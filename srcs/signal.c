@@ -1,7 +1,8 @@
-#include "../incs/minishell.h"
+/*#include "../incs/minishell.h"
 
 void    handle_signal(int sig)
 {
+    (void)sig;
     printf("%s\n", "A signal detected", sig);
     exit(0);
-}
+}*/

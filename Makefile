@@ -5,7 +5,7 @@ MAKEFLAGS += $(MK_FLAGS)
 NAME = minishell.a
 LBFT = Libft/libft.a
 
-SRCS = srcs/main.c srcs/signal.c
+SRCS = srcs/main.c srcs/builtins/ft_echo.c srcs/builtins/ft_cd.c
 INCS = incs/ \
     Libft/incs/
 OBJS = $(patsubst srcs/%.c, objs/%.o, $(SRCS))

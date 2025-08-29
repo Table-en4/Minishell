@@ -5,6 +5,7 @@ int main(int ac, char **av, char **envp)
     (void)ac;
     (void)av;
     (void)envp;
-    signal(SIGINT, handle_signal);
-    printf("%s\n", readline("minishell> "));
+    //printf("%s\n", readline("minishell> "));
+    //ft_echo(av);
+    ft_cd(av);
 }

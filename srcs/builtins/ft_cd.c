@@ -1,18 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_putstr_fd.c                                     :+:      :+:    :+:   */
+/*   ft_cd.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: molapoug <molapoug@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/26 17:55:07 by raamayri          #+#    #+#             */
-/*   Updated: 2025/08/29 10:37:03 by molapoug         ###   ########.fr       */
+/*   Created: 2025/08/29 11:04:38 by molapoug          #+#    #+#             */
+/*   Updated: 2025/08/29 12:48:27 by molapoug         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../incs/libft.h"
+#include "minishell.h"
 
-void	ft_putstr_fd(char *s, int fd)
+int ft_cd(char **av)
 {
-	write(fd, s, ft_strlen(s));
+    DIR *doss;
+    //struct dirent *entre;
+    
+    if (ft_strcmp(av[1], "cd") ==0)
+    {
+        doss = opendir(av[2]);
+        if (doss == NULL)
+            chdir("/usr");
+        else
+            chdir(av[2]);
+    }
+    return (0);
 }
