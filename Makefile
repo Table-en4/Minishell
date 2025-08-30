@@ -1,13 +1,16 @@
-CC_FLAGS = -Wall -Wextra -Werror -g3 -MMD -MP
+CC_FLAGS =  -g3 -MMD -MP
 MK_FLAGS = --silent
 MAKEFLAGS += $(MK_FLAGS)
 
 NAME = minishell.a
 LBFT = Libft/libft.a
 
-SRCS = srcs/main.c srcs/builtins/ft_echo.c srcs/builtins/ft_cd.c
-INCS = incs/ \
-    Libft/incs/
+SRCS = srcs/main.c srcs/builtins/ft_echo.c srcs/builtins/ft_cd.c \
+	srcs/builtins/env_init.c srcs/builtins/env_node.c srcs/builtins/env_utils.c \
+	srcs/exec_builtin.c
+
+INCS = incs Libft/incs
+
 OBJS = $(patsubst srcs/%.c, objs/%.o, $(SRCS))
 DEPS = $(patsubst objs/%.o, deps/%.d, $(OBJS))
 

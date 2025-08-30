@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+         #
+#    By: molapoug <molapoug@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/06/23 17:57:19 by raamayri          #+#    #+#              #
-#    Updated: 2025/08/01 19:15:20 by raamayri         ###   ########.fr        #
+#    Updated: 2025/08/30 02:40:06 by molapoug         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -52,6 +52,9 @@ SRCS = srcs/ft_isalpha.c \
 	   srcs/ft_putstr_fd.c \
 	   srcs/ft_putendl_fd.c \
 	   srcs/ft_putnbr_fd.c \
+	   srcs/ft_strtok.c\
+	   srcs/ft_strcpy.c\
+	   srcs/ft_strcat.c\
 	   srcs/get_next_line/get_next_line.c \
 	   srcs/get_next_line/get_next_line_utils.c \
 	   srcs/ft_printf/ft_printf.c \

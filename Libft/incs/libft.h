@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
+/*   By: molapoug <molapoug@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 17:56:18 by raamayri          #+#    #+#             */
-/*   Updated: 2025/07/30 20:25:06 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/08/30 02:59:28 by molapoug         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,5 +54,8 @@ void	ft_putchar_fd(char c, int fd);
 void	ft_putstr_fd(char *s, int fd);
 void	ft_putendl_fd(char *s, int fd);
 void	ft_putnbr_fd(int n, int fd);
+char *ft_strtok(char *str, const char *delim);
+char	*ft_strcpy(char *dest, char *str);
+char	*ft_strcat(char *dest, char *src);
 
 #endif

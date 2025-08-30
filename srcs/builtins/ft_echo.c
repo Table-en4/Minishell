@@ -6,7 +6,7 @@
 /*   By: molapoug <molapoug@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/29 10:30:06 by molapoug          #+#    #+#             */
-/*   Updated: 2025/08/29 10:58:44 by molapoug         ###   ########.fr       */
+/*   Updated: 2025/08/30 03:15:36 by molapoug         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	ft_echo(char **av)
 {
 	int	i;
 	int	no_newline;
-
+	
 	i = 1;
 	no_newline = 0;
 	if (av[i] && is_n_option(av[i]))
