@@ -2,7 +2,7 @@ CC_FLAGS = -Wall -Werror -Wextra -g3 -MMD -MP
 MK_FLAGS = --silent
 MAKEFLAGS += $(MK_FLAGS)
 
-NAME = minishell.a
+NAME = minishell
 LBFT = Libft/libft.a
 
 SRCS = srcs/main.c srcs/builtins/ft_echo.c srcs/builtins/ft_cd.c \
@@ -20,7 +20,7 @@ DEPS = $(patsubst objs/%.o, deps/%.d, $(OBJS))
 all: $(NAME)
 
 $(NAME): $(OBJS) $(LBFT)
-	cc $(CC_FLAGS) -o $@ $^ -lreadline 
+	cc $(CC_FLAGS) -o $@ $^ -lreadline
 	$(info [MAKE] $@ built successfully.)
 
 objs/%.o: srcs/%.c
