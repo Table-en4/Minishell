@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   exec_builtin.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: molapoug <molapoug@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/30 11:45:06 by molapoug          #+#    #+#             */
+/*   Updated: 2025/08/30 11:45:08 by molapoug         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 int execute_builtin(char **args, t_env **envp)
@@ -23,19 +35,16 @@ int execute_builtin(char **args, t_env **envp)
             perror("pwd");
         return (0);
     }
+    if (ft_strcmp(args[0], "unset") == 0)
+        return (ft_unset(args, envp));
     if (ft_strcmp(args[0], "env") == 0)
-    {
-        while (current)
-        {
-            ft_dprintf(1, "%s=%s\n", current->key, current->value);
-            current = current->next;
-        }
-        return (0);
-    }
+        return (ft_env(args, envp));
+    if (ft_strcmp(args[0], "export") == 0)
+        return (ft_export(args, envp));
     if (ft_strcmp(args[0], "exit") == 0)
     {
-        ft_dprintf(1, "fin de l'experience utilisateur\n");
-        //free_args(args);
+        ft_dprintf(1, "\e[46mfin de l'experience utilisateur\e[0m\n");
+        free_args(args);
         free_env_list(*envp);
         exit(0);
     }

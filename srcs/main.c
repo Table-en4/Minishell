@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: molapoug <molapoug@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/30 11:44:12 by molapoug          #+#    #+#             */
+/*   Updated: 2025/08/31 17:01:56 by molapoug         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 int main(int ac, char **av, char **envp)
@@ -12,18 +24,16 @@ int main(int ac, char **av, char **envp)
     
     env_list = init_env(envp);
     if (!env_list)
-        return (ft_putstr_fd("Error: Failed to initialize environment\n", 2), 1);
-    
+        return (ft_putstr_fd("Error: Failed to initialize env\n", 2), 1);
     ft_dprintf(1, "Minishell avec cd et echo\n");
-    ft_dprintf(1, "Commandes disponibles: cd, echo, pwd, env, exit\n");
+    ft_dprintf(1, "cmd: cd, echo, pwd, env, export, unset, exit\n");
     ft_dprintf(1, "Tapez 'exit' pour quitter\n\n");
-    
     while (1)
     {
         line = readline("\001\033[0;32m\002minishell> \001\033[0m\002");
         if (!line)
         {
-            ft_dprintf(1, "\nGoodbye!\n");
+            ft_dprintf(1, "\nye!\n");
             break;
         }
         if (*line == '\0')
@@ -41,9 +51,7 @@ int main(int ac, char **av, char **envp)
         }
         builtin_result = execute_builtin(args, &env_list);
         if (builtin_result == -1)
-        {
             execute_external(args, env_list);
-        }
         free(line);
         free_args(args);
     }

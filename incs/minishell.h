@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: molapoug <molapoug@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/30 11:43:53 by molapoug          #+#    #+#             */
+/*   Updated: 2025/08/31 16:58:26 by molapoug         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef MINISHELL_H 
 # define MINISHELL_H
 
@@ -22,6 +34,13 @@ typedef struct s_env
     struct s_env    *next;
 }   t_env;
 
+typedef struct s_blt
+{
+    char    *pos;
+    char    *key;
+    char    *value;
+    char    *copy;
+}   t_blt;
 
 /* #---------------# */
 /*  signal functions */
@@ -33,6 +52,9 @@ void    handle_signal(int sig);
 /* # --------------- # */
 int ft_echo(char **av);
 int ft_cd(char **args, t_env **envp);
+int ft_export(char **args, t_env **envp);
+int ft_env(char **args, t_env **envp);
+int ft_unset(char **args, t_env **envp);
 
 /* # --------------- # */
 /*    builtins utils   */
@@ -48,6 +70,12 @@ void    free_args(char **args);
 int     execute_builtin(char **args, t_env **envp);
 int     execute_external(char **args, t_env *env_list);
 void    free_env_list(t_env *envp);
+void    free_env_node(t_env *node);
 void    set_env_value(t_env **envp, char *key, char *value);
+int     valide_id(char *name);
+char    **conv_env_envp(t_env *env_list);
+void    free_envp(char **envp);
+int     export_no_value(t_env **envp, char *arg);
+int     unset_env(t_env **envp, char *key);
 
 #endif
