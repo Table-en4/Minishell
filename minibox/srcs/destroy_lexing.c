@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/29 19:59:14 by raamayri          #+#    #+#             */
-/*   Updated: 2025/08/29 20:52:17 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/09/02 21:46:40 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,7 @@ void	ft_destroy_minibox_lexing(t_minibox *minibox)
 	if (!minibox || !minibox->lexing)
 		return ;
 	while (minibox->lexing->prev)
-	{
 		minibox->lexing = minibox->lexing->prev;
-	}
 	curr_node = minibox->lexing;
 	while (curr_node)
 	{
