@@ -6,7 +6,7 @@
 /*   By: molapoug <molapoug@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 11:43:53 by molapoug          #+#    #+#             */
-/*   Updated: 2025/08/31 16:58:26 by molapoug         ###   ########.fr       */
+/*   Updated: 2025/09/02 17:01:13 by molapoug         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,21 +18,29 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <signal.h>
+#include <fcntl.h>
 #include <dirent.h>
 #include <errno.h>
 #include <sys/wait.h>
 #include "../Libft/incs/libft.h"
 #include "../Libft/incs/ft_dprintf.h"
 
-/* # ------------- # */
-/*      struct     # */
-/* # ------------- # */
+/*#-----------------#*/
+/*#------struct-----#*/
+/*#-----------------#*/
 typedef struct s_env
 {
     char    *key;
     char    *value;
     struct s_env    *next;
 }   t_env;
+
+typedef struct s_cd
+{
+    char    *go_dir;
+    char    *home;
+    char    *old_pwd;
+}   t_cd;
 
 typedef struct s_blt
 {
@@ -42,23 +50,23 @@ typedef struct s_blt
     char    *copy;
 }   t_blt;
 
-/* #---------------# */
-/*  signal functions */
-/* #---------------# */
+/*#------------------#*/
+/*#-signal functions-#*/
+/*#------------------#*/
 void    handle_signal(int sig);
 
-/* # --------------- # */
-/*  builtins functions */
-/* # --------------- # */
+/*#--------------------#*/
+/*#-builtins functions-#*/
+/*#--------------------#*/
 int ft_echo(char **av);
 int ft_cd(char **args, t_env **envp);
 int ft_export(char **args, t_env **envp);
 int ft_env(char **args, t_env **envp);
 int ft_unset(char **args, t_env **envp);
 
-/* # --------------- # */
-/*    builtins utils   */
-/* # --------------- # */
+/*#-------------------#*/
+/*#---builtins utils--#*/
+/*#-------------------#*/
 char    *get_env(t_env *envp, char *key);
 void    set_env_value(t_env **envp, char *key, char *value);
 char    *get_home(t_env *envp);

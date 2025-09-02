@@ -6,7 +6,7 @@
 /*   By: molapoug <molapoug@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 11:44:12 by molapoug          #+#    #+#             */
-/*   Updated: 2025/08/31 17:01:56 by molapoug         ###   ########.fr       */
+/*   Updated: 2025/09/02 16:33:17 by molapoug         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@ int main(int ac, char **av, char **envp)
     
     (void)ac;
     (void)av;
-    
     env_list = init_env(envp);
     if (!env_list)
         return (ft_putstr_fd("Error: Failed to initialize env\n", 2), 1);
