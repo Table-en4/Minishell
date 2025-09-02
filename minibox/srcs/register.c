@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/29 22:27:25 by raamayri          #+#    #+#             */
-/*   Updated: 2025/08/31 15:30:17 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/09/02 21:25:22 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,9 +81,10 @@ const char	**ft_get_error_msgs(void)
 {
 	static const char	*minimsg[MINICODE_SIZE + 1] = {
 	[MINICODE_NONE] = "No error.",
-	[MINICODE_ERRNO] = "System error occurred (see errno).",
-	[MINICODE_INPUT_NULL] = "The received string is NULL or empty.",
-	[MINICODE_UNDEFINED] = "An undefined error occurred.",
+	[MINICODE_ERRNO] = "A system error occurred (see errno).",
+	[MINICODE_INPUT_NULL] = "Input Error: Null or blank input.",
+	[MINICODE_UNCLOSED_QUOTES] = "Lexing Error: Unclosed quotes.",
+	[MINICODE_UNDEFINED] = "Unknown or undefined error.",
 	};
 
 	return (minimsg);

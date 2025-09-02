@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/24 20:15:46 by raamayri          #+#    #+#             */
-/*   Updated: 2025/08/31 15:26:55 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/09/02 21:17:29 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,21 +49,21 @@ typedef struct s_minilexing
 
 typedef enum e_minitype
 {
-	MININODE_CMD,
-	MININODE_AND,
-	MININODE_OR,
-	MININODE_PIPE,
-	MININODE_REDIN,
-	MININODE_REDOUT,
-	MININODE_REDAPP,
-	MININODE_HEREDOC,
-	MININODE_SUBSHELL,
-	MININODE_SIZE
+	MINITYPE_CMD,
+	MINITYPE_AND,
+	MINITYPE_OR,
+	MINITYPE_PIPE,
+	MINITYPE_REDIN,
+	MINITYPE_REDOUT,
+	MINITYPE_REDAPP,
+	MINITYPE_HEREDOC,
+	MINITYPE_SUBSHELL,
+	MINITYPE_SIZE
 }	t_minitype;
 
 typedef struct s_miniparsing
 {
-	t_minitype				node;
+	t_minitype				type;
 	t_minilexing			*lexing;
 	struct s_miniparsing	*left;
 	struct s_miniparsing	*right;
@@ -76,6 +76,7 @@ typedef enum e_minicode
 	MINICODE_NONE,
 	MINICODE_ERRNO,
 	MINICODE_INPUT_NULL,
+	MINICODE_UNCLOSED_QUOTES,
 	MINICODE_UNDEFINED,
 	MINICODE_SIZE
 }	t_minicode;

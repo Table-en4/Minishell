@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/27 19:15:10 by raamayri          #+#    #+#             */
-/*   Updated: 2025/08/31 15:28:59 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/09/02 21:51:04 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,30 +26,31 @@ static int	ft_istoken(const char c)
 static size_t	ft_set_node_value(t_minibox *minibox, t_minilexing *node,
 	char *str)
 {
-	const char		**miniops = ft_get_token_operators();
-	const char		*miniop = miniops[node->token];
-	size_t			i[2];
+	const char	**miniops = ft_get_token_operators();
+	const char	*miniop = miniops[node->token];
+	size_t		i[2];
 
-	i[0] = 0;
-	i[1] = (node->token == MINITOKEN_SQUOTE || node->token == MINITOKEN_DQUOTE);
-	if (node->token == MINITOKEN_SQUOTE || node->token == MINITOKEN_DQUOTE)
-		while (str[i[0]] && str[i[0] + 1] && \
-			ft_strncmp(&str[i[0] + 1], miniop, ft_strlen(miniop)) != 0)
-			i[0]++;
-	else if (node->token == MINITOKEN_TEXT)
-		while (str[++i[0]] && !ft_istoken(str[i[0]]))
-			;
+	i[0] = (node->token == MINITOKEN_SQUOTE || node->token == MINITOKEN_DQUOTE);
+	i[1] = 0;
+	if (node->token != MINITOKEN_TEXT && !i[0])
+		i[1] = ft_strlen(miniop);
+	while ((node->token == MINITOKEN_TEXT || i[0]) && str[i[1] + i[0]])
+	{
+		if ((i[0] && !ft_strncmp(&str[i[1] + i[0]], miniop, ft_strlen(miniop)))
+			|| (node->token == MINITOKEN_TEXT && ft_istoken(str[i[1] + i[0]])))
+			break ;
+		i[1]++;
+	}
+	if (i[0] && ft_strncmp(&str[i[1] + i[0]], miniop, ft_strlen(miniop)))
+		ft_set_minibox_error(minibox, MINICODE_UNCLOSED_QUOTES);
 	else
-		i[0] = ft_strlen(miniop);
-	node->value = ft_calloc(i[0] + 1, sizeof(char));
-	if (!node->value)
+		node->value = ft_calloc(i[1] + 1, sizeof(char));
+	if (minibox->error.code == MINICODE_ERRNO && !node->value)
 		ft_set_minibox_error(minibox, MINICODE_ERRNO);
 	if (minibox->error.code != MINICODE_NONE)
-		return (0);
-	ft_memcpy(node->value, &str[i[1]], i[0]);
-	node->value[i[0]] = '\0';
-	node->length = i[0];
-	return (i[0]);
+		return (-1);
+	ft_memcpy(node->value, &str[i[0]], i[1]);
+	return ((node->value[i[1]] = '\0'), (node->length = i[1]), i[1]);
 }
 
 static size_t	ft_add_lexing_node(t_minibox *minibox, t_minitoken token,
@@ -62,13 +63,13 @@ static size_t	ft_add_lexing_node(t_minibox *minibox, t_minitoken token,
 	if (!node)
 		ft_set_minibox_error(minibox, MINICODE_ERRNO);
 	if (minibox->error.code != MINICODE_NONE)
-		return (0);
+		return (-1);
 	node->token = token;
 	len = ft_set_node_value(minibox, node, str);
+	if (minibox->error.code != MINICODE_NONE)
+		return (free(node), -1);
 	if (node->token == MINITOKEN_SQUOTE || node->token == MINITOKEN_DQUOTE)
 		len += 2;
-	if (minibox->error.code != MINICODE_NONE)
-		return (0);
 	node->next = NULL;
 	if (!minibox->lexing)
 	{
