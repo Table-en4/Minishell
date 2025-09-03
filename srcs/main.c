@@ -6,7 +6,7 @@
 /*   By: molapoug <molapoug@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 11:44:12 by molapoug          #+#    #+#             */
-/*   Updated: 2025/09/02 16:33:17 by molapoug         ###   ########.fr       */
+/*   Updated: 2025/09/03 16:35:13 by molapoug         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,12 @@
 int main(int ac, char **av, char **envp)
 {
     char *line;
+    char    cwd[1024];
     char **args;
     t_env *env_list;
     int builtin_result;
+    char *pwd;
+    char    *value_add;
     
     (void)ac;
     (void)av;
@@ -29,7 +32,10 @@ int main(int ac, char **av, char **envp)
     ft_dprintf(1, "Tapez 'exit' pour quitter\n\n");
     while (1)
     {
-        line = readline("\001\033[0;32m\002minishell> \001\033[0m\002");
+        pwd = getcwd(cwd, sizeof(cwd));
+        value_add = ft_strjoin(pwd, "> ");
+        //line = readline("\001\033[0;32m\002minishell> \001\033[0m\002");
+        line = readline(value_add);
         if (!line)
         {
             ft_dprintf(1, "\nye!\n");

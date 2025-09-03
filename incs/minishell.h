@@ -6,7 +6,7 @@
 /*   By: molapoug <molapoug@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 11:43:53 by molapoug          #+#    #+#             */
-/*   Updated: 2025/09/02 17:01:13 by molapoug         ###   ########.fr       */
+/*   Updated: 2025/09/03 18:28:00 by molapoug         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,10 @@ int ft_cd(char **args, t_env **envp);
 int ft_export(char **args, t_env **envp);
 int ft_env(char **args, t_env **envp);
 int ft_unset(char **args, t_env **envp);
+int ft_pwd(char **arg, t_env **envp);
+
+//AST READ AND GESTION
+int execute_ast(t_miniparsing *node, t_env *env);
 
 /*#-------------------#*/
 /*#---builtins utils--#*/
@@ -85,5 +89,8 @@ char    **conv_env_envp(t_env *env_list);
 void    free_envp(char **envp);
 int     export_no_value(t_env **envp, char *arg);
 int     unset_env(t_env **envp, char *key);
+int     is_builtin(char *cmd);
+char	*find_path(char *cmd, char **envp);
+int     exec_command(t_miniparsing *node, t_env *env);
 
 #endif

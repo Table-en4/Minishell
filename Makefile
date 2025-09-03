@@ -8,7 +8,7 @@ LBFT = Libft/libft.a
 SRCS = srcs/main.c srcs/builtins/ft_echo.c srcs/builtins/ft_cd.c \
 	srcs/builtins/env_init.c srcs/builtins/env_node.c srcs/builtins/env_utils.c \
 	srcs/exec_builtin.c srcs/builtins/ft_export.c srcs/builtins/ft_env.c \
-	srcs/builtins/ft_unset.c srcs/pipex/here_doc.c
+	srcs/builtins/ft_unset.c srcs/builtins/ft_pwd.c srcs/pipex/here_doc.c
 
 INCS = incs Libft/incs
 

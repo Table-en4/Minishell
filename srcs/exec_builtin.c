@@ -12,45 +12,56 @@
 
 #include "minishell.h"
 
+int is_builtin(char *cmd)
+{
+    if (!cmd)
+        return (-1);
+    if (ft_strcmp(cmd, "cd") == 0)
+        return (1);
+    if (ft_strcmp(cmd, "echo") == 0)
+        return (2);
+    if (ft_strcmp(cmd, "pwd") == 0)
+        return (3);
+    if (ft_strcmp(cmd, "unset") == 0)
+        return (4);
+    if (ft_strcmp(cmd, "env") == 0)
+        return (5);
+    if (ft_strcmp(cmd, "export") == 0)
+        return (6);
+    if (ft_strcmp(cmd, "exit") == 0)
+        return (7);
+    //IMPORTANT : si return = -1 alors pas un builtin
+    return (-1);
+}
+
 int execute_builtin(char **args, t_env **envp)
 {
-    char    cwd[1024];
-    t_env   *current;
+    int builtin; 
 
-    current = *envp;
-    if (!args[0])
-        return (0);
-    if (ft_strcmp(args[0], "cd") == 0)
-        return (ft_cd(args, envp));
-    if (ft_strcmp(args[0], "echo") == 0)
-        return (ft_echo(args));
-    if (ft_strcmp(args[0], "pwd") == 0)
-    {
-        if (getcwd(cwd, sizeof(cwd)))
-        {
-            write(1, cwd, ft_strlen(cwd));
-            write(1, "\n", 1);
-        }
-        else
-            perror("pwd");
-        return (0);
-    }
-    if (ft_strcmp(args[0], "unset") == 0)
-        return (ft_unset(args, envp));
-    if (ft_strcmp(args[0], "env") == 0)
-        return (ft_env(args, envp));
-    if (ft_strcmp(args[0], "export") == 0)
-        return (ft_export(args, envp));
-    if (ft_strcmp(args[0], "exit") == 0)
+    builtin = is_builtin(args[0]);
+    if (builtin == 1)
+        return ft_cd(args, envp);
+    else if (builtin == 2)
+        return ft_echo(args);
+    else if (builtin == 3)
+        return (ft_pwd(args, envp));
+    else if (builtin == 4)
+        return ft_unset(args, envp);
+    else if (builtin == 5)
+        return ft_env(args, envp);
+    else if (builtin == 6)
+        return ft_export(args, envp);
+    else if (builtin == 7)
     {
         ft_dprintf(1, "\e[46mfin de l'experience utilisateur\e[0m\n");
         free_args(args);
         free_env_list(*envp);
         exit(0);
     }
-    //IMPORTANT : la valeur -1 n'est pas un builtin
+    //IMPORTANT : si return = -1 alors pas un builtin
     return (-1);
 }
+
 
 char    **conv_env_envp(t_env *env_list)
 {
