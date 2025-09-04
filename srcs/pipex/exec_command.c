@@ -19,11 +19,31 @@
     }
 }*/
 
-char    **ft_convert_lexing_to_argv(t_minilexing *node)
+char    **ft_convert_lexing_to_argv(t_minilexing *lexing)
 {
-    char    **argv = NULL;
-    (void)node;
-    return argv;
+    int             count;
+    char            **argv;
+    t_minilexing    *current;
+
+    current = lexing;
+    count = 0;
+    while (current)
+    {
+        count++;
+        current = current->next;
+    }
+    argv = malloc(sizeof(char *) * count + 1);
+    if (!argv)
+        return (NULL);
+    current = lexing;
+    count = 0;
+    while (current)
+    {
+        argv[count] = ft_strdup(current->value);
+        current = current->next;
+        count++;
+    }
+    return (argv[count] = NULL, argv);
 }
 
 int exec_command(t_miniparsing *node, t_env *env)

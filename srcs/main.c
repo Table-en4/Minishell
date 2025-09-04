@@ -6,11 +6,21 @@
 /*   By: molapoug <molapoug@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 11:44:12 by molapoug          #+#    #+#             */
-/*   Updated: 2025/09/04 11:18:12 by molapoug         ###   ########.fr       */
+/*   Updated: 2025/09/04 23:14:44 by molapoug         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+t_minilexing    *create_token(char *value)
+{
+    t_minilexing    *token;
+
+    token = malloc(sizeof(t_minilexing));
+    token->value = ft_strdup(value);
+	token->next = NULL;
+	return token;
+}
 
 int main(int ac, char **av, char **envp)
 {

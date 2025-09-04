@@ -20,7 +20,7 @@ int ft_unset(char **args, t_env **envp)
 {
     int i;
     int error_count;
-    int found;
+    //int found;
 
     if (!args[1])
         return (0);
@@ -69,7 +69,7 @@ int ft_unset(char **args, t_env **envp)
                 ft_strcmp(args[i], "OLDPWD") == 0 ||
                 ft_strcmp(args[i], "PATH") == 0)
                 ft_dprintf(2, "unset: warning: unsetting '%s'\n", args[i]);
-            found = unset_env(envp, args[i]);
+            //found = unset_env(envp, args[i]);
         }
         i++;
     }
