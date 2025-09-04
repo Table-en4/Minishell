@@ -1,8 +1,6 @@
 #include "minishell.h"
-#include "minibox_internal.h"
-#include "minibox.h"
 
-int exec_pipe(t_miniparsing *node, int input_fd, t_env *env)
+/*int exec_pipe(t_miniparsing *node, int input_fd, t_env *env)
 {
     int fd[2];
     pid_t   pid;
@@ -19,6 +17,13 @@ int exec_pipe(t_miniparsing *node, int input_fd, t_env *env)
         if (input_fd != STDIN_FILENO)
             exit(execute_ast(node->left, env));;
     }
+}*/
+
+char    **ft_convert_lexing_to_argv(t_minilexing *node)
+{
+    char    **argv = NULL;
+    (void)node;
+    return argv;
 }
 
 int exec_command(t_miniparsing *node, t_env *env)
@@ -31,8 +36,7 @@ int exec_command(t_miniparsing *node, t_env *env)
     if (!argv || !argv[0])
         return (1);
     if (is_builtin(argv[0]))
-        return (exec_builtin(argv, env));
-
+        return (execute_builtin(argv, &env));
     pid = fork();
     if (pid == 0)
     {

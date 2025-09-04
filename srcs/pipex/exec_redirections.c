@@ -1,0 +1,49 @@
+#include "minishell.h"
+
+int exec_redirection(t_miniparsing *node, t_env *env)
+{
+    int fd;
+    int save_fd;
+    int exit_code;
+
+    if (node->type == MINITYPE_REDIN)
+    {
+        fd = open(node->lexing->value, O_RDONLY);
+        if (fd == -1)
+            return (1);
+        save_fd = dup(STDIN_FILENO);
+        dup2(fd, STDIN_FILENO);
+        close(fd);
+        exit_code = (execute_ast(node->left, env));
+        dup2(save_fd, STDIN_FILENO);
+        close(save_fd);
+    }
+    else if (node->type == MINITYPE_REDOUT)
+    {
+        fd = open(node->lexing->value, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+        if (fd == -1)
+            return (1);
+        save_fd = dup(STDOUT_FILENO);
+        dup2(fd, STDOUT_FILENO);
+        close(fd);
+        exit_code = execute_ast(node->left, env);
+        dup2(save_fd, STDOUT_FILENO);
+        close(save_fd);
+    }
+    else if (node->type == MINITYPE_REDAPP)
+    {
+        fd = open(node->lexing->value, O_WRONLY | O_CREAT | O_APPEND, 0644);
+        if (fd == -1)
+            return (1);
+        save_fd = dup(STDOUT_FILENO);
+        dup2(fd, STDOUT_FILENO);
+        close(fd);
+        exit_code = execute_ast(node->left, env);
+        dup2(save_fd, STDOUT_FILENO);
+        close(save_fd);
+    }
+    /*else if (node->type == MINITYPE_HEREDOC)
+        exit_code = exec_heredoc(node, env);*/
+        exit_code = 0;
+    return (exit_code);
+}

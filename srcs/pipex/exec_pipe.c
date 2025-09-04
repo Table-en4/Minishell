@@ -1,4 +1,3 @@
-#include "minibox.h"
 #include "minishell.h"
 
 int exec_pipe(t_miniparsing *node, int input_fd, t_env *env)
@@ -30,7 +29,7 @@ int exec_pipe(t_miniparsing *node, int input_fd, t_env *env)
     {
         if (input_fd != STDIN_FILENO)
             dup2(input_fd, STDIN_FILENO);
-        dup2(pipe_fd[0], STDOUT_FILENO);
+        dup2(pipe_fd[0], STDIN_FILENO);
         close(pipe_fd[0]);
         close(pipe_fd[1]);
         exit(execute_ast(node->right, env));
@@ -38,6 +37,6 @@ int exec_pipe(t_miniparsing *node, int input_fd, t_env *env)
     close(pipe_fd[0]);
     close(pipe_fd[1]);
     waitpid(left_pid, &status, 0);
-    waitpid(right_pid, &status, 0);
+    waitpid(right_pid, &exit_code, 0);
     return (WEXITSTATUS(exit_code));
 }

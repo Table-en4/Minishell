@@ -6,7 +6,7 @@
 /*   By: molapoug <molapoug@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 11:43:53 by molapoug          #+#    #+#             */
-/*   Updated: 2025/09/03 18:28:00 by molapoug         ###   ########.fr       */
+/*   Updated: 2025/09/04 11:13:50 by molapoug         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 #include <sys/wait.h>
 #include "../Libft/incs/libft.h"
 #include "../Libft/incs/ft_dprintf.h"
+#include "../minibox/incs/minibox.h"
 
 /*#-----------------#*/
 /*#------struct-----#*/
@@ -68,10 +69,20 @@ int ft_pwd(char **arg, t_env **envp);
 //AST READ AND GESTION
 int execute_ast(t_miniparsing *node, t_env *env);
 
+
+//exec cmd
+int exec_subshell(t_miniparsing *node, t_env *env);
+int exec_and(t_miniparsing *node, t_env *env);
+int exec_or(t_miniparsing *node, t_env *env);
+int exec_pipe(t_miniparsing *node, int input_fd, t_env *env);
+int exec_redirection(t_miniparsing *node, t_env *env);
+int exec_subshell(t_miniparsing *node, t_env *env);
+
 /*#-------------------#*/
 /*#---builtins utils--#*/
 /*#-------------------#*/
 char    *get_env(t_env *envp, char *key);
+char	**env_to_tab(t_env *envp);
 void    set_env_value(t_env **envp, char *key, char *value);
 char    *get_home(t_env *envp);
 char    *get_oldpwd(t_env *envp);
@@ -90,7 +101,8 @@ void    free_envp(char **envp);
 int     export_no_value(t_env **envp, char *arg);
 int     unset_env(t_env **envp, char *key);
 int     is_builtin(char *cmd);
-char	*find_path(char *cmd, char **envp);
+char    *find_path(char *cmd, t_env *env);
 int     exec_command(t_miniparsing *node, t_env *env);
+void	ft_free_split(char **result);
 
 #endif
