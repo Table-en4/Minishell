@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_unset.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: molapoug <molapoug@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/05 10:37:11 by molapoug          #+#    #+#             */
+/*   Updated: 2025/09/05 10:53:32 by molapoug         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 int is_valide_unset(char *name)
@@ -20,7 +32,6 @@ int ft_unset(char **args, t_env **envp)
 {
     int i;
     int error_count;
-    //int found;
 
     if (!args[1])
         return (0);
@@ -69,11 +80,9 @@ int ft_unset(char **args, t_env **envp)
                 ft_strcmp(args[i], "OLDPWD") == 0 ||
                 ft_strcmp(args[i], "PATH") == 0)
                 ft_dprintf(2, "unset: warning: unsetting '%s'\n", args[i]);
-            //found = unset_env(envp, args[i]);
         }
         i++;
     }
-
     if (error_count > 0)
         return (1);
     return (0);

@@ -114,7 +114,7 @@ void    free_envp(char **envp)
 int execute_external(char **args, t_env *env_list)
 {
     pid_t pid;
-    int status;
+    int statu;
     char **envp;
     
     envp = conv_env_envp(env_list);
@@ -131,16 +131,8 @@ int execute_external(char **args, t_env *env_list)
         }
     }
     else if (pid > 0)
-    {
-        waitpid(pid, &status, 0);
-        free_envp(envp);
-        return (WEXITSTATUS(status));
-    }
+        return (waitpid(pid, &statu, 0), free_envp(envp) ,WEXITSTATUS(statu));
     else
-    {
-        perror("fork");
-        free_envp(envp);
-        return (1);
-    }
+        return (perror("fork"), free_envp(envp), 1);
     return (0);
 }

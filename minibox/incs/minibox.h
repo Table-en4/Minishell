@@ -6,7 +6,7 @@
 /*   By: molapoug <molapoug@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/24 20:15:46 by raamayri          #+#    #+#             */
-/*   Updated: 2025/09/03 13:57:49 by molapoug         ###   ########.fr       */
+/*   Updated: 2025/09/05 12:34:33 by molapoug         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ typedef struct s_minierror
 }	t_minierror;
 
 typedef struct s_minibox
-{
+{	
 	t_miniinput		*input;
 	t_minilexing	*lexing;
 	t_miniparsing	*parsing;

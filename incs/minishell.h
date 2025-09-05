@@ -6,7 +6,7 @@
 /*   By: molapoug <molapoug@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 11:43:53 by molapoug          #+#    #+#             */
-/*   Updated: 2025/09/04 11:13:50 by molapoug         ###   ########.fr       */
+/*   Updated: 2025/09/05 16:04:31 by molapoug         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,6 @@ int ft_pwd(char **arg, t_env **envp);
 
 //AST READ AND GESTION
 int execute_ast(t_miniparsing *node, t_env *env);
-
 
 //exec cmd
 int exec_subshell(t_miniparsing *node, t_env *env);
