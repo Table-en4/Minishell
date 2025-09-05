@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/27 19:13:59 by raamayri          #+#    #+#             */
-/*   Updated: 2025/08/31 17:04:06 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/09/04 20:41:50 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,14 +30,18 @@ void	ft_build_minibox_input(t_minibox *minibox, const char *str)
 		ft_set_minibox_error(minibox, MINICODE_ERRNO);
 	if (minibox->error.code != MINICODE_NONE)
 		return ;
+	if (!str)
+		ft_set_minibox_error(minibox, MINICODE_INPUT_NULL);
+	if (minibox->error.code != MINICODE_NONE)
+		return ;
 	minibox->input->value = ft_strdup(str);
 	if (!minibox->input->value)
 		ft_set_minibox_error(minibox, MINICODE_ERRNO);
 	if (minibox->error.code != MINICODE_NONE)
 		return ;
 	minibox->input->length = ft_strlen(minibox->input->value);
-	if (!minibox->input->value || ft_isspaces(minibox->input->value))
-		ft_set_minibox_error(minibox, MINICODE_INPUT_NULL);
+	if (ft_isspaces(minibox->input->value))
+		ft_set_minibox_error(minibox, MINICODE_INPUT_BLANK);
 	if (minibox->error.code != MINICODE_NONE)
 		return ;
 }
