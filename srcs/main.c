@@ -125,7 +125,8 @@ int main(int ac, char **av, char **envp)
         }
         if (ft_strcmp(args[0], "testast") == 0)
         {
-            char *test_args[] = {"/bin/ls", NULL};
+            //put un NULL a la fin de la commande pour le \0 ca evite le seg fault
+            char *test_args[] = {"echo", "hello my g", NULL};
             t_miniparsing *ast_testing = create_command_node(test_args);
             int result = execute_ast(ast_testing, env_list);
             printf("Resultat de l'execution: %d\n", result);
