@@ -6,7 +6,7 @@
 /*   By: molapoug <molapoug@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 11:43:53 by molapoug          #+#    #+#             */
-/*   Updated: 2025/08/31 16:58:26 by molapoug         ###   ########.fr       */
+/*   Updated: 2025/09/05 16:04:31 by molapoug         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,21 +18,30 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <signal.h>
+#include <fcntl.h>
 #include <dirent.h>
 #include <errno.h>
 #include <sys/wait.h>
 #include "../Libft/incs/libft.h"
 #include "../Libft/incs/ft_dprintf.h"
+#include "../minibox/incs/minibox.h"
 
-/* # ------------- # */
-/*      struct     # */
-/* # ------------- # */
+/*#-----------------#*/
+/*#------struct-----#*/
+/*#-----------------#*/
 typedef struct s_env
 {
     char    *key;
     char    *value;
     struct s_env    *next;
 }   t_env;
+
+typedef struct s_cd
+{
+    char    *go_dir;
+    char    *home;
+    char    *old_pwd;
+}   t_cd;
 
 typedef struct s_blt
 {
@@ -42,24 +51,37 @@ typedef struct s_blt
     char    *copy;
 }   t_blt;
 
-/* #---------------# */
-/*  signal functions */
-/* #---------------# */
+/*#------------------#*/
+/*#-signal functions-#*/
+/*#------------------#*/
 void    handle_signal(int sig);
 
-/* # --------------- # */
-/*  builtins functions */
-/* # --------------- # */
+/*#--------------------#*/
+/*#-builtins functions-#*/
+/*#--------------------#*/
 int ft_echo(char **av);
 int ft_cd(char **args, t_env **envp);
 int ft_export(char **args, t_env **envp);
 int ft_env(char **args, t_env **envp);
 int ft_unset(char **args, t_env **envp);
+int ft_pwd(char **arg, t_env **envp);
 
-/* # --------------- # */
-/*    builtins utils   */
-/* # --------------- # */
+//AST READ AND GESTION
+int execute_ast(t_miniparsing *node, t_env *env);
+
+//exec cmd
+int exec_subshell(t_miniparsing *node, t_env *env);
+int exec_and(t_miniparsing *node, t_env *env);
+int exec_or(t_miniparsing *node, t_env *env);
+int exec_pipe(t_miniparsing *node, int input_fd, t_env *env);
+int exec_redirection(t_miniparsing *node, t_env *env);
+int exec_subshell(t_miniparsing *node, t_env *env);
+
+/*#-------------------#*/
+/*#---builtins utils--#*/
+/*#-------------------#*/
 char    *get_env(t_env *envp, char *key);
+char	**env_to_tab(t_env *envp);
 void    set_env_value(t_env **envp, char *key, char *value);
 char    *get_home(t_env *envp);
 char    *get_oldpwd(t_env *envp);
@@ -77,5 +99,9 @@ char    **conv_env_envp(t_env *env_list);
 void    free_envp(char **envp);
 int     export_no_value(t_env **envp, char *arg);
 int     unset_env(t_env **envp, char *key);
+int     is_builtin(char *cmd);
+char    *find_path(char *cmd, t_env *env);
+int     exec_command(t_miniparsing *node, t_env *env);
+void	ft_free_split(char **result);
 
 #endif

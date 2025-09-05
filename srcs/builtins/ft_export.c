@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_export.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: molapoug <molapoug@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/05 10:36:54 by molapoug          #+#    #+#             */
+/*   Updated: 2025/09/05 10:36:55 by molapoug         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 int valide_id(char *name)
@@ -62,9 +74,9 @@ int export_no_value(t_env **envp, char *arg)
 //la fonction execute_builtins dans exec_builtin.c
 int ft_export(char **args, t_env **envp)
 {
-    int i;
-    int error_count;
-    t_env *current;
+    int     i;
+    int     error_count;
+    t_env   *current;
     if (!args[1])
     {
         current = *envp;

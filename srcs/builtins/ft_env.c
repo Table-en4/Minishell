@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_env.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: molapoug <molapoug@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/05 10:36:47 by molapoug          #+#    #+#             */
+/*   Updated: 2025/09/05 10:36:48 by molapoug         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 int env_value(t_env **env, char *arg)
@@ -97,14 +109,12 @@ int ft_env(char **args, t_env **envp)
     int     i;
     t_env   *env;
     t_env   *current;
-    int     ignore_env;
     char    **commad;
     int     command_start;
     int     result;
 
     i = 1;
     env = NULL;
-    ignore_env = 0;
     commad = NULL;
     command_start = -1;
     if (!args[1])
@@ -122,7 +132,6 @@ int ft_env(char **args, t_env **envp)
     {
         if (ft_strcmp(args[i], "-i") == 0)
         {
-            ignore_env = 1;
             free_env_list(env);
             env = NULL;
         }

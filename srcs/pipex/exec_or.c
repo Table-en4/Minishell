@@ -1,20 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signal.c                                           :+:      :+:    :+:   */
+/*   exec_or.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: molapoug <molapoug@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/30 11:44:41 by molapoug          #+#    #+#             */
-/*   Updated: 2025/09/02 13:01:31 by molapoug         ###   ########.fr       */
+/*   Created: 2025/09/05 10:37:52 by molapoug          #+#    #+#             */
+/*   Updated: 2025/09/05 10:37:53 by molapoug         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void    handle_signal(int sig)
+int exec_or(t_miniparsing *node, t_env *env)
 {
-    if (sig == SIGINT)
-        printf("ctrl+c detected programe exit : '%i'\n", sig);
-}
+    int left_exit;
 
+    left_exit = execute_ast(node->left, env);
+    if (left_exit != 0)
+        return (execute_ast(node->right, env));
+    return (left_exit);
+}

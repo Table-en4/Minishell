@@ -1,20 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signal.c                                           :+:      :+:    :+:   */
+/*   exec_subshell.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: molapoug <molapoug@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/30 11:44:41 by molapoug          #+#    #+#             */
-/*   Updated: 2025/09/02 13:01:31 by molapoug         ###   ########.fr       */
+/*   Created: 2025/09/05 10:38:12 by molapoug          #+#    #+#             */
+/*   Updated: 2025/09/05 10:38:13 by molapoug         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void    handle_signal(int sig)
+int exec_subshell(t_miniparsing *node, t_env *env)
 {
-    if (sig == SIGINT)
-        printf("ctrl+c detected programe exit : '%i'\n", sig);
-}
+    pid_t pid;
+    int status;
 
+    pid = fork();
+    if (pid == -1)
+        return (1);
+    if (pid == 0)
+        exit(execute_ast(node->left, env));
+    waitpid(pid, &status, 0);
+    return (WEXITSTATUS(status));
+}
