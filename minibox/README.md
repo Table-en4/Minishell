@@ -2,11 +2,11 @@
 
 This library provides a minimal shell lexing and parsing toolkit.<br/>
 Minibox only supports the following operators:<br/>
-- `|` Pipe
 - `&&`, `||` Logical AND, OR
+- `|` Pipe
 - `>`, `<`, `>>`, `<<` Redirection (Explicit file descriptors are not supported.)
-- `'`, `"` Quotes (Unclosed quotes are not supported.)
 - `(`, `)` Parenthesis
+- `'`, `"` Quotes (Unclosed quotes are not supported.)
 
 ## Functions
 #### `ft_build_minibox();`
@@ -16,13 +16,6 @@ Protoype: int ft_build_minibox(t_minibox *minibox, const char *str);
 Returns: 0 on success.
          -1 if minibox is NULL.
          >0 on a specific error.
-```
-#### `ft_convert_lexing_to_argv();`
-Convert a lexing linked list into a NULL-terminated array of strings, similar to `argv`, which is suitable for use with `execve`.
-```c
-Protoype: char	**ft_convert_lexing_to_argv(const t_minilexing *lexing);
-Returns: NULL-terminated array of strings on success.
-         NULL on failure.
 ```
 #### `ft_destroy_minibox();`
 Frees all dynamically allocated memory within the `t_minibox` structure.<br/>
@@ -65,12 +58,26 @@ typedef struct s_minilexing
 	struct s_minilexing	*prev;
 }	t_minilexing;
 ```
+#### `t_minifd`
+```c
+typedef struct s_minifd
+{
+	t_minitype		redir;
+	char			*file;
+	int				fd;
+	struct s_minifd	*next;
+	struct s_minifd	*prev;
+}	t_minifd;
+```
 #### `t_miniparsing`
 ```c
 typedef struct s_miniparsing
 {
 	t_minitype				type;
-	t_minilexing			*lexing;
+	t_minifd				*fds;
+	size_t					argc;
+	char					**argv;
+	struct s_miniparsing	*subshell;
 	struct s_miniparsing	*left;
 	struct s_miniparsing	*right;
 }	t_miniparsing;
@@ -88,57 +95,66 @@ typedef struct s_minierror
 ```c
 typedef enum e_minitoken
 {
-    MINITOKEN_REDAPP,
-    MINITOKEN_HEREDOC,
-    MINITOKEN_AND,
-    MINITOKEN_OR,
-    MINITOKEN_SQUOTE,
-    MINITOKEN_DQUOTE,
-    MINITOKEN_REDOUT,
-    MINITOKEN_REDIN,
-    MINITOKEN_LPAREN,
-    MINITOKEN_RPAREN,
-    MINITOKEN_PIPE,
-    MINITOKEN_TEXT,
-    MINITOKEN_SIZE
+	MINITOKEN_REDAPP,
+	MINITOKEN_HEREDOC,
+	MINITOKEN_AND,
+	MINITOKEN_OR,
+	MINITOKEN_PIPE,
+	MINITOKEN_REDOUT,
+	MINITOKEN_REDIN,
+	MINITOKEN_LPAREN,
+	MINITOKEN_RPAREN,
+	MINITOKEN_DQUOTE,
+	MINITOKEN_SQUOTE,
+	MINITOKEN_UQUOTE,
+	MINITOKEN_WSPACE,
+	MINITOKEN_SIZE
 }   t_minitoken;
 ```
 #### `t_minitype`
 ```c
 typedef enum e_minitype
 {
-    MINITYPE_CMD,
-    MINITYPE_AND,
-    MINITYPE_OR,
-    MINITYPE_PIPE,
-    MINITYPE_REDIN,
-    MINITYPE_REDOUT,
-    MINITYPE_REDAPP,
-    MINITYPE_HEREDOC,
-    MINITYPE_SUBSHELL,
-    MINITYPE_SIZE
+	MINITYPE_AND,
+	MINITYPE_OR,
+	MINITYPE_PIPE,
+	MINITYPE_CMD,
+	MINITYPE_SUBSHELL,
+	MINITYPE_REDAPP,
+	MINITYPE_HEREDOC,
+	MINITYPE_REDOUT,
+	MINITYPE_REDIN,
+	MINITYPE_SIZE
 }   t_minitype;
+```
+#### `MINIMSG_SIZE`
+```c
+# define MINIMSG_SIZE 256
 ```
 #### `t_minicode`
 ```c
 typedef enum e_minicode
 {
-    MINICODE_NONE,
-    MINICODE_ERRNO,
-    MINICODE_INPUT_NULL,
-    MINICODE_UNCLOSED_QUOTES,
-    MINICODE_UNDEFINED,
-    MINICODE_SIZE
+	MINICODE_NONE,
+	MINICODE_ERRNO,
+	MINICODE_INPUT_NULL,
+	MINICODE_INPUT_BLANK,
+	MINICODE_UNCLOSED_QUOTES,
+	MINICODE_UNCLOSED_PARENTHESIS,
+	MINICODE_UNDEFINED,
+	MINICODE_SIZE
 }   t_minicode;
 ```
 ## Errors
-|ID  |Code                        |Message                                 |
-|----|----------------------------|----------------------------------------|
-|0   |`MINICODE_NONE`             |No error.                               |
-|1   |`MINICODE_ERRNO`            |A system error occurred (see errno).    |
-|2   |`MINICODE_INPUT_NULL`       |Input Error: Null or blank input.       |
-|3   |`MINICODE_UNCLOSED_QUOTES`  |Lexing Error: Unclosed quotes.          |
-|4   |`MINICODE_UNDEFINED`        |Unknown or undefined error.             |
+|ID  |Code                            |Message                                 |
+|----|--------------------------------|----------------------------------------|
+|0   |`MINICODE_NONE`                 |No error.                               |
+|1   |`MINICODE_ERRNO`                |System error (see errno).               |
+|2   |`MINICODE_INPUT_NULL`           |Null input.                             |
+|3   |`MINICODE_INPUT_BLANK`          |Blank input.                            |
+|4   |`MINICODE_UNCLOSED_QUOTES`      |Unclosed quotes.                        |
+|5   |`MINICODE_UNCLOSED_PARENTHESIS` |Unclosed parenthesis.                   |
+|6   |`MINICODE_UNDEFINED`            |Unknown or undefined error.             |
 ## Minishell
 This library was originally developed as a submodule for the minishell project from 42 school.<br/>
 You can find the main repository here: [Minishell](https://github.com/Table-en4/Minishell) by [Table-en4](https://github.com/Table-en4).

@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/29 22:27:25 by raamayri          #+#    #+#             */
-/*   Updated: 2025/09/02 21:25:22 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/09/05 21:19:37 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,18 +15,19 @@
 const char	**ft_get_token_names(void)
 {
 	static const char	*mininames[MINITOKEN_SIZE + 1] = {
-	[MINITOKEN_TEXT] = "MINITOKEN_TEXT",
-	[MINITOKEN_SQUOTE] = "MINITOKEN_SQUOTE",
-	[MINITOKEN_DQUOTE] = "MINITOKEN_DQUOTE",
-	[MINITOKEN_REDIN] = "MINITOKEN_REDIN",
-	[MINITOKEN_REDOUT] = "MINITOKEN_REDOUT",
 	[MINITOKEN_REDAPP] = "MINITOKEN_REDAPP",
 	[MINITOKEN_HEREDOC] = "MINITOKEN_HEREDOC",
 	[MINITOKEN_AND] = "MINITOKEN_AND",
 	[MINITOKEN_OR] = "MINITOKEN_OR",
+	[MINITOKEN_PIPE] = "MINITOKEN_PIPE",
+	[MINITOKEN_REDOUT] = "MINITOKEN_REDOUT",
+	[MINITOKEN_REDIN] = "MINITOKEN_REDIN",
 	[MINITOKEN_LPAREN] = "MINITOKEN_LPAREN",
 	[MINITOKEN_RPAREN] = "MINITOKEN_RPAREN",
-	[MINITOKEN_PIPE] = "MINITOKEN_PIPE",
+	[MINITOKEN_DQUOTE] = "MINITOKEN_DQUOTE",
+	[MINITOKEN_SQUOTE] = "MINITOKEN_SQUOTE",
+	[MINITOKEN_UQUOTE] = "MINITOKEN_UQUOTE",
+	[MINITOKEN_WSPACE] = "MINITOKEN_WSPACE",
 	};
 
 	return (mininames);
@@ -53,13 +54,11 @@ const char	**ft_get_token_operators(void)
 	[MINITOKEN_HEREDOC] = "<<",
 	[MINITOKEN_AND] = "&&",
 	[MINITOKEN_OR] = "||",
+	[MINITOKEN_PIPE] = "|",
 	[MINITOKEN_REDOUT] = ">",
 	[MINITOKEN_REDIN] = "<",
 	[MINITOKEN_LPAREN] = "(",
 	[MINITOKEN_RPAREN] = ")",
-	[MINITOKEN_PIPE] = "|",
-	[MINITOKEN_SQUOTE] = "'",
-	[MINITOKEN_DQUOTE] = "\"",
 	};
 
 	return (miniops);
@@ -71,6 +70,9 @@ const char	**ft_get_error_names(void)
 	[MINICODE_NONE] = "MINICODE_NONE",
 	[MINICODE_ERRNO] = "MINICODE_ERRNO",
 	[MINICODE_INPUT_NULL] = "MINICODE_INPUT_NULL",
+	[MINICODE_INPUT_BLANK] = "MINICODE_INPUT_BLANK",
+	[MINICODE_UNCLOSED_QUOTES] = "MINICODE_UNCLOSED_QUOTES",
+	[MINICODE_UNCLOSED_PARENTHESIS] = "MINICODE_UNCLOSED_PARENTHESIS",
 	[MINICODE_UNDEFINED] = "MINICODE_UNDEFINED",
 	};
 
@@ -81,9 +83,11 @@ const char	**ft_get_error_msgs(void)
 {
 	static const char	*minimsg[MINICODE_SIZE + 1] = {
 	[MINICODE_NONE] = "No error.",
-	[MINICODE_ERRNO] = "A system error occurred (see errno).",
-	[MINICODE_INPUT_NULL] = "Input Error: Null or blank input.",
-	[MINICODE_UNCLOSED_QUOTES] = "Lexing Error: Unclosed quotes.",
+	[MINICODE_ERRNO] = "System error (see errno).",
+	[MINICODE_INPUT_NULL] = "Null input.",
+	[MINICODE_INPUT_BLANK] = "Blank input.",
+	[MINICODE_UNCLOSED_QUOTES] = "Unclosed quotes.",
+	[MINICODE_UNCLOSED_PARENTHESIS] = "Unclosed parenthesis.",
 	[MINICODE_UNDEFINED] = "Unknown or undefined error.",
 	};
 
