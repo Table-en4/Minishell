@@ -6,13 +6,13 @@
 /*   By: molapoug <molapoug@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 10:37:57 by molapoug          #+#    #+#             */
-/*   Updated: 2025/09/05 10:37:58 by molapoug         ###   ########.fr       */
+/*   Updated: 2025/09/06 14:57:25 by molapoug         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int left_exec(pid_t left_pid, t_miniparsing *node, int input_fd, t_env *env)
+int left_exec(pid_t left_pid, t_minibox *node, int input_fd, t_env *env)
 {
     int pip_fd[2];
 
@@ -28,12 +28,12 @@ int left_exec(pid_t left_pid, t_miniparsing *node, int input_fd, t_env *env)
         dup2(pip_fd[1], STDOUT_FILENO);
         close(pip_fd[0]);
         close(pip_fd[1]);
-        exit(execute_ast(node->left, env));
+        exit(execute_ast(node, env, node->parsing->left));
     }
     return (0);
 }
 
-int right_exec(pid_t right_pid, t_miniparsing *node, int input_fd, t_env *env)
+int right_exec(pid_t right_pid, t_minibox *node, int input_fd, t_env *env)
 {
     int pipe_fd[2];
 
@@ -49,12 +49,12 @@ int right_exec(pid_t right_pid, t_miniparsing *node, int input_fd, t_env *env)
         dup2(pipe_fd[0], STDOUT_FILENO);
         close(pipe_fd[0]);
         close(pipe_fd[1]);
-        exit(execute_ast(node->right, env));
+        exit(execute_ast(node, env, node->parsing->left));
     }
     return (0);
 }
 
-int exec_pipe(t_miniparsing *node, int input_fd, t_env *env)
+int exec_pipe(t_minibox *node, int input_fd, t_env *env)
 {
     int     pipe_fd[2];
     pid_t   left_pid;

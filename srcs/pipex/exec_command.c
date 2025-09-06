@@ -6,7 +6,7 @@
 /*   By: molapoug <molapoug@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 10:37:46 by molapoug          #+#    #+#             */
-/*   Updated: 2025/09/05 10:37:48 by molapoug         ###   ########.fr       */
+/*   Updated: 2025/09/06 14:49:09 by molapoug         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,13 +31,13 @@
     }
 }*/
 
-char    **ft_convert_lexing_to_argv(t_minilexing *lexing)
+char    **ft_convert_lexing_to_argv(t_minibox *lexing)
 {
     int             count;
     char            **argv;
     t_minilexing    *current;
 
-    current = lexing;
+    current = lexing->lexing;
     count = 0;
     while (current)
     {
@@ -47,7 +47,7 @@ char    **ft_convert_lexing_to_argv(t_minilexing *lexing)
     argv = malloc(sizeof(char *) * count + 1);
     if (!argv)
         return (NULL);
-    current = lexing;
+    current = lexing->lexing;
     count = 0;
     while (current)
     {
@@ -58,13 +58,13 @@ char    **ft_convert_lexing_to_argv(t_minilexing *lexing)
     return (argv[count] = NULL, argv);
 }
 
-int exec_command(t_miniparsing *node, t_env *env)
+int exec_command(t_minibox *node, t_env *env)
 {
     char **argv;
     char *path;
     pid_t pid;
 
-    argv = ft_convert_lexing_to_argv(node->lexing);
+    argv = ft_convert_lexing_to_argv(node);
     if (!argv || !argv[0])
         return (1);
     if (is_builtin(argv[0]))

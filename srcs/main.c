@@ -6,7 +6,7 @@
 /*   By: molapoug <molapoug@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 11:44:12 by molapoug          #+#    #+#             */
-/*   Updated: 2025/09/05 19:21:03 by molapoug         ###   ########.fr       */
+/*   Updated: 2025/09/06 15:02:02 by molapoug         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,16 +24,16 @@ t_minilexing *create_token(char *value)
     return (token);
 }
 
-t_miniparsing *create_command_node(char **args)
+t_minibox *create_command_node(char **args)
 {
-    t_miniparsing   *node = malloc(sizeof(t_miniparsing));
+    t_minibox   *node = malloc(sizeof(t_miniparsing));
     int             i = 0;
 
     if (!node)
         return (NULL);
-    node->type = MINITYPE_CMD;
-    node->left = NULL;
-    node->right = NULL;
+    node->parsing->type = MINITYPE_CMD;
+    node->parsing->left = NULL;
+    node->parsing->right = NULL;
     t_minilexing *tokens = NULL;
     t_minilexing *current = NULL;
     while (args[i])
@@ -57,27 +57,29 @@ t_miniparsing *create_command_node(char **args)
         current = new_token;
         i++;
     }
-    return (node->lexing = tokens, node);
+    node->lexing = tokens;
+    return (node);
 }
 
-void free_tokens(t_minilexing *tokens)
+void free_tokens(t_minibox *tokens)
 {
+    t_minibox   *next;
     while (tokens)
     {
-        t_minilexing *next = tokens->next;
-        free(tokens->value);
+        next->parsing->fds = tokens->parsing->fds->next;
+        free(tokens->input->value);
         free(tokens);
         tokens = next;
     }
 }
 
-void free_ast(t_miniparsing *node)
+void free_ast(t_miniparsing *node, t_minibox *lexer)
 {
-    if (!node)
-        return;
-    free_ast(node->left);
-    free_ast(node->right);
-    free_tokens(node->lexing);
+    if (!node || !lexer)
+        return ;
+    free_ast(node->left, lexer);
+    free_ast(node->right, lexer);
+    free_tokens(lexer);
     free(node);
 }
 
@@ -127,10 +129,11 @@ int main(int ac, char **av, char **envp)
         {
             //put un NULL a la fin de la commande pour le \0 ca evite le seg fault
             char *test_args[] = {"echo", "hello my g", NULL};
-            t_miniparsing *ast_testing = create_command_node(test_args);
-            int result = execute_ast(ast_testing, env_list);
+            t_minibox *ast_testing = create_command_node(test_args);
+            t_minibox   *lexer;
+            int result = execute_ast(lexer, env_list, ast_testing->parsing);
             printf("Resultat de l'execution: %d\n", result);
-            free_ast(ast_testing);
+            free_ast(lexer->parsing, ast_testing);
         }
         else
         {

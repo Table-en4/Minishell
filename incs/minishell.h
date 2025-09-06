@@ -6,7 +6,7 @@
 /*   By: molapoug <molapoug@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 11:43:53 by molapoug          #+#    #+#             */
-/*   Updated: 2025/09/05 16:04:31 by molapoug         ###   ########.fr       */
+/*   Updated: 2025/09/06 14:53:44 by molapoug         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,15 +67,15 @@ int ft_unset(char **args, t_env **envp);
 int ft_pwd(char **arg, t_env **envp);
 
 //AST READ AND GESTION
-int execute_ast(t_miniparsing *node, t_env *env);
+int execute_ast(t_minibox *node, t_env *env, t_miniparsing *value);
 
 //exec cmd
-int exec_subshell(t_miniparsing *node, t_env *env);
-int exec_and(t_miniparsing *node, t_env *env);
-int exec_or(t_miniparsing *node, t_env *env);
-int exec_pipe(t_miniparsing *node, int input_fd, t_env *env);
-int exec_redirection(t_miniparsing *node, t_env *env);
-int exec_subshell(t_miniparsing *node, t_env *env);
+int exec_subshell(t_minibox *node, t_env *env);
+int exec_and(t_minibox *node, t_env *env);
+int exec_or(t_minibox*node, t_env *env);
+int exec_pipe(t_minibox *node, int input_fd, t_env *env);
+int exec_redirection(t_minibox *node, t_env *env);
+int exec_subshell(t_minibox *node, t_env *env);
 
 /*#-------------------#*/
 /*#---builtins utils--#*/
@@ -101,7 +101,7 @@ int     export_no_value(t_env **envp, char *arg);
 int     unset_env(t_env **envp, char *key);
 int     is_builtin(char *cmd);
 char    *find_path(char *cmd, t_env *env);
-int     exec_command(t_miniparsing *node, t_env *env);
+int     exec_command(t_minibox *node, t_env *env);
 void	ft_free_split(char **result);
 
 #endif
