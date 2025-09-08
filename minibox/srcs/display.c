@@ -6,61 +6,54 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 17:04:44 by raamayri          #+#    #+#             */
-/*   Updated: 2025/08/31 15:35:51 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/09/07 20:49:54 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../incs/minibox_internal.h"
 
-static void	ft_display_minibox_input(const t_minibox *minibox)
+static void	ft_display_minibox_asccii(void)
 {
-	const t_miniinput	*input = minibox->input;
+	int		fd;
+	char	*line;
 
-	ft_printf("│    ├─── value: [%s]\n", input->value);
-	ft_printf("│    └─── length: %d\n", input->length);
-}
-
-static void	ft_display_minibox_lexing(const t_minibox *minibox)
-{
-	const char		**token_names = ft_get_token_names();
-	t_minilexing	*curr_lexing;
-
-	curr_lexing = minibox->lexing;
-	while (curr_lexing)
+	fd = open("./txts/ascii_minibox.txt", O_RDONLY);
+	if (fd == -1)
 	{
-		if (!curr_lexing->next)
-		{
-			ft_printf("│    └─── token: %s (%d)\n",
-				token_names[curr_lexing->token], curr_lexing->token);
-			ft_printf("│         ├─── value: [%s]\n", curr_lexing->value);
-			ft_printf("│         └─── length: %d\n", curr_lexing->length);
-			break ;
-		}
-		ft_printf("│    ├─── token: %s (%d)\n",
-			token_names[curr_lexing->token], curr_lexing->token);
-		ft_printf("│    │    ├─── value: [%s]\n", curr_lexing->value);
-		ft_printf("│    │    └─── length: %d\n", curr_lexing->length);
-		curr_lexing = curr_lexing->next;
+		ft_printf("minibox\n");
+		return ;
 	}
+	line = get_next_line(fd);
+	while (line)
+	{
+		ft_printf("%s", line);
+		free(line);
+		line = get_next_line(fd);
+	}
+	close(fd);
+	ft_printf("\n");
 }
 
 void	ft_display_minibox(const t_minibox *minibox)
 {
-	const char	**mininame = ft_get_error_names();
-
 	if (!minibox)
 		return ;
-	ft_printf("minibox\n");
-	ft_printf("├─── input %p\n", minibox->input);
+	ft_display_minibox_asccii();
+	ft_printf("├─── input\n");
 	if (minibox->input)
-		ft_display_minibox_input(minibox);
-	ft_printf("├─── lexing: %p\n", minibox->lexing);
+		ft_display_minibox_input(minibox->input);
+	else
+		ft_printf("│    └─── NULL\n");
+	ft_printf("├─── lexing\n");
 	if (minibox->lexing)
-		ft_display_minibox_lexing(minibox);
-	ft_printf("├─── parsing: %p\n", minibox->parsing);
-	// TODO: Expand parsing display
+		ft_display_minibox_lexing(minibox->lexing);
+	else
+		ft_printf("│    └─── NULL\n");
+	ft_printf("├─── parsing\n");
+	if (minibox->parsing)
+		ft_display_minibox_parsing(minibox->parsing);
+	else
+		ft_printf("│    └─── NULL\n");
 	ft_printf("└─── error\n");
-	ft_printf("     ├─── code: %s (%d)\n",
-		mininame[minibox->error.code], minibox->error.code);
-	ft_printf("     └─── msg: [%s]\n", minibox->error.msg);
+	ft_display_minibox_error(minibox->error);
 }

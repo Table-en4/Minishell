@@ -6,11 +6,28 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/29 22:27:25 by raamayri          #+#    #+#             */
-/*   Updated: 2025/09/05 21:19:37 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/09/07 20:55:40 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../incs/minibox_internal.h"
+
+const char	**ft_get_type_names(void)
+{
+	static const char	*mininames[MINITYPE_SIZE + 1] = {
+	[MINITYPE_AND] = "MINITYPE_AND",
+	[MINITYPE_OR] = "MINITYPE_OR",
+	[MINITYPE_PIPE] = "MINITYPE_PIPE",
+	[MINITYPE_CMD] = "MINITYPE_CMD",
+	[MINITYPE_SUBSHELL] = "MINITYPE_SUBSHELL",
+	[MINITYPE_REDAPP] = "MINITYPE_REDAPP",
+	[MINITYPE_HEREDOC] = "MINITYPE_HEREDOC",
+	[MINITYPE_REDOUT] = "MINITYPE_REDOUT",
+	[MINITYPE_REDIN] = "MINITYPE_REDIN",
+	};
+
+	return (mininames);
+}
 
 const char	**ft_get_token_names(void)
 {
@@ -33,20 +50,6 @@ const char	**ft_get_token_names(void)
 	return (mininames);
 }
 
-// INFO: Might handle those operators later :
-//       &   - background operator
-//       =   - assignment operator
-//       \   - escape operator
-//       ;   - command separator
-//       {}  - command group
-//       ;;  - case terminator
-//       ;&  - fallthrough to next case (same command list)
-//       ;;& - fallthrough to next case (new command list)
-//       <<< - here-string
-//       >&  - duplicate stdout file descriptor
-//       <&  - duplicate stdin file descriptor
-//       <>  - open file for reading and writing
-//       >|  - force overwrite (even if noclobber is set)
 const char	**ft_get_token_operators(void)
 {
 	static const char	*miniops[MINITOKEN_SIZE + 1] = {

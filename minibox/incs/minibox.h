@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minibox.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: molapoug <molapoug@student.42.fr>          +#+  +:+       +#+        */
+/*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/24 20:15:46 by raamayri          #+#    #+#             */
-/*   Updated: 2025/09/06 00:53:59 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/09/06 22:27:19 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,20 @@ typedef struct s_miniinput
 	size_t	length;
 }	t_miniinput;
 
+// TODO: Handle those operators later :
+//       &   - background operator
+//       =   - assignment operator
+//       \   - escape operator
+//       ;   - command separator
+//       {}  - command group
+//       ;;  - case terminator
+//       ;&  - fallthrough to next case (same command list)
+//       ;;& - fallthrough to next case (new command list)
+//       <<< - here-string
+//       >&  - duplicate stdout file descriptor
+//       <&  - duplicate stdin file descriptor
+//       <>  - open file for reading and writing
+//       >|  - force overwrite (even if noclobber is set)
 typedef enum e_minitoken
 {
 	MINITOKEN_REDAPP,
@@ -64,7 +78,7 @@ typedef enum e_minitype
 
 typedef struct s_minifd
 {
-	t_minitype		redir;
+	t_minitype		type;
 	char			*file;
 	int				fd;
 	struct s_minifd	*next;
@@ -74,9 +88,9 @@ typedef struct s_minifd
 typedef struct s_miniparsing
 {
 	t_minitype				type;
-	t_minifd				*fds;
 	size_t					argc;
 	char					**argv;
+	t_minifd				*fds;
 	struct s_miniparsing	*subshell;
 	struct s_miniparsing	*left;
 	struct s_miniparsing	*right;
@@ -103,7 +117,7 @@ typedef struct s_minierror
 }	t_minierror;
 
 typedef struct s_minibox
-{	
+{
 	t_miniinput		*input;
 	t_minilexing	*lexing;
 	t_miniparsing	*parsing;

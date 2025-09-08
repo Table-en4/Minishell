@@ -1,34 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   destroy_lexing.c                                   :+:      :+:    :+:   */
+/*   display_error.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/29 19:59:14 by raamayri          #+#    #+#             */
-/*   Updated: 2025/09/06 20:28:46 by raamayri         ###   ########.fr       */
+/*   Created: 2025/09/06 22:34:19 by raamayri          #+#    #+#             */
+/*   Updated: 2025/09/06 22:49:45 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../incs/minibox_internal.h"
 
-void	ft_destroy_minibox_lexing(t_minibox *minibox, t_minilexing *lexing)
+void	ft_display_minibox_error(const t_minierror error)
 {
-	t_minilexing	*curr_node;
-	t_minilexing	*next_node;
+	const char	**mininames = ft_get_error_names();
+	char		*mininame;
 
-	if (!minibox || !minibox->lexing || !lexing)
-		return ;
-	while (lexing->prev)
-		lexing = lexing->prev;
-	curr_node = lexing;
-	while (curr_node)
-	{
-		next_node = curr_node->next;
-		if (curr_node->value)
-			free(curr_node->value);
-		free(curr_node);
-		curr_node = next_node;
-	}
-	minibox->lexing = NULL;
+	mininame = (char *)mininames[error.code];
+	ft_printf("     ├─── code: %s\n", mininame);
+	ft_printf("     └─── msg: [%s]\n", error.msg);
 }
