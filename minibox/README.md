@@ -62,7 +62,7 @@ typedef struct s_minilexing
 ```c
 typedef struct s_minifd
 {
-	t_minitype		redir;
+	t_minitype		type;
 	char			*file;
 	int				fd;
 	struct s_minifd	*next;
@@ -125,7 +125,7 @@ typedef enum e_minitype
 	MINITYPE_REDOUT,
 	MINITYPE_REDIN,
 	MINITYPE_SIZE
-}   t_minitype;
+}	t_minitype;
 ```
 #### `MINIMSG_SIZE`
 ```c

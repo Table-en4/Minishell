@@ -6,7 +6,7 @@
 #    By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/05/29 18:33:52 by raamayri          #+#    #+#              #
-#    Updated: 2025/08/31 17:38:36 by raamayri         ###   ########.fr        #
+#    Updated: 2025/09/07 19:42:04 by raamayri         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,12 +21,16 @@ SRCS = srcs/build.c \
 	   srcs/build_input.c \
 	   srcs/build_lexing.c \
 	   srcs/build_parsing.c \
+	   srcs/set_error.c \
+	   srcs/display.c \
+	   srcs/display_input.c \
+	   srcs/display_lexing.c \
+	   srcs/display_parsing.c \
+	   srcs/display_error.c \
 	   srcs/destroy.c \
 	   srcs/destroy_input.c \
 	   srcs/destroy_lexing.c \
 	   srcs/destroy_parsing.c \
-	   srcs/display.c \
-	   srcs/set_error.c \
 	   srcs/register.c
 
 INCS = incs/ \
