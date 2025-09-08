@@ -103,5 +103,6 @@ int     is_builtin(char *cmd);
 char    *find_path(char *cmd, t_env *env);
 int     exec_command(t_minibox *node, t_env *env);
 void	ft_free_split(char **result);
+void	restore_stdio(int stdio_backup[3]);
 
 #endif

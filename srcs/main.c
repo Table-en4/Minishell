@@ -93,65 +93,60 @@ int main(int ac, char **av, char **envp)
 {
     char *line;
     char cwd[1024];
-    char **args;
     t_env *env_list;
-    int builtin_result;
-    char *pwd;
-    char *value_add;
-    
+    t_minibox minibox;
+
     (void)ac;
     (void)av;
+
     env_list = init_env(envp);
     if (!env_list)
         return (ft_putstr_fd("Error: Failed to initialize env\n", 2), 1);
-    ft_dprintf(1, "Minishell avec cd et echo\n");
-    ft_dprintf(1, "cmd: cd, echo, pwd, env, export, unset, exit\n");
-    ft_dprintf(1, "\e[41mTapez 'exit' pour quitter\e[0m\n\n");
+
     while (1)
     {
-        pwd = getcwd(cwd, sizeof(cwd));
-        value_add = ft_strjoin(pwd, "> ");
-        line = readline(value_add);
-        free(value_add);
+        // Afficher le prompt
+        char *pwd = getcwd(cwd, sizeof(cwd));
+        char *prompt = ft_strjoin(pwd, "> ");
+        line = readline(prompt);
+        free(prompt);
+
         if (!line)
         {
             ft_dprintf(1, "\nbye!\n");
             break;
         }
+
         if (*line == '\0')
         {
             free(line);
             continue;
         }
+
         add_history(line);
-        args = pasrse_line(line);
-        if (!args || !args[0])
+
+        // Construire le minibox avec la ligne de commande
+        ft_build_minibox_input(&minibox, line);
+        ft_build_minibox_lexing(&minibox);
+        ft_build_minibox_parsing(&minibox);
+
+        // Exécuter si pas d'erreur
+        if (minibox.error.code == MINICODE_NONE)
         {
-            free(line);
-            free_args(args);
-            continue;
-        }
-        if (ft_strcmp(args[0], "testast") == 0)
-        {
-            char *test_args[] = {"echo", "hello my g", "&&", "cat", "Makefile", NULL};
-            t_minibox *ast_testing = create_command_node(test_args);
-            if (ast_testing)
-            {
-                int result = execute_ast(ast_testing, env_list, ast_testing->parsing);
-                printf("Resultat de l'execution: %d\n", result);
-                free_token_list(ast_testing->lexing);
-                free_ast(ast_testing->parsing);
-                free(ast_testing);
-            }
+            int result = execute_minibox(&minibox, env_list);
+            if (result != 0)
+                ft_dprintf(2, "Command failed with exit code %d\n", result);
         }
         else
         {
-            builtin_result = execute_builtin(args, &env_list);
-            if (builtin_result == -1)
-                execute_external(args, env_list);
+            ft_display_minibox_error(minibox.error);
         }
+
+        // Nettoyer
+        ft_destroy_minibox(&minibox);
         free(line);
-        free_args(args);
     }
-    return (free_env_list(env_list), 0);
+
+    free_env_list(env_list);
+    return (0);
 }

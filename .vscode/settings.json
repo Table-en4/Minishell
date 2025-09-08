@@ -3,5 +3,6 @@
         "minishell.h": "c",
         "readline.h": "c",
         "stdlib.h": "c"
-    }
+    },
+    "C_Cpp.default.compilerPath": "cl.exe"
 }
