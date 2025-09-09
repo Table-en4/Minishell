@@ -4,6 +4,7 @@ MAKEFLAGS += $(MK_FLAGS)
 
 NAME = minishell
 LBFT = Libft/libft.a
+MINIBOX = minibox/minibox.a
 
 SRCS = srcs/main.c srcs/builtins/ft_echo.c srcs/builtins/ft_cd.c \
 	srcs/builtins/env_init.c srcs/builtins/env_node.c srcs/builtins/env_utils.c \
@@ -11,19 +12,19 @@ SRCS = srcs/main.c srcs/builtins/ft_echo.c srcs/builtins/ft_cd.c \
 	srcs/builtins/ft_unset.c srcs/builtins/ft_pwd.c srcs/pipex/here_doc.c \
 	srcs/pipex/exec_and.c srcs/pipex/exec_command.c srcs/pipex/exec_pipe.c \
 	srcs/pipex/exec_redirections.c srcs/pipex/exec_subshell.c srcs/pipex/pipex_utils.c \
-	srcs/pipex/read_ast.c srcs/pipex/exec_or.c
+	srcs/pipex/read_ast.c srcs/pipex/exec_or.c srcs/pipex/redirection.c
 
 INCS = incs Libft/incs
 
 OBJS = $(patsubst srcs/%.c, objs/%.o, $(SRCS))
 DEPS = $(patsubst objs/%.o, deps/%.d, $(OBJS))
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re debug
 
 all: $(NAME)
 
-$(NAME): $(OBJS) $(LBFT)
-	cc $(CC_FLAGS) -o $@ $^ -lreadline
+$(NAME): $(OBJS) $(LBFT) $(MINIBOX)
+	cc $(CC_FLAGS) -o $@ $(OBJS) $(MINIBOX) $(LBFT) -lreadline
 	$(info [MAKE] $@ built successfully.)
 
 objs/%.o: srcs/%.c
@@ -35,14 +36,22 @@ $(LBFT):
 	$(MAKE) $(MK_FLAGS) -C $(dir $@) 1> /dev/null
 	$(info [MAKE] $(dir $@) compiled successfully.)
 
+$(MINIBOX):
+	$(MAKE) $(MK_FLAGS) -C $(dir $@) 1> /dev/null
+	$(info [MAKE] $(dir $@) compiled successfully.)
+
 clean:
 	rm -rf $(sort $(dir $(OBJS)) $(dir $(DEPS)))
 	$(MAKE) $(MK_FLAGS) -C $(dir $(LBFT)) $@ 1> /dev/null
 	$(info [MAKE] $(NAME) cleaned successfully.)
 
 fclean: clean
-	rm -rf $(NAME) $(LBFT)
+	rm -rf $(NAME) $(LBFT) $(MINIBOX)
 
 re: fclean all
+
+# 🔍 Debug target : compile et lance gdb
+debug: re
+	gdb ./$(NAME)
 
 -include $(DEPS)

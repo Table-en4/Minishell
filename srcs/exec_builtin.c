@@ -6,7 +6,7 @@
 /*   By: molapoug <molapoug@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 11:45:06 by molapoug          #+#    #+#             */
-/*   Updated: 2025/08/30 11:45:08 by molapoug         ###   ########.fr       */
+/*   Updated: 2025/09/08 21:28:31 by molapoug         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@ int is_builtin(char *cmd)
         return (6);
     if (ft_strcmp(cmd, "exit") == 0)
         return (7);
-    //IMPORTANT : si return = -1 alors pas un builtin
     return (-1);
 }
 
@@ -58,10 +57,8 @@ int execute_builtin(char **args, t_env **envp)
         free_env_list(*envp);
         exit(0);
     }
-    //IMPORTANT : si return = -1 alors pas un builtin
     return (-1);
 }
-
 
 char    **conv_env_envp(t_env *env_list)
 {
@@ -114,25 +111,49 @@ void    free_envp(char **envp)
 int execute_external(char **args, t_env *env_list)
 {
     pid_t pid;
-    int statu;
+    int status;
     char **envp;
+    char *cmd_path;
+    
+    if (!args || !args[0])
+        return (1);
     
     envp = conv_env_envp(env_list);
     if (!envp)
         return (1);
+    
+    cmd_path = find_path(args[0], env_list);
+    if (!cmd_path)
+    {
+        ft_dprintf(2, "%s: command not found\n", args[0]);
+        free_envp(envp);
+        return (127);
+    }
+    
     pid = fork();
     if (pid == 0)
     {
-        if (execve(args[0], args, envp) == -1)
+        if (execve(cmd_path, args, envp) == -1)
         {
             perror(args[0]);
+            free(cmd_path);
             free_envp(envp);
             exit(127);
         }
     }
     else if (pid > 0)
-        return (waitpid(pid, &statu, 0), free_envp(envp) ,WEXITSTATUS(statu));
+    {
+        waitpid(pid, &status, 0);
+        free(cmd_path);
+        free_envp(envp);
+        return (WEXITSTATUS(status));
+    }
     else
-        return (perror("fork"), free_envp(envp), 1);
+    {
+        perror("fork");
+        free(cmd_path);
+        free_envp(envp);
+        return (1);
+    }
     return (0);
 }
