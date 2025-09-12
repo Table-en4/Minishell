@@ -6,7 +6,7 @@
 /*   By: molapoug <molapoug@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 11:43:53 by molapoug          #+#    #+#             */
-/*   Updated: 2025/09/08 21:22:22 by molapoug         ###   ########.fr       */
+/*   Updated: 2025/09/12 14:47:26 by molapoug         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <signal.h>
@@ -26,6 +27,9 @@
 #include "../Libft/incs/ft_dprintf.h"
 #include "../minibox/incs/minibox.h"
 #include "../minibox/incs/minibox_internal.h"
+
+#define FOUT 2
+#define FIN 3
 
 /*#-----------------#*/
 /*#------struct-----#*/
@@ -78,12 +82,11 @@ int ft_pwd(char **arg, t_env **envp);
 int execute_ast(t_minibox *node, t_env *env, t_miniparsing *value);
 
 //exec cmd
-int exec_subshell(t_minibox *node, t_env *env);
+int exec_subshell(t_minibox *minibox, t_env *env, t_miniparsing *node);
 int exec_and(t_minibox *node, t_env *env);
 int exec_or(t_minibox*node, t_env *env);
 int exec_pipe(t_minibox *node, int input_fd, t_env *env);
 int exec_redirection(t_minibox *node, t_env *env);
-int exec_subshell(t_minibox *node, t_env *env);
 int execute_minibox(t_minibox *minibox, t_env *env);
 
 /*#-------------------#*/
@@ -115,4 +118,11 @@ void	ft_free_split(char **result);
 void	restore_stdio(int stdio_backup[3]);
 void	apply_redirections(t_minifd *fds);
 char **tokens_to_argv(t_minilexing *tokens);
+
+//reading ast cmds
+int	execute_parsing_node(t_minibox *minibox, t_env *env, t_miniparsing *node);
+int exec_pipe_chain(t_minibox *minibox, t_env *env, t_miniparsing *node);
+int exec_and_seq(t_minibox *minibox, t_env *env, t_miniparsing *node);
+int exec_or_seq(t_minibox *minibox, t_env *env,t_miniparsing *node);
+
 #endif

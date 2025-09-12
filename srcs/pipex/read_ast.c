@@ -6,11 +6,12 @@
 /*   By: molapoug <molapoug@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 10:38:30 by molapoug          #+#    #+#             */
-/*   Updated: 2025/09/06 14:53:18 by molapoug         ###   ########.fr       */
+/*   Updated: 2025/09/12 14:57:13 by molapoug         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
 
 int execute_ast(t_minibox *node, t_env *env, t_miniparsing *value)
 {

@@ -6,7 +6,7 @@
 /*   By: molapoug <molapoug@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 10:37:46 by molapoug          #+#    #+#             */
-/*   Updated: 2025/09/08 21:28:31 by molapoug         ###   ########.fr       */
+/*   Updated: 2025/09/12 14:41:41 by molapoug         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,71 +55,35 @@ char **tokens_to_argv(t_minilexing *tokens)
 
 int	execute_parsing_node(t_minibox *minibox, t_env *env, t_miniparsing *node)
 {
-	int		exit_code;
-	int		pipe_fd[2];
-	pid_t	pid;
+    int     exit_code;
+    int     stdio_backup[3];
 
-	if (!node)
-		return (0);
-	if (node->type == MINITYPE_CMD)
-		exit_code = exec_command(minibox, env);
-	else if (node->type == MINITYPE_AND)
-	{
-		exit_code = execute_parsing_node(minibox, env, node->left);
-		if (exit_code == 0)
-			exit_code = execute_parsing_node(minibox, env, node->right);
-	}
-	else if (node->type == MINITYPE_OR)
-	{
-		exit_code = execute_parsing_node(minibox, env, node->left);
-		if (exit_code != 0)
-			exit_code = execute_parsing_node(minibox, env, node->right);
-	}
-	else if (node->type == MINITYPE_PIPE)
-	{
-		if (pipe(pipe_fd) == -1)
-			return (1);
-		pid = fork();
-		if (pid == -1)
-			return (1);
-		if (pid == 0)
-		{
-			close(pipe_fd[0]);
-			dup2(pipe_fd[1], STDOUT_FILENO);
-			close(pipe_fd[1]);
-			exit(execute_parsing_node(minibox, env, node->left));
-		}
-		else
-		{
-			close(pipe_fd[1]);
-			dup2(pipe_fd[0], STDIN_FILENO);
-			close(pipe_fd[0]);
-            waitpid(pid, &exit_code, 0);
-            if (WIFEXITED(exit_code))
-                exit_code = WEXITSTATUS(exit_code);
-			exit_code = execute_parsing_node(minibox, env, node->right);
-		}
-	}
-    else if (node->type == MINITYPE_SUBSHELL)
+    if (!node)
+        return (0);
+    if (node->fds)
     {
-        pid = fork();
-        if (pid == -1)
-            return (1);
-        if (pid == 0)
-        {
-            if (node->fds)
-                apply_redirections(node->fds);
-            exit(execute_parsing_node(minibox, env, node->subshell));
-        }
-        else
-        {
-            waitpid(pid, &exit_code, 0);
-            if (WIFEXITED(exit_code))
-                exit_code = WEXITSTATUS(exit_code);
-        }
+        stdio_backup[0] = dup(STDIN_FILENO);
+        stdio_backup[1] = dup(STDIN_FILENO);
+        stdio_backup[2] = dup(STDIN_FILENO);
+        apply_redirections(node->fds);
     }
+    if (node->type == MINITYPE_CMD)
+        exit_code = exec_command(minibox, env);
+    else if (node->type == MINITYPE_PIPE)
+        exit_code = exec_pipe_chain(minibox, env, node);
+    else if (node->type == MINITYPE_AND)
+        exit_code = exec_and_seq(minibox, env, node);
+    else if (node->type == MINITYPE_OR)
+        exit_code = exec_or_seq(minibox, env, node);
+    else if (node->type == MINITYPE_SUBSHELL)
+        exit_code = exec_subshell(minibox, env, node);
+    else if ( node->type == MINITYPE_REDIN || node->type == MINITYPE_REDOUT ||
+        node->type == MINITYPE_REDAPP || node->type == MINITYPE_HEREDOC)
+        exit_code = exec_redirection(minibox, env, node);
     else
         exit_code = 1;
+    if (!node->fds)
+        restore_stdio(stdio_backup);
     return (exit_code);
 }
 
