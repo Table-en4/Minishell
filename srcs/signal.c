@@ -12,6 +12,20 @@
 
 #include "minishell.h"
 
+void    handle_signal(int sig)
+{
+    t_minibox *minibox;
+    t_env *env_list;
+
+     (void)env_list;
+     (void)minibox;
+    if (sig == SIGINT)
+    {
+        ft_dprintf(1, "Un Ctrl + C a été détecté\n");
+        exit(130);
+    }
+}
+
 void    execution_singals(void)
 {
     signal(SIGINT, SIG_DFL);
@@ -19,3 +33,9 @@ void    execution_singals(void)
     signal(SIGTSTP, SIG_DFL); // ctrl + z
 }
 
+void    restore_exec_signals(void)
+{
+    signal(SIGINT, handle_signal);
+    signal(SIGQUIT, SIG_IGN);
+    signal(SIGTSTP, SIG_IGN);
+}
