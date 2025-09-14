@@ -6,29 +6,29 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 19:45:55 by raamayri          #+#    #+#             */
-/*   Updated: 2025/09/06 19:26:35 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/09/12 16:52:23 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../incs/minibox_internal.h"
+#include "../../incs/minibox_internal.h"
 
 static size_t	ft_get_node_value_length(t_minibox *minibox, const char *str)
 {
 	const t_minitoken	token = minibox->lexing->token;
 	const char			**miniops = ft_get_token_operators();
-	const char			*miniop = miniops[token];
 	size_t				i;
 
-	if (miniop)
-		return (ft_strlen(miniop));
+	if (miniops[token])
+		return (ft_strlen(miniops[token]));
 	i = (token == MINITOKEN_SQUOTE || token == MINITOKEN_DQUOTE);
 	if (token == MINITOKEN_WSPACE)
 		while (ft_isspace(str[i]))
 			i++;
 	if (token == MINITOKEN_UQUOTE)
-		while (str[i] && !(str[i] == 34 || str[i] == 36 || str[i] == 38 || \
-			str[i] == 39 || str[i] == 40 || str[i] == 41 || str[i] == 60 || \
-			str[i] == 62 || str[i] == 124 || ft_isspace(str[i])))
+		while (str[i + 1] && !(str[i + 1] == 34 || str[i + 1] == 36 || \
+			str[i + 1] == 38 || str[i + 1] == 39 || str[i + 1] == 40 || \
+			str[i + 1] == 41 || str[i + 1] == 60 || str[i + 1] == 62 || \
+			str[i + 1] == 124 || ft_isspace(str[i + 1])))
 			i++;
 	if (token == MINITOKEN_SQUOTE || token == MINITOKEN_DQUOTE)
 	{
@@ -49,6 +49,8 @@ static size_t	ft_set_node_value(t_minibox *minibox, const char *str)
 
 	node = minibox->lexing;
 	len = ft_get_node_value_length(minibox, str);
+	if (node->token == MINITOKEN_UQUOTE)
+		len++;
 	if (minibox->error.code != MINICODE_NONE)
 		return (0);
 	node->value = ft_calloc(len + 1, sizeof(char));
@@ -100,7 +102,7 @@ static t_minitoken	ft_get_token(const char *str)
 
 	if (ft_isspace(str[0]))
 		return (MINITOKEN_WSPACE);
-	i = 0;
+	i = 1;
 	while (miniops[i])
 	{
 		miniops_len = ft_strlen(miniops[i]);
@@ -119,7 +121,6 @@ void	ft_build_minibox_lexing(t_minibox *minibox)
 {
 	const t_miniinput	*input = minibox->input;
 	char				*curr_value;
-	t_minitoken			curr_token;
 	int					paren_count;
 	size_t				i;
 
@@ -129,12 +130,13 @@ void	ft_build_minibox_lexing(t_minibox *minibox)
 	while (i < input->length)
 	{
 		curr_value = &input->value[i];
-		curr_token = ft_get_token(curr_value);
-		if (curr_token == MINITOKEN_LPAREN || curr_token == MINITOKEN_RPAREN)
-			paren_count += 15 * 2 - (int)curr_token;
+		i += ft_add_node(minibox, ft_get_token(curr_value), curr_value);
+		if (ft_get_token(curr_value) == MINITOKEN_LPAREN)
+			paren_count++;
+		if (ft_get_token(curr_value) == MINITOKEN_RPAREN)
+			paren_count--;
 		if (paren_count < 0)
 			ft_set_minibox_error(minibox, MINICODE_UNCLOSED_PARENTHESIS);
-		i += ft_add_node(minibox, curr_token, curr_value);
 		if (minibox->error.code != MINICODE_NONE)
 			return ;
 	}

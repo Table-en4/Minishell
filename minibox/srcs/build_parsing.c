@@ -6,107 +6,141 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/31 17:19:05 by raamayri          #+#    #+#             */
-/*   Updated: 2025/09/06 21:23:27 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/09/13 23:26:45 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../incs/minibox_internal.h"
 
-// WARN: Test for the cmd : echo 'Test...' | cat && echo Done.
+static int	ft_build_parsing_ao(t_minibox *minibox, t_miniparsing *parent,
+				const t_minilexing *lexing, const size_t lexing_len);
+
+static int	ft_build_parsing_cmd(t_minibox *minibox, t_miniparsing *parent,
+	const t_minilexing *lexing, const size_t lexing_len)
+{
+	t_minilexing	*curr_lexing;
+	t_miniparsing	*node;
+
+	curr_lexing = (t_minilexing *)lexing;
+	ft_check_syntax_cmd(minibox, curr_lexing, lexing_len);
+	if (minibox->error.code != MINICODE_NONE)
+		return (1);
+	node = ft_new_node(minibox, parent, MINITYPE_CMD);
+	if (minibox->error.code != MINICODE_NONE)
+		return (1);
+	node->fds = ft_build_parsing_red(minibox, curr_lexing, lexing_len);
+	if (minibox->error.code != MINICODE_NONE)
+		return (1);
+	ft_build_parsing_argc(node, lexing, lexing_len);
+	node->argv = ft_calloc(node->argc + 1, sizeof(char *));
+	if (!node->argv)
+		ft_set_minibox_error(minibox, MINICODE_ERRNO);
+	if (minibox->error.code != MINICODE_NONE)
+		return (1);
+	ft_build_parsing_argv(minibox, node, lexing, lexing_len);
+	return (0);
+}
+
+static int	ft_build_parsing_ss(t_minibox *minibox, t_miniparsing *parent,
+	const t_minilexing *lexing, const size_t lexing_len)
+{
+	t_minilexing	*curr_lexing;
+	t_miniparsing	*node;
+	size_t			i;
+
+	curr_lexing = (t_minilexing *)lexing;
+	i = ft_find_tokens(minibox, &curr_lexing, lexing_len,
+			(t_minitoken [2]){MINITOKEN_RPAREN, MINITOKEN_NONE});
+	if (minibox->error.code != MINICODE_NONE)
+		return (1);
+	if (!curr_lexing || i >= lexing_len)
+		return (ft_build_parsing_cmd(minibox, parent, lexing, lexing_len));
+	ft_check_syntax_ss(minibox, lexing, lexing_len);
+	if (minibox->error.code == MINICODE_NONE)
+		node = ft_new_node(minibox, parent, MINITYPE_SUBSHELL);
+	if (minibox->error.code == MINICODE_NONE)
+		node->fds = ft_build_parsing_red(minibox, lexing, lexing_len);
+	if (minibox->error.code != MINICODE_NONE)
+		return (1);
+	curr_lexing = (t_minilexing *)lexing;
+	i -= ft_find_tokens(minibox, &curr_lexing, lexing_len,
+			(t_minitoken [2]){MINITOKEN_LPAREN, MINITOKEN_NONE});
+	if (minibox->error.code != MINICODE_NONE)
+		return (1);
+	return (ft_build_parsing_ao(minibox, node, curr_lexing->next, i - 1));
+}
+
+static int	ft_build_parsing_p(t_minibox *minibox, t_miniparsing *parent,
+	const t_minilexing *lexing, const size_t lexing_len)
+{
+	t_minilexing	*curr_lexing;
+	t_miniparsing	*node;
+	t_minitype		node_type;
+	size_t			i;
+
+	curr_lexing = (t_minilexing *)lexing;
+	i = ft_find_tokens(minibox, &curr_lexing, lexing_len,
+			(t_minitoken [2]){MINITOKEN_PIPE, MINITOKEN_NONE});
+	if (minibox->error.code != MINICODE_NONE)
+		return (1);
+	if (!curr_lexing || i >= lexing_len)
+		return (ft_build_parsing_ss(minibox, parent, lexing, lexing_len));
+	node_type = ft_cnv_token_to_type(curr_lexing->token);
+	node = ft_new_node(minibox, parent, node_type);
+	if (minibox->error.code != MINICODE_NONE)
+		return (1);
+	ft_check_syntax_aop(minibox, curr_lexing);
+	if (minibox->error.code != MINICODE_NONE)
+		return (1);
+	ft_build_parsing_ss(minibox, node, lexing, i);
+	if (minibox->error.code != MINICODE_NONE)
+		return (1);
+	i = lexing_len - i - 1;
+	return (ft_build_parsing_p(minibox, node, curr_lexing->next, i));
+}
+
+static int	ft_build_parsing_ao(t_minibox *minibox, t_miniparsing *parent,
+	const t_minilexing *lexing, const size_t lexing_len)
+{
+	t_minilexing	*curr_lexing;
+	t_miniparsing	*node;
+	t_minitype		node_type;
+	size_t			i;
+
+	curr_lexing = (t_minilexing *)lexing;
+	i = ft_find_tokens(minibox, &curr_lexing, lexing_len,
+			(t_minitoken [3]){MINITOKEN_AND, MINITOKEN_OR, MINITOKEN_NONE});
+	if (minibox->error.code != MINICODE_NONE)
+		return (1);
+	if (!curr_lexing || i >= lexing_len)
+		return (ft_build_parsing_p(minibox, parent, lexing, lexing_len));
+	node_type = ft_cnv_token_to_type(curr_lexing->token);
+	node = ft_new_node(minibox, parent, node_type);
+	if (minibox->error.code != MINICODE_NONE)
+		return (1);
+	ft_check_syntax_aop(minibox, curr_lexing);
+	if (minibox->error.code != MINICODE_NONE)
+		return (1);
+	ft_build_parsing_p(minibox, node, lexing, i);
+	if (minibox->error.code != MINICODE_NONE)
+		return (1);
+	i = lexing_len - i - 1;
+	return (ft_build_parsing_ao(minibox, node, curr_lexing->next, i));
+}
+
 void	ft_build_minibox_parsing(t_minibox *minibox)
 {
-	t_miniparsing	*parsing;
+	t_minilexing	*curr_lexing;
+	size_t			lexing_len;
 
-	parsing = ft_calloc(1, sizeof(t_miniparsing));
-	if (!parsing)
-		ft_set_minibox_error(minibox, MINICODE_ERRNO);
+	curr_lexing = minibox->lexing;
+	lexing_len = 0;
+	while (curr_lexing)
+	{
+		lexing_len++;
+		curr_lexing = curr_lexing->next;
+	}
+	ft_build_parsing_ao(minibox, NULL, minibox->lexing, lexing_len);
 	if (minibox->error.code != MINICODE_NONE)
 		return ;
-	minibox->parsing = parsing;
-	parsing->type = MINITYPE_AND;
-	parsing->fds = NULL;
-	parsing->argc = 0;
-	parsing->argv = NULL;
-	parsing->subshell = NULL;
-
-	parsing->left = ft_calloc(1, sizeof(t_miniparsing));
-	if (!parsing->left)
-		ft_set_minibox_error(minibox, MINICODE_ERRNO);
-	if (minibox->error.code != MINICODE_NONE)
-		return ;
-	parsing->left->type = MINITYPE_PIPE;
-	parsing->left->fds = NULL;
-	parsing->left->argc = 0;
-	parsing->left->argv = NULL;
-	parsing->left->subshell = NULL;
-
-	parsing->left->left = ft_calloc(1, sizeof(t_miniparsing));
-	if (!parsing->left->left)
-		ft_set_minibox_error(minibox, MINICODE_ERRNO);
-	if (minibox->error.code != MINICODE_NONE)
-		return ;
-	parsing->left->left->type = MINITYPE_CMD;
-	parsing->left->left->fds = NULL;
-	parsing->left->left->argc = 2;
-	parsing->left->left->argv = ft_calloc(3, sizeof(char *));
-	if (!parsing->left->left->argv)
-		ft_set_minibox_error(minibox, MINICODE_ERRNO);
-	if (minibox->error.code != MINICODE_NONE)
-		return ;
-	parsing->left->left->argv[0] = ft_strdup("echo");
-	parsing->left->left->argv[1] = ft_strdup("Test...");
-	if (!parsing->left->left->argv[0] || !parsing->left->left->argv[1])
-		ft_set_minibox_error(minibox, MINICODE_ERRNO);
-	if (minibox->error.code != MINICODE_NONE)
-		return ;
-	parsing->left->left->subshell = NULL;
-	parsing->left->left->left = NULL;
-	parsing->left->left->right = NULL;
-
-	parsing->left->right = ft_calloc(1, sizeof(t_miniparsing));
-	if (!parsing->left->right)
-		ft_set_minibox_error(minibox, MINICODE_ERRNO);
-	if (minibox->error.code != MINICODE_NONE)
-		return ;
-	parsing->left->right->type = MINITYPE_CMD;
-	parsing->left->right->fds = NULL;
-	parsing->left->right->argc = 1;
-	parsing->left->right->argv = ft_calloc(2, sizeof(char *));
-	if (!parsing->left->right->argv)
-		ft_set_minibox_error(minibox, MINICODE_ERRNO);
-	if (minibox->error.code != MINICODE_NONE)
-		return ;
-	parsing->left->right->argv[0] = ft_strdup("cat");
-	if (!parsing->left->right->argv[0])
-		ft_set_minibox_error(minibox, MINICODE_ERRNO);
-	if (minibox->error.code != MINICODE_NONE)
-		return ;
-	parsing->left->right->subshell = NULL;
-	parsing->left->right->left = NULL;
-	parsing->left->right->right = NULL;
-
-	parsing->right = ft_calloc(1, sizeof(t_miniparsing));
-	if (!parsing->right)
-		ft_set_minibox_error(minibox, MINICODE_ERRNO);
-	if (minibox->error.code != MINICODE_NONE)
-		return ;
-	parsing->right->type = MINITYPE_CMD;
-	parsing->right->fds = NULL;
-	parsing->right->argc = 2;
-	parsing->right->argv = ft_calloc(3, sizeof(char *));
-	if (!parsing->right->argv)
-		ft_set_minibox_error(minibox, MINICODE_ERRNO);
-	if (minibox->error.code != MINICODE_NONE)
-		return ;
-	parsing->right->argv[0] = ft_strdup("echo");
-	parsing->right->argv[1] = ft_strdup("Done.");
-	if (!parsing->right->argv[0] || !parsing->right->argv[1])
-		ft_set_minibox_error(minibox, MINICODE_ERRNO);
-	if (minibox->error.code != MINICODE_NONE)
-		return ;
-	parsing->right->subshell = NULL;
-	parsing->right->left = NULL;
-	parsing->right->right = NULL;
-
-	minibox->parsing = parsing;
 }

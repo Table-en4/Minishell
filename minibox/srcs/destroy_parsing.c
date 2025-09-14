@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/31 17:35:31 by raamayri          #+#    #+#             */
-/*   Updated: 2025/09/07 20:56:01 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/09/12 22:25:44 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,10 +37,14 @@ static void	ft_destroy_fds(t_minifd *minifd)
 	while (curr_fd)
 	{
 		next_fd = curr_fd->next;
+		if (curr_fd->fd >= 0)
+			if (close(curr_fd->fd) == -1)
+				perror("Error on close: ");
+		if (curr_fd->type == MINITYPE_HEREDOC && curr_fd->file)
+			if (unlink(curr_fd->file) == -1)
+				perror("Error on unlink: ");
 		if (curr_fd->file)
 			free(curr_fd->file);
-		if (curr_fd->fd >= 0)
-			close(curr_fd->fd);
 		free(curr_fd);
 		curr_fd = next_fd;
 	}
@@ -63,10 +67,10 @@ void	ft_destroy_parsing(t_miniparsing *parsing)
 	free(parsing);
 }
 
-void	ft_destroy_minibox_parsing(t_minibox *minibox, t_miniparsing *parsing)
+void	ft_destroy_minibox_parsing(t_minibox *minibox)
 {
-	if (!minibox || !minibox->parsing || !parsing)
+	if (!minibox || !minibox->parsing)
 		return ;
-	ft_destroy_parsing(parsing);
+	ft_destroy_parsing(minibox->parsing);
 	minibox->parsing = NULL;
 }

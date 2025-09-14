@@ -6,22 +6,22 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/29 19:59:14 by raamayri          #+#    #+#             */
-/*   Updated: 2025/09/06 20:28:46 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/09/12 16:59:13 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../incs/minibox_internal.h"
 
-void	ft_destroy_minibox_lexing(t_minibox *minibox, t_minilexing *lexing)
+void	ft_destroy_minibox_lexing(t_minibox *minibox)
 {
 	t_minilexing	*curr_node;
 	t_minilexing	*next_node;
 
-	if (!minibox || !minibox->lexing || !lexing)
+	if (!minibox || !minibox->lexing)
 		return ;
-	while (lexing->prev)
-		lexing = lexing->prev;
-	curr_node = lexing;
+	while (minibox->lexing->prev)
+		minibox->lexing = minibox->lexing->prev;
+	curr_node = minibox->lexing;
 	while (curr_node)
 	{
 		next_node = curr_node->next;

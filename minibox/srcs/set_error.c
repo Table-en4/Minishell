@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/27 18:35:10 by raamayri          #+#    #+#             */
-/*   Updated: 2025/09/02 21:23:23 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/09/12 18:20:54 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void	ft_set_minibox_error(t_minibox *minibox, t_minicode code)
 {
 	const char	**minimsg = ft_get_error_msgs();
 
-	if (code < 0 || code >= MINICODE_SIZE)
+	if (code < 0 || code >= MINICODE_SIZE || !minimsg[code])
 		code = MINICODE_UNDEFINED;
 	minibox->error.code = code;
 	ft_strlcpy(minibox->error.msg, minimsg[code], MINIMSG_SIZE);

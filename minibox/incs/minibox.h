@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/24 20:15:46 by raamayri          #+#    #+#             */
-/*   Updated: 2025/09/06 22:27:19 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/09/13 21:38:58 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,16 @@
 
 # include <stddef.h>
 
+# define MINIMSG_SIZE 256
+
 typedef struct s_miniinput
 {
+	char	**envp;
 	char	*value;
 	size_t	length;
 }	t_miniinput;
 
-// TODO: Handle those operators later :
+// INFO: Those operators are not not supported:
 //       &   - background operator
 //       =   - assignment operator
 //       \   - escape operator
@@ -37,6 +40,7 @@ typedef struct s_miniinput
 //       >|  - force overwrite (even if noclobber is set)
 typedef enum e_minitoken
 {
+	MINITOKEN_NONE,
 	MINITOKEN_REDAPP,
 	MINITOKEN_HEREDOC,
 	MINITOKEN_AND,
@@ -64,6 +68,7 @@ typedef struct s_minilexing
 
 typedef enum e_minitype
 {
+	MINITYPE_NONE,
 	MINITYPE_AND,
 	MINITYPE_OR,
 	MINITYPE_PIPE,
@@ -96,8 +101,6 @@ typedef struct s_miniparsing
 	struct s_miniparsing	*right;
 }	t_miniparsing;
 
-# define MINIMSG_SIZE 256
-
 typedef enum e_minicode
 {
 	MINICODE_NONE,
@@ -106,6 +109,12 @@ typedef enum e_minicode
 	MINICODE_INPUT_BLANK,
 	MINICODE_UNCLOSED_QUOTES,
 	MINICODE_UNCLOSED_PARENTHESIS,
+	MINICODE_OPERATOR_LOST,
+	MINICODE_OPERATORS_COLLISION,
+	MINICODE_PROCESSORS_COLLISION,
+	MINICODE_REDIRECTION_LOST,
+	MINICODE_PARENT_OVERLOAD,
+	MINICODE_SUBSHELL_EMPTY,
 	MINICODE_UNDEFINED,
 	MINICODE_SIZE
 }	t_minicode;
@@ -124,7 +133,7 @@ typedef struct s_minibox
 	t_minierror		error;
 }	t_minibox;
 
-int		ft_build_minibox(t_minibox *minibox, const char *cmd);
+int		ft_build_minibox(t_minibox *minibox, const char *cmd, char **envp);
 void	ft_display_minibox(const t_minibox *minibox);
 void	ft_destroy_minibox(t_minibox *minibox);
 
