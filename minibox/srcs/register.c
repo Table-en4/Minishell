@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/29 22:27:25 by raamayri          #+#    #+#             */
-/*   Updated: 2025/09/07 20:55:40 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/09/13 18:46:05 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,8 @@
 
 const char	**ft_get_type_names(void)
 {
-	static const char	*mininames[MINITYPE_SIZE + 1] = {
+	static const char	*mininames[MINITYPE_SIZE] = {
+	[MINITYPE_NONE] = "MINITYPE_NONE",
 	[MINITYPE_AND] = "MINITYPE_AND",
 	[MINITYPE_OR] = "MINITYPE_OR",
 	[MINITYPE_PIPE] = "MINITYPE_PIPE",
@@ -31,7 +32,8 @@ const char	**ft_get_type_names(void)
 
 const char	**ft_get_token_names(void)
 {
-	static const char	*mininames[MINITOKEN_SIZE + 1] = {
+	static const char	*mininames[MINITOKEN_SIZE] = {
+	[MINITOKEN_NONE] = "MINITOKEN_NONE",
 	[MINITOKEN_REDAPP] = "MINITOKEN_REDAPP",
 	[MINITOKEN_HEREDOC] = "MINITOKEN_HEREDOC",
 	[MINITOKEN_AND] = "MINITOKEN_AND",
@@ -52,7 +54,7 @@ const char	**ft_get_token_names(void)
 
 const char	**ft_get_token_operators(void)
 {
-	static const char	*miniops[MINITOKEN_SIZE + 1] = {
+	static const char	*miniops[MINITOKEN_SIZE] = {
 	[MINITOKEN_REDAPP] = ">>",
 	[MINITOKEN_HEREDOC] = "<<",
 	[MINITOKEN_AND] = "&&",
@@ -69,13 +71,19 @@ const char	**ft_get_token_operators(void)
 
 const char	**ft_get_error_names(void)
 {
-	static const char	*mininames[MINICODE_SIZE + 1] = {
+	static const char	*mininames[MINICODE_SIZE] = {
 	[MINICODE_NONE] = "MINICODE_NONE",
 	[MINICODE_ERRNO] = "MINICODE_ERRNO",
 	[MINICODE_INPUT_NULL] = "MINICODE_INPUT_NULL",
 	[MINICODE_INPUT_BLANK] = "MINICODE_INPUT_BLANK",
 	[MINICODE_UNCLOSED_QUOTES] = "MINICODE_UNCLOSED_QUOTES",
 	[MINICODE_UNCLOSED_PARENTHESIS] = "MINICODE_UNCLOSED_PARENTHESIS",
+	[MINICODE_OPERATOR_LOST] = "MINICODE_OPERATOR_LOST",
+	[MINICODE_OPERATORS_COLLISION] = "MINICODE_OPERATORS_COLLISION",
+	[MINICODE_PROCESSORS_COLLISION] = "MINICODE_PROCESSORS_COLLISION",
+	[MINICODE_REDIRECTION_LOST] = "MINICODE_REDIRECTION_LOST",
+	[MINICODE_PARENT_OVERLOAD] = "MINICODE_PARENT_OVERLOAD",
+	[MINICODE_SUBSHELL_EMPTY] = "MINICODE_SUBSHELL_EMPTY",
 	[MINICODE_UNDEFINED] = "MINICODE_UNDEFINED",
 	};
 
@@ -84,13 +92,19 @@ const char	**ft_get_error_names(void)
 
 const char	**ft_get_error_msgs(void)
 {
-	static const char	*minimsg[MINICODE_SIZE + 1] = {
+	static const char	*minimsg[MINICODE_SIZE] = {
 	[MINICODE_NONE] = "No error.",
 	[MINICODE_ERRNO] = "System error (see errno).",
 	[MINICODE_INPUT_NULL] = "Null input.",
 	[MINICODE_INPUT_BLANK] = "Blank input.",
 	[MINICODE_UNCLOSED_QUOTES] = "Unclosed quotes.",
 	[MINICODE_UNCLOSED_PARENTHESIS] = "Unclosed parenthesis.",
+	[MINICODE_OPERATOR_LOST] = "Operator lost.",
+	[MINICODE_OPERATORS_COLLISION] = "Operators collision.",
+	[MINICODE_PROCESSORS_COLLISION] = "Processors collision.",
+	[MINICODE_REDIRECTION_LOST] = "Redirection lost.",
+	[MINICODE_PARENT_OVERLOAD] = "Parent overload.",
+	[MINICODE_SUBSHELL_EMPTY] = "Subshell empty.",
 	[MINICODE_UNDEFINED] = "Unknown or undefined error.",
 	};
 

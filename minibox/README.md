@@ -12,10 +12,16 @@ Minibox only supports the following operators:<br/>
 #### `ft_build_minibox();`
 Initializes a `t_minibox` structure by performing input processing, lexing, and parsing on the provided command string `str`.
 ```c
-Protoype: int ft_build_minibox(t_minibox *minibox, const char *str);
+Protoype: int ft_build_minibox(t_minibox *minibox, const char *cmd, char **envp);
+
 Returns: 0 on success.
          -1 if minibox is NULL.
          >0 on a specific error.
+```
+#### `ft_display_minibox();`
+Prints the contents of the `t_minibox` structure, to the standard output.
+```c
+Protoype: void ft_display_minibox(const t_minibox *minibox);
 ```
 #### `ft_destroy_minibox();`
 Frees all dynamically allocated memory within the `t_minibox` structure.<br/>
@@ -23,21 +29,15 @@ The user is responsible for freeing the `t_minibox` struct itself.
 ```c
 Protoype: void ft_destroy_minibox(t_minibox *minibox);
 ```
-#### `ft_display_minibox();`
-Prints the contents of the `t_minibox` structure, to the standard output.
-```c
-Protoype: void ft_display_minibox(const t_minibox *minibox);
-```
 ## Structures
 #### `t_minibox`
 ```c
-typedef struct s_minibox
+typedef struct s_miniinput
 {
-    t_miniinput     *input;
-    t_minilexing    *lexing;
-    t_miniparsing   *parsing;
-    t_minierror     error;
-}   t_minibox;
+	char	**envp;
+	char	*value;
+	size_t	length;
+}	t_miniinput;
 ```
 #### `t_miniinput`
 ```c
@@ -141,9 +141,15 @@ typedef enum e_minicode
 	MINICODE_INPUT_BLANK,
 	MINICODE_UNCLOSED_QUOTES,
 	MINICODE_UNCLOSED_PARENTHESIS,
+	MINICODE_OPERATOR_LOST,
+	MINICODE_OPERATORS_COLLISION,
+	MINICODE_PROCESSORS_COLLISION,
+	MINICODE_REDIRECTION_LOST,
+	MINICODE_PARENT_OVERLOAD,
+	MINICODE_SUBSHELL_EMPTY,
 	MINICODE_UNDEFINED,
 	MINICODE_SIZE
-}   t_minicode;
+}	t_minicode;
 ```
 ## Errors
 |ID  |Code                            |Message                                 |
@@ -154,7 +160,13 @@ typedef enum e_minicode
 |3   |`MINICODE_INPUT_BLANK`          |Blank input.                            |
 |4   |`MINICODE_UNCLOSED_QUOTES`      |Unclosed quotes.                        |
 |5   |`MINICODE_UNCLOSED_PARENTHESIS` |Unclosed parenthesis.                   |
-|6   |`MINICODE_UNDEFINED`            |Unknown or undefined error.             |
+|6   |`MINICODE_OPERATOR_LOST`        |Operator lost.                          |
+|7   |`MINICODE_OPERATORS_COLLISION`  |Operators collision.                    |
+|8   |`MINICODE_PROCESSORS_COLLISION` |Processors collision.                   |
+|9   |`MINICODE_REDIRECTION_LOST`     |Redirection lost.                       |
+|10  |`MINICODE_PARENT_OVERLOAD`      |Parent overload.                        |
+|11  |`MINICODE_SUBSHELL_EMPTY`       |Subshell empty.                         |
+|12  |`MINICODE_UNDEFINED`            |Unknown or undefined error.             |
 ## Minishell
 This library was originally developed as a submodule for the minishell project from 42 school.<br/>
 You can find the main repository here: [Minishell](https://github.com/Table-en4/Minishell) by [Table-en4](https://github.com/Table-en4).

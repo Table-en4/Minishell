@@ -6,11 +6,11 @@
 #    By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/05/29 18:33:52 by raamayri          #+#    #+#              #
-#    Updated: 2025/09/07 19:42:04 by raamayri         ###   ########.fr        #
+#    Updated: 2025/09/13 20:32:58 by raamayri         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-CC_FLAGS = -Wall -Wextra -Werror -g3 -MMD -MP
+CC_FLAGS = -Wall -Wextra -Werror -g
 MK_FLAGS = --silent
 MAKEFLAGS += $(MK_FLAGS)
 
@@ -21,6 +21,11 @@ SRCS = srcs/build.c \
 	   srcs/build_input.c \
 	   srcs/build_lexing.c \
 	   srcs/build_parsing.c \
+	   srcs/build_parsing_syntax.c \
+	   srcs/build_parsing_redirection.c \
+	   srcs/build_parsing_redirection_heredoc.c \
+	   srcs/build_parsing_arguments.c \
+	   srcs/build_parsing_utils.c \
 	   srcs/set_error.c \
 	   srcs/display.c \
 	   srcs/display_input.c \
@@ -32,9 +37,8 @@ SRCS = srcs/build.c \
 	   srcs/destroy_lexing.c \
 	   srcs/destroy_parsing.c \
 	   srcs/register.c
-
 INCS = incs/ \
-	Libft/incs/
+	   Libft/incs/
 OBJS = $(patsubst srcs/%.c, objs/%.o, $(SRCS))
 DEPS = $(patsubst objs/%.o, deps/%.d, $(OBJS))
 
@@ -48,7 +52,7 @@ $(NAME): $(OBJS) $(LBFT)
 
 objs/%.o: srcs/%.c
 	mkdir -p $(sort $(dir $@) $(dir $(patsubst objs/%.o, deps/%.d, $@)))
-	cc $(CC_FLAGS) -MF $(patsubst objs/%.o, deps/%.d, $@) $(addprefix -I, $(INCS)) -o $@ -c $<
+	cc $(CC_FLAGS) -MMD -MP -MF $(patsubst objs/%.o, deps/%.d, $@) $(addprefix -I, $(INCS)) -o $@ -c $<
 	$(info [MAKE] $(addprefix $*, .c) compiled successfully.)
 
 $(LBFT):
@@ -56,7 +60,7 @@ $(LBFT):
 	$(info [MAKE] $(dir $@) compiled successfully.)
 
 debug: srcs/debug.c $(NAME) $(LBFT)
-	cc -Wall -Wextra -Werror -g3 $(addprefix -I, $(INCS)) $< $(NAME) $(LBFT) -o debug
+	cc $(CC_FLAGS) -lreadline $(addprefix -I, $(INCS)) $< $(NAME) $(LBFT) -o debug
 	$(info [MAKE] debug built successfully.)
 
 clean:

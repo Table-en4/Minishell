@@ -6,11 +6,11 @@
 #    By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/06/23 17:57:19 by raamayri          #+#    #+#              #
-#    Updated: 2025/08/01 19:15:20 by raamayri         ###   ########.fr        #
+#    Updated: 2025/09/12 20:59:24 by raamayri         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-CC_FLAGS = -Wall -Wextra -Werror -g3 -MMD -MP
+CC_FLAGS = -Wall -Wextra -Werror -g
 
 NAME = libft.a
 
@@ -89,7 +89,7 @@ $(NAME): $(OBJS)
 
 objs/%.o: srcs/%.c
 	mkdir -p $(sort $(dir $@) $(dir $(patsubst objs/%.o,deps/%.d,$@)))
-	cc $(CC_FLAGS) -MF $(patsubst objs/%.o,deps/%.d,$@) $(addprefix -I,$(INCS)) -o $@ -c $<
+	cc $(CC_FLAGS) -MMD -MP -MF $(patsubst objs/%.o,deps/%.d,$@) $(addprefix -I,$(INCS)) -o $@ -c $<
 	$(info [MAKE] $(addprefix $*, .c) compiled successfully.)
 
 clean:
