@@ -71,7 +71,6 @@ t_minibox *create_command_node(char **args)
     t_minilexing *tokens = NULL;
     t_minilexing *current = NULL;
     int i = 0;
-
     while (args[i])
     {
         t_minilexing *new_token = create_token(args[i]);
@@ -170,7 +169,7 @@ int	main(int ac, char **av, char **envp)
 	{
         pwd = getcwd(cwd, sizeof(cwd));
         if (!pwd)
-            pwd = "\n>";
+            pwd = ">";
         prompt = ft_strjoin(pwd, "\n> ");
         if (!prompt)
             prompt = "> ";
@@ -187,7 +186,7 @@ int	main(int ac, char **av, char **envp)
 		//gestion de Ctrl+D (EOF)
 		if (!line)
 		{
-			ft_dprintf(1, "exit\n");
+			ft_dprintf(1, "\e[46m exit \e[0m \n");
 			break;
 		}
 		if (*line == '\0')
