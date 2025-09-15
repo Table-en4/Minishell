@@ -79,15 +79,18 @@ int ft_unset(char **args, t_env **envp);
 int ft_pwd(char **arg, t_env **envp);
 
 //AST READ AND GESTION
-int execute_ast(t_minibox *node, t_env *env, t_miniparsing *value);
+int	execute_ast(t_minibox *minibox, t_miniparsing *node, t_env *env);
 
 //exec cmd
-int exec_subshell(t_minibox *minibox, t_env *env, t_miniparsing *node);
-int exec_and(t_minibox *node, t_env *env);
-int exec_or(t_minibox*node, t_env *env);
-int exec_pipe(t_minibox *node, int input_fd, t_env *env);
-int exec_redirection(t_minibox *node, t_env *env);
-int execute_minibox(t_minibox *minibox, t_env *env);
+int	execute_builtin_no_fork(char **argv, t_env **env);
+int	should_fork(char *cmd);
+int	run_command(char **argv, t_env *env);
+int	exec_command(t_minibox *minibox, t_miniparsing *node, t_env *env);
+int	exec_pipe(t_minibox *minibox, t_miniparsing *node, t_env *env);
+int	exec_and(t_minibox *minibox, t_miniparsing *node, t_env *env);
+int	exec_or(t_minibox *minibox, t_miniparsing *node, t_env *env);
+int exec_subshell(t_minibox *minibox, t_miniparsing *node, t_env *env);
+int exec_redirection(t_minibox *minibox, t_miniparsing *node, t_env *env);
 
 /*#-------------------#*/
 /*#---builtins utils--#*/
@@ -113,16 +116,12 @@ int     export_no_value(t_env **envp, char *arg);
 int     unset_env(t_env **envp, char *key);
 int     is_builtin(char *cmd);
 char    *find_path(char *cmd, t_env *env);
-int     exec_command(t_minibox *node, t_env *env);
 void	ft_free_split(char **result);
 void	restore_stdio(int stdio_backup[3]);
-void	apply_redirections(t_minifd *fds);
-char **tokens_to_argv(t_minilexing *tokens);
+int     apply_redirections(t_minifd *fds, int stdio_backup[3]);
 
-//reading ast cmds
-int	execute_parsing_node(t_minibox *minibox, t_env *env, t_miniparsing *node);
-int exec_pipe_chain(t_minibox *minibox, t_env *env, t_miniparsing *node);
-int exec_and_seq(t_minibox *minibox, t_env *env, t_miniparsing *node);
-int exec_or_seq(t_minibox *minibox, t_env *env,t_miniparsing *node);
+//utils pour l'exec
+int	execute_minibox(t_minibox *minibox, t_env *env);
+int	execute_node(t_minibox *minibox, t_miniparsing *node, t_env *env);
 
 #endif

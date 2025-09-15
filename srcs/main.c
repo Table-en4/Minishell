@@ -12,6 +12,36 @@
 
 #include "minishell.h"
 
+volatile sig_atomic_t g_signal_received = 0;
+
+void	handle_sigint(int sig)
+{
+	(void)sig;
+	g_signal_received = SIGINT;
+	ft_putstr_fd("\n", STDOUT_FILENO);
+	rl_on_new_line();
+	rl_replace_line("", 0);
+	rl_redisplay();
+}
+
+void	handle_sigquit(int sig)
+{
+	(void)sig;
+	// Ignorer SIGQUIT dans le shell interactif
+}
+
+void	setup_signals(void)
+{
+	signal(SIGINT, handle_sigint);
+	signal(SIGQUIT, handle_sigquit);
+}
+
+void	setup_child_signals(void)
+{
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
+}
+
 t_minilexing *create_token(char *value)
 {
     t_minilexing    *token;
@@ -89,7 +119,6 @@ void free_ast(t_miniparsing *node)
     free(node);
 }
 
-//version simplifiée pour contourner le problème de minibox temporairement
 int execute_simple_command(char *line, t_env *env_list)
 {
     char **args;
@@ -112,7 +141,6 @@ int execute_simple_command(char *line, t_env *env_list)
             ft_free_split(args);
         return (1);
     }
-    DEBUG_PRINT("Executing simple command: '%s'\n", args[0]);
     is_built_in = is_builtin(args[0]);
     if (is_built_in != -1)
         result = execute_builtin(args, &env_list);
@@ -122,95 +150,75 @@ int execute_simple_command(char *line, t_env *env_list)
     return (result);
 }
 
-int main(int ac, char **av, char **envp)
+int	main(int ac, char **av, char **envp)
 {
-    char *line;
-    char cwd[1024];
-    t_env *env_list;
-    t_minibox minibox;
-    int use_simple_mode = 1;
+	char		*line;
+	t_env		*env_list;
+	t_minibox	minibox;
+	int			exit_code;
+    char        *pwd;
+    char        *prompt;
+    char       cwd[1024];
 
-    (void)ac;
-    (void)av;
-    DEBUG_PRINT("Starting minishell\n");
-    if (!envp || !envp[0])
-    {
-        ft_putstr_fd("Error: No environment variables\n", 2);
-        return (1);
-    }
-    env_list = init_env(envp);
-    if (!env_list)
-        return (ft_putstr_fd("Error: Failed to initialize env\n", 2), 1);
-    if (!get_env(env_list, "PATH"))
-    {
-        ft_putstr_fd("Warning: PATH not found, setting default\n", 2);
-        set_env_value(&env_list, "PATH", "/bin:/usr/bin:/usr/local/bin");
-    }
-    DEBUG_PRINT("PATH: %s\n", get_env(env_list, "PATH"));
-    while (1)
-    {
-        char *pwd = getcwd(cwd, sizeof(cwd));
+	(void)ac;
+	(void)av;
+	setup_signals();	
+	env_list = init_env(envp);
+	/*if (!env_list)
+		return (ft_putstr_fd("Error: Failed to initialize env\n", 2), 1);*/
+	while (1)
+	{
+        pwd = getcwd(cwd, sizeof(cwd));
         if (!pwd)
-            pwd = "unknown";
-            
-        char *prompt = ft_strjoin(pwd, "> ");
+            pwd = "\n>";
+        prompt = ft_strjoin(pwd, "\n> ");
         if (!prompt)
-            prompt = ft_strdup("> ");
-            
-        line = readline(prompt);
-        if (prompt)
-            free(prompt);
-
-        if (!line)
-        {
-            ft_dprintf(1, "\nbye!\n");
-            break;
-        }
-        if (*line == '\0')
-        {
-            free(line);
-            continue;
-        }
-        add_history(line);
-        if (use_simple_mode)
-        {
-            // Mode simple sans minibox pour tester
-            DEBUG_PRINT("Using simple mode for: '%s'\n", line);
-            int result = execute_simple_command(line, env_list);
-            if (result != 0)
-                DEBUG_PRINT("Command failed with exit code %d\n", result);
-        }
-        else
-        {
-            ft_memset(&minibox, 0, sizeof(t_minibox));
-            DEBUG_PRINT("Processing line: '%s'\n", line);
-            ft_build_minibox_input(&minibox, line);
-            DEBUG_PRINT("Error in build_minibox_input\n");
-            ft_build_minibox_lexing(&minibox);
-            DEBUG_PRINT("Error in build_minibox_lexing\n");
-            ft_destroy_minibox(&minibox);
-            ft_build_minibox_parsing(&minibox);
-            DEBUG_PRINT("Error in build_minibox_parsing\n");
-            ft_destroy_minibox(&minibox);
-            DEBUG_PRINT("Error code before execution: %d\n", minibox.error.code);
-            if (minibox.error.code == MINICODE_NONE)
-            {
-                DEBUG_PRINT("Executing minibox...\n");
-                int result = execute_minibox(&minibox, env_list);
-                DEBUG_PRINT("Execution result: %d\n", result);
-            }
-            else
-            {
-                DEBUG_PRINT("Minibox has error, displaying...\n");
-                ft_display_minibox_error(minibox.error);
-            }
-
-            ft_destroy_minibox(&minibox);
-        }
-
-        free(line);
-    }
-
-    free_env_list(env_list);
-    return (0);
+            prompt = "> ";
+		g_signal_received = 0;		
+		line = readline(prompt);		
+		if (g_signal_received == SIGINT)
+		{
+			if (line)
+			{
+				free(line);
+				continue;
+			}
+		}
+		//gestion de Ctrl+D (EOF)
+		if (!line)
+		{
+			ft_dprintf(1, "exit\n");
+			break;
+		}
+		if (*line == '\0')
+		{
+			free(line);
+			continue;
+		}
+		add_history(line);
+		ft_memset(&minibox, 0, sizeof(t_minibox));
+		//construction de la minibox
+		if (ft_build_minibox(&minibox, line, envp) == 0)
+		{
+			if (minibox.error.code == MINICODE_NONE)
+			{
+				exit_code = execute_minibox(&minibox, env_list);
+				DEBUG_PRINT("Command exit code: %d\n", exit_code);
+			}
+			else
+			{
+				ft_display_minibox_error(minibox.error);
+				exit_code = 1;
+			}
+		}
+		else
+		{
+			ft_dprintf(2, "Error building minibox\n");
+			exit_code = 1;
+		}
+		free(line);
+		ft_destroy_minibox(&minibox);
+	}
+	free_env_list(env_list);
+	return (exit_code);
 }

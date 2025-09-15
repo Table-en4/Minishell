@@ -12,74 +12,146 @@
 
 #include "minishell.h"
 
-void restore_stdio(int stdio_backup[3])
+int	redirect_input(char *file)
 {
-    DEBUG_PRINT("Restoring stdio\n");
-    
-    if (stdio_backup[0] != -1)
-    {
-        if (dup2(stdio_backup[0], STDIN_FILENO) == -1)
-            perror("dup2 stdin");
-        close(stdio_backup[0]);
-    }
-    if (stdio_backup[1] != -1)
-    {
-        if (dup2(stdio_backup[1], STDOUT_FILENO) == -1)
-            perror("dup2 stdout");
-        close(stdio_backup[1]);
-    }
-    if (stdio_backup[2] != -1)
-    {
-        if (dup2(stdio_backup[2], STDERR_FILENO) == -1)
-            perror("dup2 stderr");
-        close(stdio_backup[2]);
-    }
+	int	fd;
+
+	if (!file)
+		return (-1);
+		
+	fd = open(file, O_RDONLY);
+	if (fd == -1)
+	{
+		ft_dprintf(2, "minishell: %s: ", file);
+		perror("");
+		return (-1);
+	}
+	
+	if (dup2(fd, STDIN_FILENO) == -1)
+	{
+		perror("dup2");
+		close(fd);
+		return (-1);
+	}
+	close(fd);
+	return (0);
 }
 
-void apply_redirections(t_minifd *fds)
+int	redirect_output(char *file, int flags)
 {
-    t_minifd *current;
-    int fd;
+	int	fd;
+
+	if (!file)
+		return (-1);
+		
+	fd = open(file, O_WRONLY | O_CREAT | flags, 0644);
+	if (fd == -1)
+	{
+		ft_dprintf(2, "minishell: %s: ", file);
+		perror("");
+		return (-1);
+	}
+	
+	if (dup2(fd, STDOUT_FILENO) == -1)
+	{
+		perror("dup2");
+		close(fd);
+		return (-1);
+	}
+	close(fd);
+	return (0);
+}
+
+int	redirect_heredoc(int fd)
+{
+	if (fd < 0)
+		return (-1);
+		
+	if (dup2(fd, STDIN_FILENO) == -1)
+	{
+		perror("dup2");
+		return (-1);
+	}
+	close(fd);
+	return (0);
+}
+
+int	apply_redirections(t_minifd *fds, int stdio_backup[3])
+{
+	t_minifd	*current;
+
+	//save des des stdio
+	if (stdio_backup[0] == -1)//gere le subshell
+	{
+		stdio_backup[0] = dup(STDIN_FILENO);
+		stdio_backup[1] = dup(STDOUT_FILENO);
+		stdio_backup[2] = dup(STDERR_FILENO);
+	}
+	current = fds;
+	while (current)
+	{
+		if (current->type == MINITYPE_REDIN)
+		{
+			if (redirect_input(current->file) < 0)
+				return (-1);
+		}
+		else if (current->type == MINITYPE_REDOUT)
+		{
+			if (redirect_output(current->file, O_TRUNC) < 0)
+				return (-1);
+		}
+		else if (current->type == MINITYPE_REDAPP)
+		{
+			if (redirect_output(current->file, O_APPEND) < 0)
+				return (-1);
+		}
+		else if (current->type == MINITYPE_HEREDOC)
+		{
+			if (redirect_heredoc(current->fd) < 0)
+				return (-1);
+		}
+		current = current->next;
+	}
+	return (0);
+}
+
+void	restore_stdio(int stdio_backup[3])
+{
+	if (stdio_backup[0] != -1)
+	{
+		dup2(stdio_backup[0], STDIN_FILENO);
+		close(stdio_backup[0]);
+	}
+	if (stdio_backup[1] != -1)
+	{
+		dup2(stdio_backup[1], STDOUT_FILENO);
+		close(stdio_backup[1]);
+	}
+	if (stdio_backup[2] != -1)
+	{
+		dup2(stdio_backup[2], STDERR_FILENO);
+		close(stdio_backup[2]);
+	}
+}
+
+int exec_redirection(t_minibox *minibox, t_miniparsing *node, t_env *env)
+{
+    int exit_code;
+    int stdio_backup[3] = {-1, -1, -1};
+
+    if (!node)
+        return (1);
     
-    current = fds;
-    while (current)
-    {        
-        if (current->type == FAPPEND)
-        {
-            fd = open(current->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
-            if (fd == -1)
-            {
-                perror("open append");
-                return;
-            }
-            if (dup2(fd, STDOUT_FILENO) == -1)
-                perror("dup2 append");
-            close(fd);
-        }/*
-        else if (current->type == FOUT)
-        {
-            fd = open(current->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-            if (fd == -1)
-            {
-                perror("open output");
-                return;
-            }
-            if (dup2(fd, STDOUT_FILENO) == -1)
-                perror("dup2 output");
-            close(fd);
-        }
-        else if (current->type == FIN)
-        {
-            fd = open(current->file, O_RDONLY);
-            if (fd == -1)
-            {
-                perror("open input");
-                return;
-            }
-            if (dup2(fd, STDIN_FILENO) == -1)
-                perror("dup2 input");
-            close(fd);
-        }*/
-        current = current->next;
-    }
+    if (apply_redirections(node->fds, stdio_backup) < 0)
+        return (1);
+    //exec la commande ou sous-commande
+    if (node->left)
+        exit_code = execute_ast(minibox, node->left, env);
+    else if (node->right)
+        exit_code = execute_ast(minibox, node->right, env);
+    else
+        exit_code = 0;//redir sans cmd, ne rien faire
+    //restore les descripteurs
+    restore_stdio(stdio_backup);
+    return (exit_code);
 }

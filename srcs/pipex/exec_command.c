@@ -12,126 +12,134 @@
 
 #include "minishell.h"
 
-char **tokens_to_argv(t_minilexing *tokens)
+int	exec_command(t_minibox *minibox, t_miniparsing *node, t_env *env)
 {
-    t_minilexing *current;
-    char **argv;
-    int count;
-    int i;
+	int		exit_code;
+	int		stdio_backup[3];
+	char	**argv;
 
-    if (!tokens)
-        return (NULL);
-
-    count = 0;
-    current = tokens;
-    while (current)
-    {
-        count++;
-        current = current->next;
-    }
-
-    argv = malloc(sizeof(char *) * (count + 1));
-    if (!argv)
-        return (NULL);
-
-    current = tokens;
-    i = 0;
-    while (current && i < count)
-    {
-        argv[i] = ft_strdup(current->value);
-        if (!argv[i])
-        {
-            while (--i >= 0)
-                free(argv[i]);
-            free(argv);
-            return (NULL);
-        }
-        current = current->next;
-        i++;
-    }
-    argv[i] = NULL;
-    return (argv);
-}
-
-int	execute_parsing_node(t_minibox *minibox, t_env *env, t_miniparsing *node)
-{
-    int     exit_code;
-    int     stdio_backup[3];
-
-    if (!node)
-        return (0);
-    if (node->fds)
-    {
-        stdio_backup[0] = dup(STDIN_FILENO);
-        stdio_backup[1] = dup(STDIN_FILENO);
-        stdio_backup[2] = dup(STDIN_FILENO);
-        apply_redirections(node->fds);
-    }
-    if (node->type == MINITYPE_CMD)
-        exit_code = exec_command(minibox, env);
-    else if (node->type == MINITYPE_PIPE)
-        exit_code = exec_pipe_chain(minibox, env, node);
-    else if (node->type == MINITYPE_AND)
-        exit_code = exec_and_seq(minibox, env, node);
-    else if (node->type == MINITYPE_OR)
-        exit_code = exec_or_seq(minibox, env, node);
-    else if (node->type == MINITYPE_SUBSHELL)
-        exit_code = exec_subshell(minibox, env, node);
-    else if ( node->type == MINITYPE_REDIN || node->type == MINITYPE_REDOUT ||
-        node->type == MINITYPE_REDAPP || node->type == MINITYPE_HEREDOC)
-        exit_code = exec_redirection(minibox, env, node);
-    else
-        exit_code = 1;
-    if (!node->fds)
-        restore_stdio(stdio_backup);
-    return (exit_code);
-}
-
-int execute_minibox(t_minibox *minibox, t_env *env)
-{
-	int	exit_code;
-
-	if (!minibox || !minibox->parsing)
+	(void)minibox;
+	if (!node || !node->argv || !node->argv[0])
 		return (1);
-    if (minibox->error.code != MINICODE_NONE)
-        return (ft_display_minibox_error(minibox->error), 1);
-	exit_code = execute_parsing_node(minibox, env, minibox->parsing);
+	
+	argv = node->argv;
+    //save des stdio
+	stdio_backup[0] = dup(STDIN_FILENO);
+	stdio_backup[1] = dup(STDOUT_FILENO);
+	stdio_backup[2] = dup(STDERR_FILENO);
+	//app des redir
+	if (apply_redirections(node->fds, stdio_backup) < 0)
+	{
+		restore_stdio(stdio_backup);
+		return (1);
+	}
+	if (!should_fork(argv[0]))
+		exit_code = execute_builtin_no_fork(argv, &env);
+	else
+		exit_code = run_command(argv, env);
+	// Restaurer les descripteurs
+	restore_stdio(stdio_backup);
 	return (exit_code);
 }
 
-int exec_command(t_minibox *node, t_env *env)
+int	execute_builtin_no_fork(char **argv, t_env **env)
 {
-    int exit_code;
-    int stdio_backup[3];
-    int is_built_in;
-    char **argv;
+	if (!argv || !argv[0])
+		return (1);
+		
+	if (ft_strcmp(argv[0], "cd") == 0)
+		return (ft_cd(argv, env));
+	else if (ft_strcmp(argv[0], "export") == 0)
+		return (ft_export(argv, env));
+	else if (ft_strcmp(argv[0], "unset") == 0)
+		return (ft_unset(argv, env));
+	else if (ft_strcmp(argv[0], "exit") == 0)
+	{
+		ft_dprintf(1, "exit\n");
+		//ne pas libérer argv ici le parser le gere
+		free_env_list(*env);
+		exit(0);
+	}
+	//builtins qui peuvent etre fork
+	return (execute_builtin(argv, env));
+}
 
-    if (!node || !node->lexing)
-        return (1);
+int	should_fork(char *cmd)
+{
+	if (!cmd)
+		return (1);
+		
+	//builtins qui doivent modifier l'env parent
+	if (ft_strcmp(cmd, "cd") == 0)
+		return (0);
+	if (ft_strcmp(cmd, "export") == 0)
+		return (0);
+	if (ft_strcmp(cmd, "unset") == 0)
+		return (0);
+	if (ft_strcmp(cmd, "exit") == 0)
+		return (0);
+	//tutes les autres commandes meme builtins
+	return (1);
+}
 
-    argv = tokens_to_argv(node->lexing);
-    if (!argv || !argv[0])
-    {
-        if (argv)
-            ft_free_split(argv);
-        return (1);
-    }
+int	run_command(char **argv, t_env *env)
+{
+	pid_t	pid;
+	int		status;
+	char	*cmd_path;
+	char	**envp;
 
-    stdio_backup[0] = dup(STDIN_FILENO);
-    stdio_backup[1] = dup(STDOUT_FILENO);
-    stdio_backup[2] = dup(STDERR_FILENO);
-
-    if (node->parsing->fds)
-        apply_redirections(node->parsing->fds);
-
-    is_built_in = is_builtin(argv[0]);
-    if (is_built_in != -1)
-        exit_code = execute_builtin(argv, &env);
-    else
-        exit_code = execute_external(argv, env);
-
-    restore_stdio(stdio_backup);
-    ft_free_split(argv);
-
-    return (exit_code);
+	if (!argv || !argv[0])
+		return (1);
+		
+	pid = fork();
+	if (pid == 0)
+	{
+		signal(SIGINT, SIG_DFL);
+		signal(SIGQUIT, SIG_DFL);
+		if (is_builtin(argv[0]) != -1)
+		{
+			exit(execute_builtin(argv, &env));
+		}
+		else
+		{
+            //gestion de commande externe
+			envp = conv_env_envp(env);
+			if (!envp)
+				exit(1);
+				
+			cmd_path = find_path(argv[0], env);
+			if (!cmd_path)
+			{
+				ft_dprintf(2, "%s: command not found\n", argv[0]);
+				free_envp(envp);
+				exit(127);
+			}
+			if (execve(cmd_path, argv, envp) == -1)
+			{
+				perror(argv[0]);
+				free(cmd_path);
+				free_envp(envp);
+				exit(126);
+			}
+		}
+	}
+    //parent
+	else if (pid > 0)
+	{
+		waitpid(pid, &status, 0);
+		
+		if (WIFEXITED(status))
+			return (WEXITSTATUS(status));
+		else if (WIFSIGNALED(status))
+		{
+			int sig = WTERMSIG(status);
+			if (sig == SIGINT)
+				ft_dprintf(1, "\n");
+			return (128 + sig);
+		}
+		return (1);
+	}
+	else
+        return (perror("fork"), 1);
 }
