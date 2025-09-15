@@ -6,7 +6,7 @@
 #    By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/05/29 18:33:52 by raamayri          #+#    #+#              #
-#    Updated: 2025/09/13 20:32:58 by raamayri         ###   ########.fr        #
+#    Updated: 2025/09/15 21:43:36 by raamayri         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,6 +25,9 @@ SRCS = srcs/build.c \
 	   srcs/build_parsing_redirection.c \
 	   srcs/build_parsing_redirection_heredoc.c \
 	   srcs/build_parsing_arguments.c \
+	   srcs/build_parsing_arguments_expand.c \
+	   srcs/build_parsing_arguments_wildcard.c \
+	   srcs/build_parsing_arguments_utils.c \
 	   srcs/build_parsing_utils.c \
 	   srcs/set_error.c \
 	   srcs/display.c \
@@ -42,7 +45,7 @@ INCS = incs/ \
 OBJS = $(patsubst srcs/%.c, objs/%.o, $(SRCS))
 DEPS = $(patsubst objs/%.o, deps/%.d, $(OBJS))
 
-.PHONY: all debug clean fclean re
+.PHONY: all clean fclean re
 
 all: $(NAME)
 
@@ -59,17 +62,13 @@ $(LBFT):
 	$(MAKE) $(MK_FLAGS) -C $(dir $@) 1> /dev/null
 	$(info [MAKE] $(dir $@) compiled successfully.)
 
-debug: srcs/debug.c $(NAME) $(LBFT)
-	cc $(CC_FLAGS) -lreadline $(addprefix -I, $(INCS)) $< $(NAME) $(LBFT) -o debug
-	$(info [MAKE] debug built successfully.)
-
 clean:
 	rm -rf $(sort $(dir $(OBJS)) $(dir $(DEPS)))
 	$(MAKE) $(MK_FLAGS) -C $(dir $(LBFT)) $@ 1> /dev/null
 	$(info [MAKE] $(NAME) cleaned successfully.)
 
 fclean: clean
-	rm -rf $(NAME) $(LBFT) debug
+	rm -rf $(NAME) $(LBFT)
 
 re: fclean all
 

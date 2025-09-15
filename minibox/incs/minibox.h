@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/24 20:15:46 by raamayri          #+#    #+#             */
-/*   Updated: 2025/09/13 21:38:58 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/09/16 00:17:08 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,7 @@
 typedef struct s_miniinput
 {
 	char	**envp;
-	char	*value;
-	size_t	length;
+	char	*cmd;
 }	t_miniinput;
 
 // INFO: Those operators are not not supported:
@@ -61,7 +60,6 @@ typedef struct s_minilexing
 {
 	t_minitoken			token;
 	char				*value;
-	size_t				length;
 	struct s_minilexing	*next;
 	struct s_minilexing	*prev;
 }	t_minilexing;

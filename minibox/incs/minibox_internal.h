@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/27 19:23:54 by raamayri          #+#    #+#             */
-/*   Updated: 2025/09/13 21:37:55 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/09/15 19:03:43 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include <fcntl.h>
 # include <stdint.h>
 # include <errno.h>
+# include <dirent.h>
 # include "minibox.h"
 # include "../Libft/incs/libft.h"
 # include "../Libft/incs/get_next_line.h"
@@ -41,10 +42,16 @@ size_t			ft_find_tokens(t_minibox *minibox, t_minilexing **lexing,
 t_miniparsing	*ft_new_node(t_minibox *minibox, t_miniparsing *parent,
 					const t_minitype type);
 
-void			ft_build_parsing_argc(t_miniparsing *node,
+void			ft_build_parsing_argc(t_minibox *minibox, t_miniparsing *node,
 					const t_minilexing *lexing, const size_t lexing_len);
 void			ft_build_parsing_argv(t_minibox *minibox, t_miniparsing *node,
 					const t_minilexing *lexing, const size_t lexing_len);
+char			*ft_get_expand_val(t_minibox *minibox,
+					const t_minilexing *lexing);
+char			**ft_expand_wildcard(t_minibox *minibox, const char *pattern,
+					size_t *count);
+void			ft_sort_str_array(char **array, int count);
+int				ft_wildcard_match(const char *pattern, const char *str);
 
 size_t			ft_skip_subshell(t_minibox *minibox, t_minilexing **lexing,
 					const size_t lexing_len);

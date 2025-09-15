@@ -6,27 +6,30 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/11 20:42:46 by raamayri          #+#    #+#             */
-/*   Updated: 2025/09/13 21:40:25 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/09/14 18:36:45 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../incs/minibox_internal.h"
 
-static void	ft_check_syntax_red(t_minibox *minibox, t_minilexing **lexing)
+static size_t	ft_check_syntax_red(t_minibox *minibox, t_minilexing **lexing)
 {
 	t_minilexing	*curr_lexing;
+	size_t			i;
 
+	i = 1;
 	curr_lexing = (*lexing)->next;
 	if (curr_lexing && curr_lexing->token == MINITOKEN_WSPACE)
-		curr_lexing = curr_lexing->next;
+		1 && (i++), curr_lexing = curr_lexing->next;
 	if (!curr_lexing || \
 		(curr_lexing->token != MINITOKEN_UQUOTE && \
 		curr_lexing->token != MINITOKEN_SQUOTE && \
 		curr_lexing->token != MINITOKEN_DQUOTE))
 		ft_set_minibox_error(minibox, MINICODE_REDIRECTION_LOST);
 	if (minibox->error.code != MINICODE_NONE)
-		return ;
+		return (i);
 	*lexing = curr_lexing;
+	return (i);
 }
 
 size_t	ft_skip_subshell(t_minibox *minibox, t_minilexing **lexing,
@@ -70,7 +73,7 @@ void	ft_check_syntax_cmd(t_minibox *minibox, const t_minilexing *lexing,
 			ft_set_minibox_error(minibox, MINICODE_PROCESSORS_COLLISION);
 		else if (ft_isred(curr_lexing->token))
 		{
-			ft_check_syntax_red(minibox, &curr_lexing);
+			i += ft_check_syntax_red(minibox, &curr_lexing);
 			if (minibox->error.code != MINICODE_NONE)
 				return ;
 		}
@@ -95,7 +98,7 @@ void	ft_check_syntax_ss(t_minibox *minibox, const t_minilexing *lexing,
 		if (curr_lexing->token == MINITOKEN_LPAREN)
 			i += ft_skip_subshell(minibox, &curr_lexing, lexing_len - i);
 		else if (ft_isred(curr_lexing->token))
-			ft_check_syntax_red(minibox, &curr_lexing);
+			i += ft_check_syntax_red(minibox, &curr_lexing);
 		else if (curr_lexing->token != MINITOKEN_WSPACE)
 			ft_set_minibox_error(minibox, MINICODE_PROCESSORS_COLLISION);
 		if (minibox->error.code != MINICODE_NONE)

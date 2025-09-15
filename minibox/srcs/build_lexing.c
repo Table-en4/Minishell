@@ -6,11 +6,11 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 19:45:55 by raamayri          #+#    #+#             */
-/*   Updated: 2025/09/12 16:52:23 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/09/15 21:35:45 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../incs/minibox_internal.h"
+#include "../incs/minibox_internal.h"
 
 static size_t	ft_get_node_value_length(t_minibox *minibox, const char *str)
 {
@@ -60,7 +60,6 @@ static size_t	ft_set_node_value(t_minibox *minibox, const char *str)
 		return (0);
 	ofst = (node->token == MINITOKEN_DQUOTE || node->token == MINITOKEN_SQUOTE);
 	ft_memcpy(node->value, &str[ofst], len);
-	node->length = ft_strlen(node->value);
 	return (len + ofst * 2);
 }
 
@@ -127,9 +126,9 @@ void	ft_build_minibox_lexing(t_minibox *minibox)
 	minibox->lexing = NULL;
 	paren_count = 0;
 	i = 0;
-	while (i < input->length)
+	while (input->cmd[i])
 	{
-		curr_value = &input->value[i];
+		curr_value = &input->cmd[i];
 		i += ft_add_node(minibox, ft_get_token(curr_value), curr_value);
 		if (ft_get_token(curr_value) == MINITOKEN_LPAREN)
 			paren_count++;
