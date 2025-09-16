@@ -13,7 +13,7 @@ SRCS = srcs/main.c srcs/builtins/ft_echo.c srcs/builtins/ft_cd.c \
 	srcs/pipex/exec_and.c srcs/pipex/exec_command.c srcs/pipex/exec_pipe.c \
 	srcs/pipex/exec_subshell.c srcs/pipex/pipex_utils.c \
 	srcs/pipex/read_ast.c srcs/pipex/exec_or.c srcs/pipex/redirection.c \
-	srcs/pipex/excute_minibox.c
+	srcs/pipex/excute_minibox.c srcs/signal.c
 
 INCS = incs Libft/incs
 

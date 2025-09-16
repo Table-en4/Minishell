@@ -153,7 +153,7 @@ int	main(int ac, char **av, char **envp)
 {
 	char		*line;
 	t_env		*env_list;
-	t_minibox	minibox;
+	t_minibox	*minibox;
 	int			exit_code;
     char        *pwd;
     char        *prompt;
@@ -161,10 +161,8 @@ int	main(int ac, char **av, char **envp)
 
 	(void)ac;
 	(void)av;
-	setup_signals();	
+	setup_signals();
 	env_list = init_env(envp);
-	/*if (!env_list)
-		return (ft_putstr_fd("Error: Failed to initialize env\n", 2), 1);*/
 	while (1)
 	{
         pwd = getcwd(cwd, sizeof(cwd));
@@ -186,37 +184,40 @@ int	main(int ac, char **av, char **envp)
 		//gestion de Ctrl+D (EOF)
 		if (!line)
 		{
-			ft_dprintf(1, "\e[46m exit \e[0m \n");
+			ft_dprintf(1, "\e[46mexit\e[0m \n");
 			break;
 		}
+        restore_exec_signals();
 		if (*line == '\0')
 		{
 			free(line);
 			continue;
 		}
 		add_history(line);
-		ft_memset(&minibox, 0, sizeof(t_minibox));
+		//ft_memset(minibox, 0, sizeof(t_minibox));
 		//construction de la minibox
-		if (ft_build_minibox(&minibox, line, envp) == 0)
-		{
-			if (minibox.error.code == MINICODE_NONE)
-			{
-				exit_code = execute_minibox(&minibox, env_list);
-				DEBUG_PRINT("Command exit code: %d\n", exit_code);
-			}
-			else
-			{
-				ft_display_minibox_error(minibox.error);
-				exit_code = 1;
-			}
-		}
+        minibox = ft_calloc(1, sizeof(t_minibox));
+        if (!minibox)   
+        {
+            perror("minishell");
+            free(line);
+            break;
+        }
+        ft_build_minibox(minibox, line, envp);
+		if (minibox->error.code == MINICODE_NONE)
+            exit_code = execute_minibox(minibox, env_list);
 		else
 		{
-			ft_dprintf(2, "Error building minibox\n");
+            if (minibox->error.code == MINICODE_ERRNO)
+                perror("minishell");
+            else
+                ft_dprintf(2, "minishell: %s\n", minibox->error.msg);
+			//ft_dprintf(2, "Error building minibox\n");
 			exit_code = 1;
 		}
 		free(line);
-		ft_destroy_minibox(&minibox);
+		ft_destroy_minibox(minibox);
+        free(minibox);  
 	}
 	free_env_list(env_list);
 	return (exit_code);

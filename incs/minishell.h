@@ -124,4 +124,6 @@ int     apply_redirections(t_minifd *fds, int stdio_backup[3]);
 int	execute_minibox(t_minibox *minibox, t_env *env);
 int	execute_node(t_minibox *minibox, t_miniparsing *node, t_env *env);
 
+void    restore_exec_signals(void);
+
 #endif

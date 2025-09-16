@@ -22,7 +22,11 @@ static void	ft_write_heredoc(t_minibox *minibox, t_minifd *node)
 	{
 		line = readline("heredoc> ");
 		if (!line)
+		{
+			ft_putendl_fd("minibox: warning: here-document delimited by end-of-file", 2);
 			ft_set_minibox_error(minibox, MINICODE_ERRNO);
+			break;
+		}
 		if (minibox->error.code != MINICODE_NONE)
 			break ;
 		if (ft_strcmp(line, eof) == 0)
