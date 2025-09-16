@@ -30,6 +30,8 @@ int is_builtin(char *cmd)
         return (6);
     if (ft_strcmp(cmd, "exit") == 0)
         return (7);
+    /*if (ft_strcmp(cmd, "?") == 0)
+        return (8);*/
     return (-1);
 }
 
@@ -57,6 +59,8 @@ int execute_builtin(char **args, t_env **envp)
         free_env_list(*envp);
         exit(0);
     }
+    /*else if (builtin == 8)
+        ft_dprintf(1, "%d\n", g_signal_received);*/
     return (-1);
 }
 

@@ -12,8 +12,6 @@
 
 #include "minishell.h"
 
-volatile sig_atomic_t g_signal_received = 0;
-
 void	handle_sigint(int sig)
 {
 	(void)sig;
@@ -168,19 +166,19 @@ int	main(int ac, char **av, char **envp)
         pwd = getcwd(cwd, sizeof(cwd));
         if (!pwd)
             pwd = ">";
-        prompt = ft_strjoin(pwd, "\n> ");
+        prompt = ft_strjoin(pwd, "> ");
         if (!prompt)
             prompt = "> ";
-		g_signal_received = 0;		
-		line = readline(prompt);		
-		if (g_signal_received == SIGINT)
+		line = readline(prompt);
+        free(prompt);		
+		/*if (g_signal_received == SIGINT)
 		{
 			if (line)
 			{
 				free(line);
 				continue;
 			}
-		}
+		}*/
 		//gestion de Ctrl+D (EOF)
 		if (!line)
 		{
@@ -209,9 +207,16 @@ int	main(int ac, char **av, char **envp)
 		else
 		{
             if (minibox->error.code == MINICODE_ERRNO)
+            {
                 perror("minishell");
+                signal_handler(1);
+            }
             else
+            {
                 ft_dprintf(2, "minishell: %s\n", minibox->error.msg);
+                signal_handler(2);
+                //printf("%d\n", g_signal_received);
+            }
 			//ft_dprintf(2, "Error building minibox\n");
 			exit_code = 1;
 		}

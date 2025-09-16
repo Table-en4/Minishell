@@ -15,6 +15,7 @@
 
 # include <stddef.h>
 
+extern int	g_signal_received;
 # define MINIMSG_SIZE 256
 
 typedef struct s_miniinput

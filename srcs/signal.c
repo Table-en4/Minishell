@@ -11,6 +11,12 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
+sig_atomic_t g_signal_received = 0;
+
+void signal_handler(int sig)
+{
+    g_signal_received = sig;
+}
 
 void    handle_signal(int sig)
 {

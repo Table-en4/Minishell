@@ -21,13 +21,10 @@ int	exec_command(t_minibox *minibox, t_miniparsing *node, t_env *env)
 	(void)minibox;
 	if (!node || !node->argv || !node->argv[0])
 		return (1);
-	
 	argv = node->argv;
-    //save des stdio
 	stdio_backup[0] = dup(STDIN_FILENO);
 	stdio_backup[1] = dup(STDOUT_FILENO);
 	stdio_backup[2] = dup(STDERR_FILENO);
-	//app des redir
 	if (apply_redirections(node->fds, stdio_backup) < 0)
 	{
 		restore_stdio(stdio_backup);
@@ -37,7 +34,6 @@ int	exec_command(t_minibox *minibox, t_miniparsing *node, t_env *env)
 		exit_code = execute_builtin_no_fork(argv, &env);
 	else
 		exit_code = run_command(argv, env);
-	// Restaurer les descripteurs
 	restore_stdio(stdio_backup);
 	return (exit_code);
 }

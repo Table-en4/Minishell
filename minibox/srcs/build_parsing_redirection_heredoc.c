@@ -12,7 +12,6 @@
 
 #include "../incs/minibox_internal.h"
 
-// TODO: HANDLE SIG
 static void	ft_write_heredoc(t_minibox *minibox, t_minifd *node)
 {
 	const char	*eof = node->file;

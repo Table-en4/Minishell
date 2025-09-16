@@ -98,7 +98,6 @@ int env_exec(char **args, t_env *env)
     {
         waitpid(pid, &status, 0);
         free_envp(envp);
-        //coder la fonction wexitstatus
         return (WEXITSTATUS(status));
     }
     return (0);

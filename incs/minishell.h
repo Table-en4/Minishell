@@ -56,13 +56,6 @@ typedef struct s_blt
     char    *copy;
 }   t_blt;
 
-// DEBUG Macros
-#ifdef DEBUG
-# define DEBUG_PRINT(fmt, ...) fprintf(stderr, "DEBUG: %s:%d:%s(): " fmt, __FILE__, __LINE__, __func__, ##__VA_ARGS__)
-#else
-# define DEBUG_PRINT(fmt, ...) do {} while (0)
-#endif
-
 /*#------------------#*/
 /*#-signal functions-#*/
 /*#------------------#*/
@@ -125,5 +118,6 @@ int	execute_minibox(t_minibox *minibox, t_env *env);
 int	execute_node(t_minibox *minibox, t_miniparsing *node, t_env *env);
 
 void    restore_exec_signals(void);
+void    signal_handler(int sig);
 
 #endif
