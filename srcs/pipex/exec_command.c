@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_command.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: molapoug <molapoug@student.42.fr>          +#+  +:+       +#+        */
+/*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 10:37:46 by molapoug          #+#    #+#             */
-/*   Updated: 2025/09/12 14:41:41 by molapoug         ###   ########.fr       */
+/*   Updated: 2025/09/16 16:42:46 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ int	execute_builtin_no_fork(char **argv, t_env **env)
 {
 	if (!argv || !argv[0])
 		return (1);
-		
+
 	if (ft_strcmp(argv[0], "cd") == 0)
 		return (ft_cd(argv, env));
 	else if (ft_strcmp(argv[0], "export") == 0)
@@ -64,7 +64,7 @@ int	should_fork(char *cmd)
 {
 	if (!cmd)
 		return (1);
-		
+
 	//builtins qui doivent modifier l'env parent
 	if (ft_strcmp(cmd, "cd") == 0)
 		return (0);
@@ -87,7 +87,7 @@ int	run_command(char **argv, t_env *env)
 
 	if (!argv || !argv[0])
 		return (1);
-		
+
 	pid = fork();
 	if (pid == 0)
 	{
@@ -103,7 +103,7 @@ int	run_command(char **argv, t_env *env)
 			envp = conv_env_envp(env);
 			if (!envp)
 				exit(1);
-				
+
 			cmd_path = find_path(argv[0], env);
 			if (!cmd_path)
 			{
@@ -124,7 +124,7 @@ int	run_command(char **argv, t_env *env)
 	else if (pid > 0)
 	{
 		waitpid(pid, &status, 0);
-		
+
 		if (WIFEXITED(status))
 			return (WEXITSTATUS(status));
 		else if (WIFSIGNALED(status))
@@ -136,6 +136,5 @@ int	run_command(char **argv, t_env *env)
 		}
 		return (1);
 	}
-	else
-        return (perror("fork"), 1);
+	return (perror("fork"), 1);
 }

@@ -1,4 +1,4 @@
-CC_FLAGS = -g3 -MMD -MP
+CC_FLAGS = -Wall -Wextra -Werror -g
 MK_FLAGS = --silent
 MAKEFLAGS += $(MK_FLAGS)
 
@@ -24,13 +24,13 @@ DEPS = $(patsubst objs/%.o, deps/%.d, $(OBJS))
 
 all: $(NAME)
 
-$(NAME): $(OBJS) $(LBFT) $(MINIBOX)
+$(NAME): $(OBJS) $(MINIBOX) $(LBFT)
 	cc $(CC_FLAGS) -o $@ $(OBJS) $(MINIBOX) $(LBFT) -lreadline
 	$(info [MAKE] $@ built successfully.)
 
 objs/%.o: srcs/%.c
 	mkdir -p $(sort $(dir $@) $(dir $(patsubst objs/%.o, deps/%.d, $@)))
-	cc $(CC_FLAGS) -MF $(patsubst objs/%.o, deps/%.d, $@) $(addprefix -I, $(INCS)) -o $@ -c $<
+	cc $(CC_FLAGS) -MMD -MP -MF $(patsubst objs/%.o, deps/%.d, $@) $(addprefix -I, $(INCS)) -o $@ -c $<
 	$(info [MAKE] $(addprefix $*, .c) compiled successfully.)
 
 $(LBFT):
@@ -38,21 +38,18 @@ $(LBFT):
 	$(info [MAKE] $(dir $@) compiled successfully.)
 
 $(MINIBOX):
-	$(MAKE) $(MK_FLAGS) -C $(dir $@) 1> /dev/null
-	$(info [MAKE] $(dir $@) compiled successfully.)
+	$(MAKE) $(MK_FLAGS) -C $(dir $@)
 
 clean:
 	rm -rf $(sort $(dir $(OBJS)) $(dir $(DEPS)))
 	$(MAKE) $(MK_FLAGS) -C $(dir $(LBFT)) $@ 1> /dev/null
+	$(MAKE) $(MK_FLAGS) -C $(dir $(MINIBOX)) $@ 1> /dev/null
 	$(info [MAKE] $(NAME) cleaned successfully.)
 
 fclean: clean
+	$(MAKE) $(MK_FLAGS) -C $(dir $(MINIBOX)) $@ 1> /dev/null
 	rm -rf $(NAME) $(LBFT) $(MINIBOX)
 
 re: fclean all
-
-# 🔍 Debug target : compile et lance gdb
-debug: re
-	gdb ./$(NAME)
 
 -include $(DEPS)

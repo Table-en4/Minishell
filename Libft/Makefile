@@ -3,14 +3,14 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: molapoug <molapoug@student.42.fr>          +#+  +:+       +#+         #
+#    By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/06/23 17:57:19 by raamayri          #+#    #+#              #
-#    Updated: 2025/08/30 02:40:06 by molapoug         ###   ########.fr        #
+#    Updated: 2025/09/16 16:45:00 by raamayri         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-CC_FLAGS = -Wall -Wextra -Werror -g3 -MMD -MP
+CC_FLAGS = -Wall -Wextra -Werror -g
 
 NAME = libft.a
 
@@ -82,7 +82,7 @@ INCS = incs/
 OBJS = $(patsubst srcs/%.c,objs/%.o,$(SRCS))
 DEPS = $(patsubst objs/%.o,deps/%.d,$(OBJS))
 
--include $(DEPS)
+.PHONY: all clean fclean re
 
 all: $(NAME)
 
@@ -92,7 +92,7 @@ $(NAME): $(OBJS)
 
 objs/%.o: srcs/%.c
 	mkdir -p $(sort $(dir $@) $(dir $(patsubst objs/%.o,deps/%.d,$@)))
-	cc $(CC_FLAGS) -MF $(patsubst objs/%.o,deps/%.d,$@) $(addprefix -I,$(INCS)) -o $@ -c $<
+	cc $(CC_FLAGS) -MMD -MP -MF $(patsubst objs/%.o,deps/%.d,$@) $(addprefix -I,$(INCS)) -o $@ -c $<
 	$(info [MAKE] $(addprefix $*, .c) compiled successfully.)
 
 clean:
@@ -104,4 +104,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re
+-include $(DEPS)

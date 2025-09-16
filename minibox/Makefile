@@ -6,7 +6,7 @@
 #    By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/05/29 18:33:52 by raamayri          #+#    #+#              #
-#    Updated: 2025/09/15 21:43:36 by raamayri         ###   ########.fr        #
+#    Updated: 2025/09/16 16:44:28 by raamayri         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -45,7 +45,7 @@ INCS = incs/ \
 OBJS = $(patsubst srcs/%.c, objs/%.o, $(SRCS))
 DEPS = $(patsubst objs/%.o, deps/%.d, $(OBJS))
 
-.PHONY: all clean fclean re
+-include $(DEPS)
 
 all: $(NAME)
 
@@ -72,4 +72,4 @@ fclean: clean
 
 re: fclean all
 
--include $(DEPS)
+.PHONY: all clean fclean re
