@@ -6,13 +6,11 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/26 16:56:17 by raamayri          #+#    #+#             */
-/*   Updated: 2025/09/13 23:47:34 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/09/15 21:41:02 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../incs/minibox.h"
-#include "../Libft/incs/libft.h"
-#include "../Libft/incs/ft_dprintf.h"
+#include "../incs/minibox_debug.h"
 
 int	main(int argc, char **argv, char **envp)
 {
@@ -24,10 +22,7 @@ int	main(int argc, char **argv, char **envp)
 		return (EXIT_FAILURE);
 	if (argc != 2)
 	{
-		cmd = "$USER '$USER' \"$USER\" '\"$USER\"' \"'$USER'\"";
-		ft_build_minibox(minibox, cmd, envp);
-		ft_display_minibox(minibox);
-		ft_destroy_minibox(minibox);
+		ft_dprintf(STDERR_FILENO, "%s \"<cmd>\"\n", argv[0]);
 		return (free(minibox), EXIT_SUCCESS);
 	}
 	cmd = argv[1];

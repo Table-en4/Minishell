@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/12 20:09:59 by raamayri          #+#    #+#             */
-/*   Updated: 2025/09/13 21:42:24 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/09/15 21:12:34 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ static int	ft_open_red(t_minibox *minibox, t_minifd *node)
 	else if (node->type == MINITYPE_HEREDOC)
 		fd = ft_open_heredoc(minibox, node);
 	if (fd == -1)
-		ft_set_minibox_error(minibox, MINICODE_ERRNO);
+		ft_set_minibox_error(minibox, MINICODE_UNCLOSED_QUOTES);
 	return (fd);
 }
 

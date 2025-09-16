@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/31 17:19:05 by raamayri          #+#    #+#             */
-/*   Updated: 2025/09/13 23:26:45 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/09/15 14:44:07 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,13 +31,17 @@ static int	ft_build_parsing_cmd(t_minibox *minibox, t_miniparsing *parent,
 	node->fds = ft_build_parsing_red(minibox, curr_lexing, lexing_len);
 	if (minibox->error.code != MINICODE_NONE)
 		return (1);
-	ft_build_parsing_argc(node, lexing, lexing_len);
+	ft_build_parsing_argc(minibox, node, curr_lexing, lexing_len);
+	if (minibox->error.code != MINICODE_NONE)
+		return (1);
 	node->argv = ft_calloc(node->argc + 1, sizeof(char *));
 	if (!node->argv)
 		ft_set_minibox_error(minibox, MINICODE_ERRNO);
 	if (minibox->error.code != MINICODE_NONE)
 		return (1);
-	ft_build_parsing_argv(minibox, node, lexing, lexing_len);
+	ft_build_parsing_argv(minibox, node, curr_lexing, lexing_len);
+	if (minibox->error.code != MINICODE_NONE)
+		return (1);
 	return (0);
 }
 

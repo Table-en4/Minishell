@@ -1,19 +1,20 @@
 # Minibox (submodule for Minishell)
-
 This library provides a minimal shell lexing and parsing toolkit.<br/>
 Minibox only supports the following operators:<br/>
 - `&&`, `||` Logical AND, OR
 - `|` Pipe
-- `>`, `<`, `>>`, `<<` Redirection (Explicit file descriptors are not supported.)
+- `>`, `<`, `>>`, `<<` Redirection (Explicit file descriptors are not supported)
 - `(`, `)` Parenthesis
-- `'`, `"` Quotes (Unclosed quotes are not supported.)
-
+- `'`, `"` Quotes (Unclosed quotes are not supported)
+- `$NAME`, `$?` Variable expansion
+- `*` Wildcards (Only for the current directory)
 ## Functions
 #### `ft_build_minibox();`
 Initializes a `t_minibox` structure by performing input processing, lexing, and parsing on the provided command string `str`.
+> **WARNING**<br/>
+> The minibox must be destroyed whether there is an error or not.
 ```c
-Protoype: int ft_build_minibox(t_minibox *minibox, const char *cmd, char **envp);
-
+Protoype: int ft_build_minibox(t_minibox *minibox, const char *str);
 Returns: 0 on success.
          -1 if minibox is NULL.
          >0 on a specific error.
@@ -26,25 +27,28 @@ Protoype: void ft_display_minibox(const t_minibox *minibox);
 #### `ft_destroy_minibox();`
 Frees all dynamically allocated memory within the `t_minibox` structure.<br/>
 The user is responsible for freeing the `t_minibox` struct itself.
+> **WARNING**<br/>
+> The minibox must be allocated and freed by the user himself.
 ```c
 Protoype: void ft_destroy_minibox(t_minibox *minibox);
 ```
 ## Structures
 #### `t_minibox`
 ```c
-typedef struct s_miniinput
+typedef struct s_minibox
 {
-	char	**envp;
-	char	*value;
-	size_t	length;
-}	t_miniinput;
+	t_miniinput		*input;
+	t_minilexing	*lexing;
+	t_miniparsing	*parsing;
+	t_minierror		error;
+}	t_minibox;
 ```
 #### `t_miniinput`
 ```c
 typedef struct s_miniinput
 {
-	char	*value;
-	size_t	length;
+	char	**envp;
+	char	*cmd;
 }	t_miniinput;
 ```
 #### `t_minilexing`
@@ -53,7 +57,6 @@ typedef struct s_minilexing
 {
 	t_minitoken			token;
 	char				*value;
-	size_t				length;
 	struct s_minilexing	*next;
 	struct s_minilexing	*prev;
 }	t_minilexing;
@@ -74,9 +77,9 @@ typedef struct s_minifd
 typedef struct s_miniparsing
 {
 	t_minitype				type;
-	t_minifd				*fds;
 	size_t					argc;
 	char					**argv;
+	t_minifd				*fds;
 	struct s_miniparsing	*subshell;
 	struct s_miniparsing	*left;
 	struct s_miniparsing	*right;
@@ -95,6 +98,7 @@ typedef struct s_minierror
 ```c
 typedef enum e_minitoken
 {
+	MINITOKEN_NONE,
 	MINITOKEN_REDAPP,
 	MINITOKEN_HEREDOC,
 	MINITOKEN_AND,
@@ -109,12 +113,13 @@ typedef enum e_minitoken
 	MINITOKEN_UQUOTE,
 	MINITOKEN_WSPACE,
 	MINITOKEN_SIZE
-}   t_minitoken;
+}	t_minitoken;
 ```
 #### `t_minitype`
 ```c
 typedef enum e_minitype
 {
+	MINITYPE_NONE,
 	MINITYPE_AND,
 	MINITYPE_OR,
 	MINITYPE_PIPE,

@@ -6,18 +6,18 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/12 23:03:08 by raamayri          #+#    #+#             */
-/*   Updated: 2025/09/13 23:13:04 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/09/15 18:38:37 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../incs/minibox_internal.h"
 
+// TODO: HANDLE SIG
 static void	ft_write_heredoc(t_minibox *minibox, t_minifd *node)
 {
-	const char			*eof = node->file;
-	char				*line;
+	const char	*eof = node->file;
+	char		*line;
 
-	// sig
 	while (1)
 	{
 		line = readline("heredoc> ");
