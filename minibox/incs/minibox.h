@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minibox.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
+/*   By: molapoug <molapoug@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/24 20:15:46 by raamayri          #+#    #+#             */
-/*   Updated: 2025/09/16 00:17:08 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/09/17 21:57:45 by molapoug         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,9 @@
 # define MINIBOX_H
 
 # include <stddef.h>
+# include <signal.h>
+# include <sys/types.h>
+# include <sys/wait.h>
 
 extern int	g_signal_received;
 # define MINIMSG_SIZE 256
@@ -135,5 +138,7 @@ typedef struct s_minibox
 int		ft_build_minibox(t_minibox *minibox, const char *cmd, char **envp);
 void	ft_display_minibox(const t_minibox *minibox);
 void	ft_destroy_minibox(t_minibox *minibox);
+void	restore_exec_signals(void);
+void    restor_exec_signals_herdoc(void);
 
 #endif

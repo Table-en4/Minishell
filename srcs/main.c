@@ -6,7 +6,7 @@
 /*   By: molapoug <molapoug@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 11:44:12 by molapoug          #+#    #+#             */
-/*   Updated: 2025/09/12 12:19:09 by molapoug         ###   ########.fr       */
+/*   Updated: 2025/09/17 21:47:15 by molapoug         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ int	handle_minibox(char *line, char **envp, t_env *env_list)
 		else
 		{
 			ft_dprintf(2, "minishell: %s\n", minibox->error.msg);
-			signal_handler(2);
+			signal_handler(1);
 		}
 	}
 	ft_destroy_minibox(minibox);
@@ -66,7 +66,6 @@ int	main_loop(char **envp, t_env *env_list)
 	char	*line;
 	char	*prompt;
 
-	g_signal_received = 0;
 	while (1)
 	{
 		prompt = get_prompt();
@@ -93,7 +92,6 @@ int	main(int ac, char **av, char **envp)
 
 	(void)ac;
 	(void)av;
-	setup_signals();
 	env_list = init_env(envp);
 	g_signal_received = main_loop(envp, env_list);
 	free_env_list(env_list);

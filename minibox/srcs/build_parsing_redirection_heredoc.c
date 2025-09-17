@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   build_parsing_redirection_heredoc.c                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
+/*   By: molapoug <molapoug@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/12 23:03:08 by raamayri          #+#    #+#             */
-/*   Updated: 2025/09/17 18:18:27 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/09/17 22:02:26 by molapoug         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,13 @@ static void	ft_write_heredoc(t_minibox *minibox, t_minifd *node)
 	const char	*wrn = "minibox: warning: heredoc delimited by eof";
 	const char	*eof = node->file;
 	char		*line;
-
+	
+	restor_exec_signals_herdoc();
 	while (1)
 	{
 		line = readline("heredoc> ");
+		if (g_signal_received == 130)
+			break ;
 		if (!line)
 		{
 			ft_dprintf(STDERR_FILENO, "%s (%s)\n", wrn, eof);
@@ -32,6 +35,7 @@ static void	ft_write_heredoc(t_minibox *minibox, t_minifd *node)
 		free(line);
 		line = NULL;
 	}
+	restore_exec_signals();
 	if (line)
 		free(line);
 	if (close(node->fd) == -1)

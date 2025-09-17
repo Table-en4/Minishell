@@ -6,7 +6,7 @@
 /*   By: molapoug <molapoug@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 11:44:41 by molapoug          #+#    #+#             */
-/*   Updated: 2025/09/12 14:59:15 by molapoug         ###   ########.fr       */
+/*   Updated: 2025/09/17 21:45:47 by molapoug         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,15 +21,9 @@ void	signal_handler(int sig)
 
 void	handle_signal(int sig)
 {
-	t_minibox	*minibox;
-	t_env		*env_list;
-
-	(void)env_list;
-	(void)minibox;
 	if (sig == SIGINT)
 	{
-		ft_dprintf(1, "Un Ctrl + C a été détecté\n");
-		exit(130);
+		ft_dprintf(1, "\n");
 	}
 }
 
