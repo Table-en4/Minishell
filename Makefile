@@ -40,7 +40,8 @@ $(LBFT):
 	$(info [MAKE] $(dir $@) compiled successfully.)
 
 $(MINIBOX):
-	$(MAKE) $(MK_FLAGS) -C $(dir $@)
+	$(MAKE) $(MK_FLAGS) -C $(dir $@) 1> /dev/null
+	$(info [MAKE] $(dir $@) compiled successfully.)
 
 clean:
 	rm -rf $(sort $(dir $(OBJS)) $(dir $(DEPS)))

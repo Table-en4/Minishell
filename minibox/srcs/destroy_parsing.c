@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/31 17:35:31 by raamayri          #+#    #+#             */
-/*   Updated: 2025/09/12 22:25:44 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/09/17 17:54:17 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,11 +38,9 @@ static void	ft_destroy_fds(t_minifd *minifd)
 	{
 		next_fd = curr_fd->next;
 		if (curr_fd->fd >= 0)
-			if (close(curr_fd->fd) == -1)
-				perror("Error on close: ");
+			close(curr_fd->fd);
 		if (curr_fd->type == MINITYPE_HEREDOC && curr_fd->file)
-			if (unlink(curr_fd->file) == -1)
-				perror("Error on unlink: ");
+			unlink(curr_fd->file);
 		if (curr_fd->file)
 			free(curr_fd->file);
 		free(curr_fd);

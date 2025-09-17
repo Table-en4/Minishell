@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/12 23:03:08 by raamayri          #+#    #+#             */
-/*   Updated: 2025/09/15 18:38:37 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/09/17 18:18:27 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 static void	ft_write_heredoc(t_minibox *minibox, t_minifd *node)
 {
+	const char	*wrn = "minibox: warning: heredoc delimited by eof";
 	const char	*eof = node->file;
 	char		*line;
 
@@ -22,12 +23,9 @@ static void	ft_write_heredoc(t_minibox *minibox, t_minifd *node)
 		line = readline("heredoc> ");
 		if (!line)
 		{
-			ft_putendl_fd("minibox: warning: here-document delimited by end-of-file", 2);
-			ft_set_minibox_error(minibox, MINICODE_ERRNO);
-			break;
-		}
-		if (minibox->error.code != MINICODE_NONE)
+			ft_dprintf(STDERR_FILENO, "%s (%s)\n", wrn, eof);
 			break ;
+		}
 		if (ft_strcmp(line, eof) == 0)
 			break ;
 		ft_dprintf(node->fd, "%s\n", line);
@@ -84,7 +82,6 @@ static char	*ft_generate_file_name(t_minibox *minibox, t_minifd *node)
 			return (NULL);
 		errno = 0;
 	}
-	printf("\n\n\n%s\n\n\n", file_name);
 	return (file_name);
 }
 

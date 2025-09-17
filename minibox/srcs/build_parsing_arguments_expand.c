@@ -6,66 +6,66 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 18:56:47 by raamayri          #+#    #+#             */
-/*   Updated: 2025/09/15 18:59:33 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/09/17 18:20:24 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../incs/minibox_internal.h"
 
-static char    *ft_get_env(t_minibox *minibox, char *name, char **envp)
+static char	*ft_get_env(t_minibox *minibox, char *name, char **envp)
 {
-    char    *itoa;
-    size_t    len;
-    size_t    i;
+	char	*itoa;
+	size_t	len;
+	size_t	i;
 
-    if (!name || !envp)
-        return (NULL);
-    i = 0;
-    len = ft_strlen(name);
-    if (ft_strncmp(name, "?", len) == 0)
-    {
-        itoa = ft_itoa((int)g_signal_received);
-        if (!itoa)
-            ft_set_minibox_error(minibox, MINICODE_ERRNO);
-        return (itoa);
-    }
-    while (envp[i])
-    {
-        if (ft_strncmp(envp[i], name, len) == 0 && envp[i][len] == 61)
-            return (&envp[i][len + 1]);
-        i++;
-    }
-    return (NULL);
+	if (!name || !envp)
+		return (NULL);
+	i = 0;
+	len = ft_strlen(name);
+	if (ft_strncmp(name, "?", len) == 0)
+	{
+		itoa = ft_itoa((int)g_signal_received);
+		if (!itoa)
+			ft_set_minibox_error(minibox, MINICODE_ERRNO);
+		return (itoa);
+	}
+	while (envp[i])
+	{
+		if (ft_strncmp(envp[i], name, len) == 0 && envp[i][len] == 61)
+			return (&envp[i][len + 1]);
+		i++;
+	}
+	return (NULL);
 }
 
-static void    ft_set_env(t_minibox *minibox, const char *value, char **str,
-    size_t ij[2])
+static void	ft_set_env(t_minibox *mbx, const char *value, char **str,
+	size_t ij[2])
 {
-    char    *env_n;
-    char    *env_v;
-    char    *tmp_str;
+	char	*env_n;
+	char	*env_v;
+	char	*tmp_str;
 
-    if (value[ij[0]] && (ft_isalnum(value[ij[0]]) || \
-        value[ij[0]] == 95 || value[ij[0]] == 63))
-    {
-        ij[1] = ij[0];
-        while (value[ij[1]] && (ft_isalnum(value[ij[0]]) || \
-            value[ij[0]] == 95 || value[ij[0]] == 63))
-            ij[1]++;
-        env_n = ft_substr(value, ij[0], ij[1] - ij[0]);
-        if (!env_n)
-            return (ft_set_minibox_error(minibox, MINICODE_ERRNO), free(*str));
-        1 && (env_v = ft_get_env(minibox, env_n, minibox->input->envp)), free(env_n);
-        if (env_v)
-            1 && (tmp_str = ft_strjoin(*str, env_v)), ij[0] = ij[1];
-        else
-            1 && (tmp_str = ft_strdup(*str)), ij[0] = ij[1];
-    }
-    else
-        1 && (tmp_str = ft_strjoin(*str, "$")), ij[0] = ij[1] + 1;
-    if (!tmp_str)
-        return (ft_set_minibox_error(minibox, MINICODE_ERRNO), free(*str));
-    return (free(*str), (*str = tmp_str), (void)env_n);
+	if (value[ij[0]] && (ft_isalnum(value[ij[0]]) || \
+		value[ij[0]] == 95 || value[ij[0]] == 63))
+	{
+		ij[1] = ij[0];
+		while (value[ij[1]] && (ft_isalnum(value[ij[0]]) || \
+			value[ij[0]] == 95 || value[ij[0]] == 63))
+			ij[1]++;
+		env_n = ft_substr(value, ij[0], ij[1] - ij[0]);
+		if (!env_n)
+			return (ft_set_minibox_error(mbx, MINICODE_ERRNO), free(*str));
+		1 && (env_v = ft_get_env(mbx, env_n, mbx->input->envp)), free(env_n);
+		if (env_v)
+			1 && (tmp_str = ft_strjoin(*str, env_v)), ij[0] = ij[1];
+		else
+			1 && (tmp_str = ft_strdup(*str)), ij[0] = ij[1];
+	}
+	else
+		1 && (tmp_str = ft_strjoin(*str, "$")), ij[0] = ij[1] + 1;
+	if (!tmp_str)
+		return (ft_set_minibox_error(mbx, MINICODE_ERRNO), free(*str));
+	return (free(*str), (*str = tmp_str), (void)env_n);
 }
 
 static int	ft_expand_val(t_minibox *minibox, const char *value, char **str,
