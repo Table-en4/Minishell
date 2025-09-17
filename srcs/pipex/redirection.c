@@ -12,61 +12,10 @@
 
 #include "minishell.h"
 
-int	redirect_input(char *file)
-{
-	int	fd;
-
-	if (!file)
-		return (-1);
-		
-	fd = open(file, O_RDONLY);
-	if (fd == -1)
-	{
-		ft_dprintf(2, "minishell: %s: ", file);
-		perror("");
-		return (-1);
-	}
-	
-	if (dup2(fd, STDIN_FILENO) == -1)
-	{
-		perror("dup2");
-		close(fd);
-		return (-1);
-	}
-	close(fd);
-	return (0);
-}
-
-int	redirect_output(char *file, int flags)
-{
-	int	fd;
-
-	if (!file)
-		return (-1);
-		
-	fd = open(file, O_WRONLY | O_CREAT | flags, 0644);
-	if (fd == -1)
-	{
-		ft_dprintf(2, "minishell: %s: ", file);
-		perror("");
-		return (-1);
-	}
-	
-	if (dup2(fd, STDOUT_FILENO) == -1)
-	{
-		perror("dup2");
-		close(fd);
-		return (-1);
-	}
-	close(fd);
-	return (0);
-}
-
 int	redirect_heredoc(int fd)
 {
 	if (fd < 0)
 		return (-1);
-		
 	if (dup2(fd, STDIN_FILENO) == -1)
 	{
 		perror("dup2");
@@ -75,13 +24,12 @@ int	redirect_heredoc(int fd)
 	close(fd);
 	return (0);
 }
-
+/*
 int	apply_redirections(t_minifd *fds, int stdio_backup[3])
 {
 	t_minifd	*current;
 
-	//save des des stdio
-	if (stdio_backup[0] == -1)//gere le subshell
+	if (stdio_backup[0] == -1)
 	{
 		stdio_backup[0] = dup(STDIN_FILENO);
 		stdio_backup[1] = dup(STDOUT_FILENO);
@@ -113,7 +61,7 @@ int	apply_redirections(t_minifd *fds, int stdio_backup[3])
 		current = current->next;
 	}
 	return (0);
-}
+}*/
 
 void	restore_stdio(int stdio_backup[3])
 {
@@ -134,24 +82,24 @@ void	restore_stdio(int stdio_backup[3])
 	}
 }
 
-int exec_redirection(t_minibox *minibox, t_miniparsing *node, t_env *env)
+int	exec_redirection(t_minibox *minibox, t_miniparsing *node, t_env *env)
 {
-    int exit_code;
-    int stdio_backup[3] = {-1, -1, -1};
+	int	exit_code;
+	int	stdio_backup[3];
 
-    if (!node)
-        return (1);
-    
-    if (apply_redirections(node->fds, stdio_backup) < 0)
-        return (1);
-    //exec la commande ou sous-commande
-    if (node->left)
-        exit_code = execute_ast(minibox, node->left, env);
-    else if (node->right)
-        exit_code = execute_ast(minibox, node->right, env);
-    else
-        exit_code = 0;//redir sans cmd, ne rien faire
-    //restore les descripteurs
-    restore_stdio(stdio_backup);
-    return (exit_code);
+	stdio_backup[0] = -1;
+	stdio_backup[1] = -1;
+	stdio_backup[2] = -1;
+	if (!node)
+		return (1);
+	if (apply_redirections(node->fds, stdio_backup) < 0)
+		return (1);
+	if (node->left)
+		exit_code = execute_ast(minibox, node->left, env);
+	else if (node->right)
+		exit_code = execute_ast(minibox, node->right, env);
+	else
+		exit_code = 0;
+	restore_stdio(stdio_backup);
+	return (exit_code);
 }

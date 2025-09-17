@@ -1,61 +1,73 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exec_subshell.c                                    :+:      :+:    :+:   */
+/*   run_command.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: molapoug <molapoug@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/05 10:38:12 by molapoug          #+#    #+#             */
-/*   Updated: 2025/09/12 14:47:08 by molapoug         ###   ########.fr       */
+/*   Created: 2025/09/17 15:36:21 by molapoug          #+#    #+#             */
+/*   Updated: 2025/09/17 15:36:22 by molapoug         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int	handle_child_process(t_minibox *minibox, t_miniparsing *node,
-				t_env *env, int stdio_backup[3])
+static int	handle_child_process(char **argv, t_env *env)
 {
-	int	exit_code;
+	char	*cmd_path;
+	char	**envp;
 
 	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
-	if (node->fds && apply_redirections(node->fds, stdio_backup) < 0)
+	if (is_builtin(argv[0]) != -1)
+		exit(execute_builtin(argv, &env));
+	envp = conv_env_envp(env);
+	if (!envp)
 		exit(1);
-	exit_code = execute_ast(minibox, node->subshell, env);
-	exit(exit_code);
+	cmd_path = find_path(argv[0], env);
+	if (!cmd_path)
+	{
+		ft_dprintf(2, "%s: command not found\n", argv[0]);
+		free_envp(envp);
+		exit(127);
+	}
+	if (execve(cmd_path, argv, envp) == -1)
+	{
+		perror(argv[0]);
+		free(cmd_path);
+		free_envp(envp);
+		exit(126);
+	}
+	return (0);
 }
 
 static int	handle_parent_process(pid_t pid)
 {
 	int	status;
-	int	exit_code;
 	int	sig;
 
 	waitpid(pid, &status, 0);
 	if (WIFEXITED(status))
-		exit_code = WEXITSTATUS(status);
+		return (WEXITSTATUS(status));
 	else if (WIFSIGNALED(status))
 	{
 		sig = WTERMSIG(status);
 		if (sig == SIGINT)
 			ft_dprintf(1, "\n");
-		exit_code = 128 + sig;
+		return (128 + sig);
 	}
-	else
-		exit_code = 1;
-	return (exit_code);
+	return (1);
 }
 
-int	exec_subshell(t_minibox *minibox, t_miniparsing *node, t_env *env)
+int	run_command(char **argv, t_env *env)
 {
 	pid_t	pid;
-	int		stdio_backup[3];
 
-	if (!node || !node->subshell)
+	if (!argv || !argv[0])
 		return (1);
 	pid = fork();
 	if (pid == 0)
-		handle_child_process(minibox, node, env, stdio_backup);
+		handle_child_process(argv, env);
 	else if (pid > 0)
 		return (handle_parent_process(pid));
 	else

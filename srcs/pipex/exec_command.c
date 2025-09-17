@@ -42,7 +42,6 @@ int	execute_builtin_no_fork(char **argv, t_env **env)
 {
 	if (!argv || !argv[0])
 		return (1);
-
 	if (ft_strcmp(argv[0], "cd") == 0)
 		return (ft_cd(argv, env));
 	else if (ft_strcmp(argv[0], "export") == 0)
@@ -52,11 +51,9 @@ int	execute_builtin_no_fork(char **argv, t_env **env)
 	else if (ft_strcmp(argv[0], "exit") == 0)
 	{
 		ft_dprintf(1, "exit\n");
-		//ne pas libérer argv ici le parser le gere
 		free_env_list(*env);
 		exit(0);
 	}
-	//builtins qui peuvent etre fork
 	return (execute_builtin(argv, env));
 }
 
@@ -64,8 +61,6 @@ int	should_fork(char *cmd)
 {
 	if (!cmd)
 		return (1);
-
-	//builtins qui doivent modifier l'env parent
 	if (ft_strcmp(cmd, "cd") == 0)
 		return (0);
 	if (ft_strcmp(cmd, "export") == 0)
@@ -74,20 +69,19 @@ int	should_fork(char *cmd)
 		return (0);
 	if (ft_strcmp(cmd, "exit") == 0)
 		return (0);
-	//tutes les autres commandes meme builtins
 	return (1);
 }
-
+/*
 int	run_command(char **argv, t_env *env)
 {
 	pid_t	pid;
 	int		status;
 	char	*cmd_path;
 	char	**envp;
+	int		sig;
 
 	if (!argv || !argv[0])
 		return (1);
-
 	pid = fork();
 	if (pid == 0)
 	{
@@ -99,11 +93,9 @@ int	run_command(char **argv, t_env *env)
 		}
 		else
 		{
-            //gestion de commande externe
 			envp = conv_env_envp(env);
 			if (!envp)
 				exit(1);
-
 			cmd_path = find_path(argv[0], env);
 			if (!cmd_path)
 			{
@@ -120,16 +112,14 @@ int	run_command(char **argv, t_env *env)
 			}
 		}
 	}
-    //parent
 	else if (pid > 0)
 	{
 		waitpid(pid, &status, 0);
-
 		if (WIFEXITED(status))
 			return (WEXITSTATUS(status));
 		else if (WIFSIGNALED(status))
 		{
-			int sig = WTERMSIG(status);
+			sig = WTERMSIG(status);
 			if (sig == SIGINT)
 				ft_dprintf(1, "\n");
 			return (128 + sig);
@@ -137,4 +127,4 @@ int	run_command(char **argv, t_env *env)
 		return (1);
 	}
 	return (perror("fork"), 1);
-}
+}*/

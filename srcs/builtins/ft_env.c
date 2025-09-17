@@ -12,161 +12,84 @@
 
 #include "minishell.h"
 
-int env_value(t_env **env, char *arg)
+static void	print_env_list(t_env *env)
 {
-    t_blt   *blt;
+	t_env	*current;
 
-    blt = NULL;
-    blt->pos = ft_strchr(arg, '=');
-    if (!blt->pos)
-        return (0);
-    *(blt->pos) = '\0';
-    blt->key = arg;
-    blt->value = blt->pos + 1;
-    if (!valide_id(blt->key))
-    {
-        *(blt->pos) = '=';
-        return (ft_dprintf(2, "env: '%s': not valid", arg), 1);
-    }
-    blt->copy = ft_strdup(blt->copy);
-    *(blt->pos) = '=';
-    set_env_value(env, blt->copy, blt->value);
-    return (free(blt->copy), 0);
+	current = env;
+	while (current)
+	{
+		ft_dprintf(1, "%s=%s\n", current->key, current->value);
+		current = current->next;
+	}
 }
 
-int    unset_env(t_env **envp, char *key)
+static int	handle_options(char **args, t_env **env, int *i)
 {
-    t_env   *current;
-    t_env   *prev;
-
-    if (!envp || !*envp || !key)
-        return (1);
-    current = *envp;
-    prev = NULL;
-    while (current)
-    {
-        if (ft_strcmp(current->key, key) == 0)
-        {
-            if (prev)
-                prev->next = current->next;
-            else
-                *envp = current->next;
-            free_env_node(current);
-            return (1);
-        }
-        prev = current;
-        current = current->next;
-    }
-    return (0);
+	if (ft_strcmp(args[*i], "-i") == 0)
+	{
+		free_env_list(*env);
+		*env = NULL;
+	}
+	else if (ft_strcmp(args[*i], "-u") == 0)
+	{
+		(*i)++;
+		if (!args[*i])
+		{
+			ft_dprintf(2, "env: option requires argument -- u\n");
+			return (1);
+		}
+		unset_env(env, args[*i]);
+	}
+	else if (ft_strchr(args[*i], '='))
+	{
+		if (export_no_value(env, args[*i]) != 0)
+			return (1);
+	}
+	else
+		return (2);
+	return (0);
 }
 
-t_env   *duplic_env(t_env *ori)
+static int	process_args(char **args, t_env **env)
 {
-    t_env   *new;
-    t_env   *current;
+	int	i;
+	int	ret;
 
-    new = NULL;
-    current = ori;
-    while (current)
-    {
-        set_env_value(&new, current->key, current->value);
-        current = current->next;
-    }
-    return (new);
+	i = 1;
+	while (args[i])
+	{
+		ret = handle_options(args, env, &i);
+		if (ret == 1)
+			return (-1);
+		if (ret == 2)
+			break ;
+		i++;
+	}
+	return (i);
 }
 
-int env_exec(char **args, t_env *env)
+int	ft_env(char **args, t_env **envp)
 {
-    pid_t   pid;
-    int     status;
-    char    **envp;
+	t_env	*env;
+	int		cmd_index;
+	int		result;
 
-    envp = conv_env_envp(env);
-    if (!env)
-        return (1);
-    pid = fork();
-    if (pid == 0)
-    {
-        if (execve(args[0], args, envp) == -1)
-        {
-            perror(args[0]);
-            free_envp(envp);
-            exit(127);
-        }
-    }
-    else if (pid > 0)
-    {
-        waitpid(pid, &status, 0);
-        free_envp(envp);
-        return (WEXITSTATUS(status));
-    }
-    return (0);
-}
-
-int ft_env(char **args, t_env **envp)
-{
-    int     i;
-    t_env   *env;
-    t_env   *current;
-    char    **commad;
-    int     command_start;
-    int     result;
-
-    i = 1;
-    env = NULL;
-    commad = NULL;
-    command_start = -1;
-    if (!args[1])
-    {
-        current = *envp;
-        while (current)
-        {
-            ft_dprintf(1, "%s=%s\n", current->key, current->value);
-            current = current->next;
-        }
-        return (0);
-    }
-    env = duplic_env(*envp);
-    while (args[i])
-    {
-        if (ft_strcmp(args[i], "-i") == 0)
-        {
-            free_env_list(env);
-            env = NULL;
-        }
-        else if (ft_strcmp(args[i], "-u") == 0)
-        {
-            i++;
-            if (!args[i])
-            {
-                ft_dprintf(2, "env: option requires argument -- u\n");
-                return (free_env_list(env), 1);
-            }
-            unset_env(&env, args[i]);
-        }
-        else if (ft_strchr(args[i], '='))
-        {
-            if (export_no_value(&env, args[i]) != 0)
-                return (free_env_list(env), 1);
-        }
-        else
-        {
-            command_start = i;
-            break ;
-        }
-        i++;
-    }
-    if (command_start == -1)
-    {
-        current = env;
-        while (current)
-        {
-            ft_dprintf(1, "%s=%s\n", current->key, current->value);
-            current = current->next;
-        }
-        return (free_env_list(env), 0);
-    }
-    commad = &args[command_start];
-    result = env_exec(commad, env);
-    return (free_env_list(env), result);
+	if (!args[1])
+	{
+		print_env_list(*envp);
+		return (0);
+	}
+	env = duplic_env(*envp);
+	cmd_index = process_args(args, &env);
+	if (cmd_index == -1)
+		return (free_env_list(env), 1);
+	if (!args[cmd_index])
+	{
+		print_env_list(env);
+		return (free_env_list(env), 0);
+	}
+	result = env_exec(&args[cmd_index], env);
+	free_env_list(env);
+	return (result);
 }

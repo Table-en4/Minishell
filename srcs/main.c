@@ -12,218 +12,90 @@
 
 #include "minishell.h"
 
-void	handle_sigint(int sig)
+void	free_ast(t_miniparsing *node)
 {
-	(void)sig;
-	g_signal_received = SIGINT;
-	ft_putstr_fd("\n", STDOUT_FILENO);
-	rl_on_new_line();
-	rl_replace_line("", 0);
-	rl_redisplay();
+	if (!node)
+		return ;
+	free_ast(node->left);
+	free_ast(node->right);
+	free(node);
 }
 
-void	handle_sigquit(int sig)
+char	*get_prompt(void)
 {
-	(void)sig;
-	// Ignorer SIGQUIT dans le shell interactif
+	char	cwd[1024];
+	char	*pwd;
+	char	*prompt;
+
+	pwd = getcwd(cwd, sizeof(cwd));
+	if (!pwd)
+		pwd = ">";
+	prompt = ft_strjoin(pwd, "> ");
+	if (!prompt)
+		return (ft_strdup("> "));
+	return (prompt);
 }
 
-void	setup_signals(void)
+int	handle_minibox(char *line, char **envp, t_env *env_list)
 {
-	signal(SIGINT, handle_sigint);
-	signal(SIGQUIT, handle_sigquit);
+	t_minibox	*minibox;
+
+	minibox = ft_calloc(1, sizeof(t_minibox));
+	if (!minibox)
+		return (perror("minishell"), free(line), 1);
+	ft_build_minibox(minibox, line, envp);
+	if (minibox->error.code == MINICODE_NONE)
+		g_signal_received = execute_minibox(minibox, env_list);
+	else
+	{
+		if (minibox->error.code == MINICODE_ERRNO)
+			(perror("minishell"), signal_handler(1));
+		else
+		{
+			ft_dprintf(2, "minishell: %s\n", minibox->error.msg);
+			signal_handler(2);
+		}
+	}
+	ft_destroy_minibox(minibox);
+	free(minibox);
+	return (g_signal_received);
 }
 
-void	setup_child_signals(void)
+int	main_loop(char **envp, t_env *env_list)
 {
-	signal(SIGINT, SIG_DFL);
-	signal(SIGQUIT, SIG_DFL);
-}
+	char	*line;
+	char	*prompt;
 
-t_minilexing *create_token(char *value)
-{
-    t_minilexing    *token;
-    
-    token = malloc(sizeof(t_minilexing));
-    if (!token)
-        return NULL;
-    token->value = ft_strdup(value);
-    token->next = NULL;
-    return (token);
-}
-
-t_minibox *create_command_node(char **args)
-{
-    t_minibox *node = malloc(sizeof(t_minibox));
-    if (!node)
-        return (NULL);
-    
-    node->parsing = malloc(sizeof(t_miniparsing));
-    if (!node->parsing)
-        return (free(node), NULL);
-    
-    node->parsing->type = MINITYPE_CMD;
-    node->parsing->left = NULL;
-    node->parsing->right = NULL;
-    
-    t_minilexing *tokens = NULL;
-    t_minilexing *current = NULL;
-    int i = 0;
-    while (args[i])
-    {
-        t_minilexing *new_token = create_token(args[i]);
-        if (!new_token)
-        {
-            while (tokens)
-            {
-                t_minilexing *tmp = tokens;
-                tokens = tokens->next;
-                free(tmp->value);
-                free(tmp);
-            }
-            free(node->parsing);
-            free(node);
-            return NULL;
-        }
-        if (!tokens)
-            tokens = new_token;
-        else
-            current->next = new_token;
-        current = new_token;
-        i++;
-    }
-    node->lexing = tokens;
-    return (node);
-}
-
-void free_token_list(t_minilexing *tokens)
-{
-    while (tokens)
-    {
-        t_minilexing *tmp = tokens;
-        tokens = tokens->next;
-        free(tmp->value);
-        free(tmp);
-    }
-}
-
-void free_ast(t_miniparsing *node)
-{
-    if (!node)
-        return;
-    free_ast(node->left);
-    free_ast(node->right);
-    free(node);
-}
-
-int execute_simple_command(char *line, t_env *env_list)
-{
-    char **args;
-    char *trimmed;
-    int result;
-    int is_built_in;
-    
-    trimmed = ft_strtrim(line, " \t\n");
-    if (!trimmed || !*trimmed)
-    {
-        if (trimmed)
-            free(trimmed);
-        return (0);
-    }
-    args = ft_split(trimmed, ' ');
-    free(trimmed);
-    if (!args || !args[0])
-    {
-        if (args)
-            ft_free_split(args);
-        return (1);
-    }
-    is_built_in = is_builtin(args[0]);
-    if (is_built_in != -1)
-        result = execute_builtin(args, &env_list);
-    else
-        result = execute_external(args, env_list);
-    ft_free_split(args);
-    return (result);
+	g_signal_received = 0;
+	while (1)
+	{
+		prompt = get_prompt();
+		line = readline(prompt);
+		free(prompt);
+		if (!line)
+			return (ft_dprintf(1, "\e[46mexit\e[0m \n"), g_signal_received);
+		restore_exec_signals();
+		if (*line == '\0')
+		{
+			free(line);
+			continue ;
+		}
+		add_history(line);
+		g_signal_received = handle_minibox(line, envp, env_list);
+		free(line);
+	}
+	return (g_signal_received);
 }
 
 int	main(int ac, char **av, char **envp)
 {
-	char		*line;
-	t_env		*env_list;
-	t_minibox	*minibox;
-	int			exit_code;
-    char        *pwd;
-    char        *prompt;
-    char       cwd[1024];
+	t_env	*env_list;
 
 	(void)ac;
 	(void)av;
 	setup_signals();
 	env_list = init_env(envp);
-	while (1)
-	{
-        pwd = getcwd(cwd, sizeof(cwd));
-        if (!pwd)
-            pwd = ">";
-        prompt = ft_strjoin(pwd, "> ");
-        if (!prompt)
-            prompt = "> ";
-		line = readline(prompt);
-        free(prompt);		
-		/*if (g_signal_received == SIGINT)
-		{
-			if (line)
-			{
-				free(line);
-				continue;
-			}
-		}*/
-		//gestion de Ctrl+D (EOF)
-		if (!line)
-		{
-			ft_dprintf(1, "\e[46mexit\e[0m \n");
-			break;
-		}
-        restore_exec_signals();
-		if (*line == '\0')
-		{
-			free(line);
-			continue;
-		}
-		add_history(line);
-		//ft_memset(minibox, 0, sizeof(t_minibox));
-		//construction de la minibox
-        minibox = ft_calloc(1, sizeof(t_minibox));
-        if (!minibox)   
-        {
-            perror("minishell");
-            free(line);
-            break;
-        }
-        ft_build_minibox(minibox, line, envp);
-		if (minibox->error.code == MINICODE_NONE)
-            exit_code = execute_minibox(minibox, env_list);
-		else
-		{
-            if (minibox->error.code == MINICODE_ERRNO)
-            {
-                perror("minishell");
-                signal_handler(1);
-            }
-            else
-            {
-                ft_dprintf(2, "minishell: %s\n", minibox->error.msg);
-                signal_handler(2);
-                //printf("%d\n", g_signal_received);
-            }
-			//ft_dprintf(2, "Error building minibox\n");
-			exit_code = 1;
-		}
-		free(line);
-		ft_destroy_minibox(minibox);
-        free(minibox);  
-	}
+	g_signal_received = main_loop(envp, env_list);
 	free_env_list(env_list);
-	return (exit_code);
+	return (g_signal_received);
 }

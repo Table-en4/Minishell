@@ -11,9 +11,11 @@ SRCS = srcs/main.c srcs/builtins/ft_echo.c srcs/builtins/ft_cd.c \
 	srcs/exec_builtin.c srcs/builtins/ft_export.c srcs/builtins/ft_env.c srcs/builtins/env_to_tab.c \
 	srcs/builtins/ft_unset.c srcs/builtins/ft_pwd.c srcs/pipex/here_doc.c \
 	srcs/pipex/exec_and.c srcs/pipex/exec_command.c srcs/pipex/exec_pipe.c \
-	srcs/pipex/exec_subshell.c srcs/pipex/pipex_utils.c \
+	srcs/pipex/exec_subshell.c srcs/pipex/pipex_utils.c srcs/signals_setup.c \
 	srcs/pipex/read_ast.c srcs/pipex/exec_or.c srcs/pipex/redirection.c \
-	srcs/pipex/excute_minibox.c srcs/signal.c
+	srcs/pipex/excute_minibox.c srcs/signal.c srcs/tokenizeing.c \
+	srcs/pipex/redirection_utils.c srcs/builtins/utilis.c \
+	srcs/pipex/apply_redirections.c srcs/pipex/run_command.c srcs/exec_extern.c \
 
 INCS = incs Libft/incs
 

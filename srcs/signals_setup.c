@@ -1,24 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_pwd.c                                           :+:      :+:    :+:   */
+/*   signals_setup.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: molapoug <molapoug@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/05 10:37:01 by molapoug          #+#    #+#             */
-/*   Updated: 2025/09/05 10:37:03 by molapoug         ###   ########.fr       */
+/*   Created: 2025/09/17 12:14:47 by molapoug          #+#    #+#             */
+/*   Updated: 2025/09/17 12:14:50 by molapoug         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	ft_pwd(char **arg, t_env **envp)
+void	setup_child_signals(void)
 {
-	char	cwd[1024];
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
+}
 
-	(void)arg;
-	(void)envp;
-	if (getcwd(cwd, sizeof(cwd)))
-		return (ft_dprintf(1, "%s\n", cwd), 0);
-	return (perror("pwd"), 1);
+void	handle_sigquit(int sig)
+{
+	(void)sig;
+}
+
+void	setup_signals(void)
+{
+	signal(SIGINT, handle_sigint);
+	signal(SIGQUIT, handle_sigquit);
 }

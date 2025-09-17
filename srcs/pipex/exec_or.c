@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"  
+#include "minishell.h"
 
 int	exec_or(t_minibox *minibox, t_miniparsing *node, t_env *env)
 {

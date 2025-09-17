@@ -53,6 +53,5 @@ char	*find_path(char *cmd, t_env *env)
 		free(full);
 		i++;
 	}
-	ft_free_split(paths);
-	return (NULL);
+	return (ft_free_split(paths), NULL);
 }

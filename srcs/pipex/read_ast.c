@@ -45,8 +45,8 @@ int	execute_node(t_minibox *minibox, t_miniparsing *node, t_env *env)
 		return (exec_or(minibox, node, env));
 	else if (node->type == MINITYPE_SUBSHELL)
 		return (exec_subshell(minibox, node, env));
-	else if (node->type == MINITYPE_REDIN || node->type == MINITYPE_REDOUT ||
-		node->type == MINITYPE_REDAPP || node->type == MINITYPE_HEREDOC)
+	else if (node->type == MINITYPE_REDIN || node->type == MINITYPE_REDOUT
+		|| node->type == MINITYPE_REDAPP || node->type == MINITYPE_HEREDOC)
 		return (exec_redirection(minibox, node, env));
 	return (1);
 }

@@ -12,12 +12,12 @@
 
 #include "minishell.h"
 
-int exec_and(t_minibox *minibox, t_miniparsing *node, t_env *env)
+int	exec_and(t_minibox *minibox, t_miniparsing *node, t_env *env)
 {
-    int left_exit;
+	int	left_exit;
 
-    left_exit = execute_ast(minibox, node->left, env);
-    if (left_exit == 0)
-        return (execute_ast(minibox, node->right, env));
-    return (left_exit);
+	left_exit = execute_ast(minibox, node->left, env);
+	if (left_exit == 0)
+		return (execute_ast(minibox, node->right, env));
+	return (left_exit);
 }

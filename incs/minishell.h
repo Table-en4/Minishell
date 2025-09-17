@@ -85,9 +85,18 @@ int	exec_or(t_minibox *minibox, t_miniparsing *node, t_env *env);
 int exec_subshell(t_minibox *minibox, t_miniparsing *node, t_env *env);
 int exec_redirection(t_minibox *minibox, t_miniparsing *node, t_env *env);
 
+//tokenzing and parsing
+void            free_token_list(t_minilexing *tokens);
+t_minibox       *create_command_node(char **args);
+t_minilexing	*create_token(char *value);
+
 /*#-------------------#*/
 /*#---builtins utils--#*/
 /*#-------------------#*/
+int     env_value(t_env **env, char *arg);
+int     unset_env(t_env **envp, char *key);
+int     env_exec(char **args, t_env *env);
+t_env	*duplic_env(t_env *ori);
 char    *get_env(t_env *envp, char *key);
 char	**env_to_tab(t_env *envp);
 void    set_env_value(t_env **envp, char *key, char *value);
@@ -112,12 +121,20 @@ char    *find_path(char *cmd, t_env *env);
 void	ft_free_split(char **result);
 void	restore_stdio(int stdio_backup[3]);
 int     apply_redirections(t_minifd *fds, int stdio_backup[3]);
+int     redirect_output(char *file, int flags);
+int     redirect_input(char *file);
+int     redirect_heredoc(int fd);
+int     valide_id(char *name);
 
 //utils pour l'exec
 int	execute_minibox(t_minibox *minibox, t_env *env);
 int	execute_node(t_minibox *minibox, t_miniparsing *node, t_env *env);
 
+//signal functions
 void    restore_exec_signals(void);
 void    signal_handler(int sig);
+void	handle_sigint(int sig);
+void	handle_sigquit(int sig);
+void	setup_signals(void);
 
 #endif

@@ -24,7 +24,6 @@ static char    *ft_get_env(t_minibox *minibox, char *name, char **envp)
     len = ft_strlen(name);
     if (ft_strncmp(name, "?", len) == 0)
     {
-		ft_printf("g_signal_received = %d\n", g_signal_received);
         itoa = ft_itoa((int)g_signal_received);
         if (!itoa)
             ft_set_minibox_error(minibox, MINICODE_ERRNO);

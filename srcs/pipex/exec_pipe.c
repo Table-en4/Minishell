@@ -37,9 +37,6 @@ int	exec_pipe(t_minibox *minibox, t_miniparsing *node, t_env *env)
 		close(pipe_fd[0]);
 		exit(execute_ast(minibox, node->right, env));
 	}
-	close(pipe_fd[0]);
-	close(pipe_fd[1]);
-	waitpid(left_pid, &status, 0);
-	waitpid(right_pid, &status, 0);
-	return (WEXITSTATUS(status));
+	1 && (close(pipe_fd[0]), close(pipe_fd[1]), waitpid(left_pid, &status, 0));
+	return (waitpid(right_pid, &status, 0), WEXITSTATUS(status));
 }

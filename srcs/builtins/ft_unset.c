@@ -12,78 +12,89 @@
 
 #include "minishell.h"
 
-int is_valide_unset(char *name)
+static int	is_valide_unset(char *name)
 {
-    int i;
+	int	i;
 
-    if (!name || !name[0])
-        return (0);
-    i = 0;
-    while (name[i])
-    {
-        if (name[i] == '=' || name[i] == '-')
-            return (0);
-        i++;
-    }
-    return (valide_id(name));
+	if (!name || !name[0])
+		return (0);
+	i = 0;
+	while (name[i])
+	{
+		if (name[i] == '=' || name[i] == '-')
+			return (0);
+		i++;
+	}
+	return (valide_id(name));
 }
 
-int ft_unset(char **args, t_env **envp)
+static int	handle_option(char **args, int *i, t_env **envp, int *error_count)
 {
-    int i;
-    int error_count;
+	if (ft_strcmp(args[*i], "-v") == 0)
+	{
+		(*i)++;
+		if (!args[*i])
+		{
+			ft_dprintf(2, "unset: -v option requires an argument\n");
+			return ((*error_count)++, 0);
+		}
+		unset_env(envp, args[*i]);
+		(*i)++;
+	}
+	else if (ft_strcmp(args[*i], "-f") == 0)
+	{
+		ft_dprintf(2, "unset: -f option not supported\n");
+		(*error_count)++;
+		(*i)++;
+	}
+	else if (ft_strcmp(args[*i], "--") == 0)
+		(*i)++;
+	else
+	{
+		ft_dprintf(2, "unset: '%s' invalid option\n", args[*i]);
+		return (ft_dprintf(2, "unset: usage: unset [-v] [name]\n"), 1);
+	}
+	return (0);
+}
 
-    if (!args[1])
-        return (0);
-    error_count = 0;
-    i = 1;
-    while (args[i])
-    {
-        if (args[i][0] == '-' && args[i][1] != '\0')
-        {
-            if (ft_strcmp(args[i], "-v") == 0)
-            {
-                i++;
-                unset_env(envp, args[i]);
-                i++;
-                continue;
-            }
-            else if (ft_strcmp(args[i], "-f") == 0)
-            {
-                ft_dprintf(2, "unset: -f option not supported\n");
-                error_count++;
-                i++;
-                continue;
-            }
-            else if (ft_strcmp(args[i], "--") == 0)
-            {
-                i++;
-                continue;
-            }
-            else
-            {
-                ft_dprintf(2, "unset: '%s' invalid option\n", args[i]);
-                ft_dprintf(2, "unset: usage: unset [-v] [name]\n");
-                return (2);
-            }
-        }
-        else
-        {
-            if (!is_valide_unset(args[i]))
-            {
-                ft_dprintf(2, "unset: '%s' invalid id\n", args[i]);
-                error_count++;
-                i++;
-                continue;
-            }
-            if (ft_strcmp(args[i], "PWD") == 0 ||
-                ft_strcmp(args[i], "OLDPWD") == 0 ||
-                ft_strcmp(args[i], "PATH") == 0)
-                ft_dprintf(2, "unset: warning: unsetting '%s'\n", args[i]);
-        }
-        i++;
-    }
-    if (error_count > 0)
-        return (1);
-    return (0);
+static int	process_argument(char *arg, t_env **envp, int *error_count)
+{
+	if (!is_valide_unset(arg))
+	{
+		ft_dprintf(2, "unset: '%s' invalid id\n", arg);
+		(*error_count)++;
+		return (0);
+	}
+	if (ft_strcmp(arg, "PWD") == 0 || ft_strcmp(arg, "OLDPWD") == 0
+		|| ft_strcmp(arg, "PATH") == 0)
+		ft_dprintf(2, "unset: warning: unsetting '%s'\n", arg);
+	unset_env(envp, arg);
+	return (0);
+}
+
+int	ft_unset(char **args, t_env **envp)
+{
+	int	i;
+	int	error_count;
+	int	ret;
+
+	if (!args[1])
+		return (0);
+	error_count = 0;
+	i = 1;
+	while (args[i])
+	{
+		if (args[i][0] == '-' && args[i][1] != '\0')
+		{
+			ret = handle_option(args, &i, envp, &error_count);
+			if (ret != 0)
+				return (ret);
+		}
+		else
+		{
+			process_argument(args[i], envp, &error_count);
+			i++;
+		}
+	}
+	return (error_count > 0);
 }
