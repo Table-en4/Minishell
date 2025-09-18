@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minibox.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: molapoug <molapoug@student.42.fr>          +#+  +:+       +#+        */
+/*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/24 20:15:46 by raamayri          #+#    #+#             */
-/*   Updated: 2025/09/17 21:57:45 by molapoug         ###   ########.fr       */
+/*   Updated: 2025/09/18 15:49:19 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,9 @@
 # include <sys/types.h>
 # include <sys/wait.h>
 
-extern int	g_signal_received;
 # define MINIMSG_SIZE 256
+
+extern sig_atomic_t	g_signal_received;
 
 typedef struct s_miniinput
 {
@@ -107,6 +108,7 @@ typedef enum e_minicode
 {
 	MINICODE_NONE,
 	MINICODE_ERRNO,
+	MINICODE_SIGINT,
 	MINICODE_INPUT_NULL,
 	MINICODE_INPUT_BLANK,
 	MINICODE_UNCLOSED_QUOTES,
@@ -138,7 +140,8 @@ typedef struct s_minibox
 int		ft_build_minibox(t_minibox *minibox, const char *cmd, char **envp);
 void	ft_display_minibox(const t_minibox *minibox);
 void	ft_destroy_minibox(t_minibox *minibox);
+
 void	restore_exec_signals(void);
-void    restor_exec_signals_herdoc(void);
+void	restore_exec_signals_heredoc(void);
 
 #endif

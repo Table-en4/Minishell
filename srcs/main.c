@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: molapoug <molapoug@student.42.fr>          +#+  +:+       +#+        */
+/*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 11:44:12 by molapoug          #+#    #+#             */
-/*   Updated: 2025/09/17 21:47:15 by molapoug         ###   ########.fr       */
+/*   Updated: 2025/09/18 16:47:04 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,49 +39,54 @@ char	*get_prompt(void)
 int	handle_minibox(char *line, char **envp, t_env *env_list)
 {
 	t_minibox	*minibox;
+	int			exit_code;
 
+	exit_code = 0;
 	minibox = ft_calloc(1, sizeof(t_minibox));
 	if (!minibox)
 		return (perror("minishell"), free(line), 1);
 	ft_build_minibox(minibox, line, envp);
 	if (minibox->error.code == MINICODE_NONE)
-		g_signal_received = execute_minibox(minibox, env_list);
-	else
+		exit_code = execute_minibox(minibox, env_list);
+	else if (minibox->error.code != MINICODE_INPUT_NULL && \
+		minibox->error.code != MINICODE_INPUT_BLANK)
 	{
+		exit_code = 1;
 		if (minibox->error.code == MINICODE_ERRNO)
-			(perror("minishell"), signal_handler(1));
-		else
-		{
+			perror("minishell");
+		else if (minibox->error.code != MINICODE_SIGINT)
 			ft_dprintf(2, "minishell: %s\n", minibox->error.msg);
-			signal_handler(1);
-		}
+		else
+			exit_code = 130;
 	}
-	ft_destroy_minibox(minibox);
-	free(minibox);
-	return (g_signal_received);
+	return (ft_destroy_minibox(minibox), free(minibox), exit_code);
 }
 
 int	main_loop(char **envp, t_env *env_list)
 {
-	char	*line;
-	char	*prompt;
+	char		*line;
+	char		*prompt;
+	static int	exit_code = 0;
 
+	signal_handler(exit_code);
 	while (1)
 	{
-		prompt = get_prompt();
-		line = readline(prompt);
-		free(prompt);
-		if (!line)
-			return (ft_dprintf(1, "\e[46mexit\e[0m \n"), g_signal_received);
 		restore_exec_signals();
+		1 && (prompt = get_prompt()), (line = readline(prompt)), free(prompt);
+		if (!line)
+		{
+			if (g_signal_received == 130)
+				continue ;
+			return (ft_dprintf(1, "exit\n"), g_signal_received);
+		}
 		if (*line == '\0')
 		{
-			free(line);
+			(signal_handler(exit_code), free(line));
 			continue ;
 		}
 		add_history(line);
-		g_signal_received = handle_minibox(line, envp, env_list);
-		free(line);
+		exit_code = handle_minibox(line, envp, env_list);
+		(signal_handler(exit_code), free(line));
 	}
 	return (g_signal_received);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_extern.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: molapoug <molapoug@student.42.fr>          +#+  +:+       +#+        */
+/*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 15:40:54 by molapoug          #+#    #+#             */
-/*   Updated: 2025/09/17 15:40:55 by molapoug         ###   ########.fr       */
+/*   Updated: 2025/09/18 15:16:23 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ static int	handle_child_process(char *cmd_path, char **args, char **envp)
 		perror(args[0]);
 		free(cmd_path);
 		free_envp(envp);
-		exit(127);
+		exit(1);
 	}
 	return (0);
 }
@@ -50,7 +50,7 @@ int	execute_external(char **args, t_env *env_list)
 	{
 		ft_dprintf(2, "%s: command not found\n", args[0]);
 		free_envp(envp);
-		return (127);
+		return (1);
 	}
 	pid = fork();
 	if (pid == 0)

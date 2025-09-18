@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utilis.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: molapoug <molapoug@student.42.fr>          +#+  +:+       +#+        */
+/*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 15:11:43 by molapoug          #+#    #+#             */
-/*   Updated: 2025/09/17 15:11:49 by molapoug         ###   ########.fr       */
+/*   Updated: 2025/09/18 15:15:21 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,7 @@ int	env_exec(char **args, t_env *env)
 		{
 			perror(args[0]);
 			free_envp(envp);
-			exit(127);
+			exit(1);
 		}
 	}
 	else if (pid > 0)

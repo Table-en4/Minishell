@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   build_parsing_redirection.c                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: molapoug <molapoug@student.42.fr>          +#+  +:+       +#+        */
+/*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/12 20:09:59 by raamayri          #+#    #+#             */
-/*   Updated: 2025/09/17 19:24:54 by molapoug         ###   ########.fr       */
+/*   Updated: 2025/09/18 14:48:44 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@ static int	ft_open_red(t_minibox *minibox, t_minifd *node)
 		fd = open(node->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
 	else if (node->type == MINITYPE_HEREDOC)
 		fd = ft_open_heredoc(minibox, node);
-	if (fd == -1)
-		ft_set_minibox_error(minibox, MINICODE_UNDEFINED);
+	else if (fd == -1)
+		ft_set_minibox_error(minibox, MINICODE_ERRNO);
 	return (fd);
 }
 

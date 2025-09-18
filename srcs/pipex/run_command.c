@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   run_command.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: molapoug <molapoug@student.42.fr>          +#+  +:+       +#+        */
+/*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 15:36:21 by molapoug          #+#    #+#             */
-/*   Updated: 2025/09/17 15:36:22 by molapoug         ###   ########.fr       */
+/*   Updated: 2025/09/18 15:15:40 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,14 +29,14 @@ static int	handle_child_process(char **argv, t_env *env)
 	{
 		ft_dprintf(2, "%s: command not found\n", argv[0]);
 		free_envp(envp);
-		exit(127);
+		exit(1);
 	}
 	if (execve(cmd_path, argv, envp) == -1)
 	{
 		perror(argv[0]);
 		free(cmd_path);
 		free_envp(envp);
-		exit(126);
+		exit(1);
 	}
 	return (0);
 }

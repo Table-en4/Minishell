@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signal.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: molapoug <molapoug@student.42.fr>          +#+  +:+       +#+        */
+/*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 11:44:41 by molapoug          #+#    #+#             */
-/*   Updated: 2025/09/17 21:45:47 by molapoug         ###   ########.fr       */
+/*   Updated: 2025/09/18 16:45:53 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,14 +19,6 @@ void	signal_handler(int sig)
 	g_signal_received = sig;
 }
 
-void	handle_signal(int sig)
-{
-	if (sig == SIGINT)
-	{
-		ft_dprintf(1, "\n");
-	}
-}
-
 void	execution_singals(void)
 {
 	signal(SIGINT, SIG_DFL);
@@ -34,19 +26,20 @@ void	execution_singals(void)
 	signal(SIGTSTP, SIG_DFL);
 }
 
-void	restore_exec_signals(void)
-{
-	signal(SIGINT, handle_signal);
-	signal(SIGQUIT, SIG_IGN);
-	signal(SIGTSTP, SIG_IGN);
-}
-
 void	handle_sigint(int sig)
 {
 	(void)sig;
-	g_signal_received = SIGINT;
+	signal_handler(SIGINT + 128);
 	ft_putstr_fd("\n", STDOUT_FILENO);
 	rl_on_new_line();
 	rl_replace_line("", 0);
 	rl_redisplay();
+}
+
+void	restore_exec_signals(void)
+{
+	rl_event_hook = 0;
+	signal(SIGINT, handle_sigint);
+	signal(SIGQUIT, SIG_IGN);
+	signal(SIGTSTP, SIG_IGN);
 }

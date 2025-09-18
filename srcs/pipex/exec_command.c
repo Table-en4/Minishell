@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_command.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: molapoug <molapoug@student.42.fr>          +#+  +:+       +#+        */
+/*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 10:37:46 by molapoug          #+#    #+#             */
-/*   Updated: 2025/09/17 19:51:42 by molapoug         ###   ########.fr       */
+/*   Updated: 2025/09/18 15:14:27 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ int	execute_builtin_no_fork(char **argv, t_env **env)
 	{
 		ft_dprintf(1, "exit\n");
 		free_env_list(*env);
-		exit(0);
+		exit(g_signal_received);
 	}
 	return (execute_builtin(argv, env));
 }
@@ -71,60 +71,3 @@ int	should_fork(char *cmd)
 		return (0);
 	return (1);
 }
-/*
-int	run_command(char **argv, t_env *env)
-{
-	pid_t	pid;
-	int		status;
-	char	*cmd_path;
-	char	**envp;
-	int		sig;
-
-	if (!argv || !argv[0])
-		return (1);
-	pid = fork();
-	if (pid == 0)
-	{
-		signal(SIGINT, SIG_DFL);
-		signal(SIGQUIT, SIG_DFL);
-		if (is_builtin(argv[0]) != -1)
-		{
-			exit(execute_builtin(argv, &env));
-		}
-		else
-		{
-			envp = conv_env_envp(env);
-			if (!envp)
-				exit(1);
-			cmd_path = find_path(argv[0], env);
-			if (!cmd_path)
-			{
-				ft_dprintf(2, "%s: command not found\n", argv[0]);
-				free_envp(envp);
-				exit(127);
-			}
-			if (execve(cmd_path, argv, envp) == -1)
-			{
-				perror(argv[0]);
-				free(cmd_path);
-				free_envp(envp);
-				exit(126);
-			}
-		}
-	}
-	else if (pid > 0)
-	{
-		waitpid(pid, &status, 0);
-		if (WIFEXITED(status))
-			return (WEXITSTATUS(status));
-		else if (WIFSIGNALED(status))
-		{
-			sig = WTERMSIG(status);
-			if (sig == SIGINT)
-				ft_dprintf(1, "\n");
-			return (128 + sig);
-		}
-		return (1);
-	}
-	return (perror("fork"), 1);
-}*/

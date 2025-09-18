@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/29 22:27:25 by raamayri          #+#    #+#             */
-/*   Updated: 2025/09/13 18:46:05 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/09/17 22:36:15 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,7 @@ const char	**ft_get_error_names(void)
 	[MINICODE_REDIRECTION_LOST] = "MINICODE_REDIRECTION_LOST",
 	[MINICODE_PARENT_OVERLOAD] = "MINICODE_PARENT_OVERLOAD",
 	[MINICODE_SUBSHELL_EMPTY] = "MINICODE_SUBSHELL_EMPTY",
+	[MINICODE_SIGINT] = "MINICODE_SIGINT",
 	[MINICODE_UNDEFINED] = "MINICODE_UNDEFINED",
 	};
 
@@ -105,6 +106,7 @@ const char	**ft_get_error_msgs(void)
 	[MINICODE_REDIRECTION_LOST] = "Redirection lost.",
 	[MINICODE_PARENT_OVERLOAD] = "Parent overload.",
 	[MINICODE_SUBSHELL_EMPTY] = "Subshell empty.",
+	[MINICODE_SIGINT] = "Signal received.",
 	[MINICODE_UNDEFINED] = "Unknown or undefined error.",
 	};
 

@@ -6,28 +6,29 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 18:56:47 by raamayri          #+#    #+#             */
-/*   Updated: 2025/09/17 18:20:24 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/09/18 16:43:36 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../incs/minibox_internal.h"
 
-static char	*ft_get_env(t_minibox *minibox, char *name, char **envp)
+static char	*ft_get_env(char *name, char **envp)
 {
-	char	*itoa;
-	size_t	len;
-	size_t	i;
+	static char	buf[32];
+	size_t		len;
+	size_t		i;
 
 	if (!name || !envp)
 		return (NULL);
 	i = 0;
+	while (i < 32)
+		buf[i++] = '\0';
+	i = 0;
 	len = ft_strlen(name);
 	if (ft_strncmp(name, "?", len) == 0)
 	{
-		itoa = ft_itoa((int)g_signal_received);
-		if (!itoa)
-			ft_set_minibox_error(minibox, MINICODE_ERRNO);
-		return (itoa);
+		ft_sprintf(buf, "%d", (int)g_signal_received);
+		return (buf);
 	}
 	while (envp[i])
 	{
@@ -55,7 +56,7 @@ static void	ft_set_env(t_minibox *mbx, const char *value, char **str,
 		env_n = ft_substr(value, ij[0], ij[1] - ij[0]);
 		if (!env_n)
 			return (ft_set_minibox_error(mbx, MINICODE_ERRNO), free(*str));
-		1 && (env_v = ft_get_env(mbx, env_n, mbx->input->envp)), free(env_n);
+		1 && (env_v = ft_get_env(env_n, mbx->input->envp)), free(env_n);
 		if (env_v)
 			1 && (tmp_str = ft_strjoin(*str, env_v)), ij[0] = ij[1];
 		else

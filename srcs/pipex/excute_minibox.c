@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   excute_minibox.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: molapoug <molapoug@student.42.fr>          +#+  +:+       +#+        */
+/*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 12:21:04 by molapoug          #+#    #+#             */
-/*   Updated: 2025/09/17 12:21:08 by molapoug         ###   ########.fr       */
+/*   Updated: 2025/09/18 15:07:35 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,11 @@
 
 int	execute_minibox(t_minibox *minibox, t_env *env)
 {
-	int	exit_code;
-
 	if (!minibox)
 		return (1);
 	if (minibox->error.code != MINICODE_NONE)
-		return (ft_display_minibox_error(minibox->error), 1);
+		return (ft_dprintf(STDERR_FILENO, "%s\n", minibox->error.msg), 1);
 	if (!minibox->parsing)
-	{
 		return (1);
-	}
-	return (exit_code = execute_ast(minibox, minibox->parsing, env), exit_code);
+	return (execute_ast(minibox, minibox->parsing, env));
 }
