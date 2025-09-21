@@ -1,4 +1,4 @@
-CC_FLAGS = -Wall -Wextra -Werror -g
+CC_FLAGS =  -g
 MK_FLAGS = --silent
 MAKEFLAGS += $(MK_FLAGS)
 

@@ -12,30 +12,50 @@
 
 #include "minishell.h"
 
+static int	exec_with_redirections(char **argv, t_env **env, t_minifd *fds)
+{
+	int	stdio_backup[3];
+	int	exit_code;
+
+	stdio_backup[0] = dup(STDIN_FILENO);
+	stdio_backup[1] = dup(STDOUT_FILENO);
+	stdio_backup[2] = dup(STDERR_FILENO);
+	if (stdio_backup[0] == -1 || stdio_backup[1] == -1 || stdio_backup[2] == -1)
+	{
+		if (stdio_backup[0] != -1)
+			close(stdio_backup[0]);
+		if (stdio_backup[1] != -1)
+			close(stdio_backup[1]);
+		if (stdio_backup[2] != -1)
+			close(stdio_backup[2]);
+		return (perror("dup"), 1);
+	}
+	if (apply_redirections(fds, stdio_backup) < 0)
+		return (restore_stdio(stdio_backup), 1);
+	if (!should_fork(argv[0]))
+		exit_code = execute_builtin_no_fork(argv, env);
+	else
+		exit_code = run_command(argv, *env);
+	restore_stdio(stdio_backup);
+	return (exit_code);
+}
+
 int	exec_command(t_minibox *minibox, t_miniparsing *node, t_env *env)
 {
-	int		exit_code;
-	int		stdio_backup[3];
 	char	**argv;
 
 	(void)minibox;
 	if (!node || !node->argv || !node->argv[0])
 		return (1);
 	argv = node->argv;
-	stdio_backup[0] = dup(STDIN_FILENO);
-	stdio_backup[1] = dup(STDOUT_FILENO);
-	stdio_backup[2] = dup(STDERR_FILENO);
-	if (apply_redirections(node->fds, stdio_backup) < 0)
+	if (!node->fds)
 	{
-		restore_stdio(stdio_backup);
-		return (1);
+		if (!should_fork(argv[0]))
+			return (execute_builtin_no_fork(argv, &env));
+		else
+			return (run_command(argv, env));
 	}
-	if (!should_fork(argv[0]))
-		exit_code = execute_builtin_no_fork(argv, &env);
-	else
-		exit_code = run_command(argv, env);
-	restore_stdio(stdio_backup);
-	return (exit_code);
+	return (exec_with_redirections(argv, &env, node->fds));
 }
 
 int	execute_builtin_no_fork(char **argv, t_env **env)

@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 11:44:12 by molapoug          #+#    #+#             */
-/*   Updated: 2025/09/18 16:47:04 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/09/21 13:41:05 by molapoug         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ int	handle_minibox(char *line, char **envp, t_env *env_list)
 	if (minibox->error.code == MINICODE_NONE)
 		exit_code = execute_minibox(minibox, env_list);
 	else if (minibox->error.code != MINICODE_INPUT_NULL && \
-		minibox->error.code != MINICODE_INPUT_BLANK)
+			minibox->error.code != MINICODE_INPUT_BLANK)
 	{
 		exit_code = 1;
 		if (minibox->error.code == MINICODE_ERRNO)
