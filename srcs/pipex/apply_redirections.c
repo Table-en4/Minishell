@@ -14,17 +14,23 @@
 
 static int	backup_stdio(int stdio_backup[3])
 {
-	if (stdio_backup[0] == -1)
+	if (stdio_backup[0] != -1)
+		return (0);
+	stdio_backup[0] = dup(STDIN_FILENO);
+	if (stdio_backup[0])
+		return (-1);
+	stdio_backup[1] = dup(STDOUT_FILENO);
+	if (stdio_backup[1])
 	{
-		stdio_backup[0] = dup(STDIN_FILENO);
-		if (stdio_backup[0] == -1)
-			return (-1);
-		stdio_backup[1] = dup(STDOUT_FILENO);
-		if (stdio_backup[1] == -1)
-			return (-1);
-		stdio_backup[2] = dup(STDERR_FILENO);
-		if (stdio_backup[2] == -1)
-			return (-1);
+		close(stdio_backup[0]);
+		return (-1);
+	}
+	stdio_backup[2] = dup(STDERR_FILENO);
+	if (stdio_backup[2])
+	{
+		close(stdio_backup[0]);
+		close(stdio_backup[1]);
+		return (-1);
 	}
 	return (0);
 }

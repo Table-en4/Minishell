@@ -12,26 +12,24 @@
 
 #include "minishell.h"
 
+static void	init_stdio_backup_exec(int stdio_backup[3])
+{
+	stdio_backup[0] = -1;
+	stdio_backup[1] = -1;
+	stdio_backup[2] = -1;
+}
+
 static int	exec_with_redirections(char **argv, t_env **env, t_minifd *fds)
 {
 	int	stdio_backup[3];
 	int	exit_code;
 
-	stdio_backup[0] = dup(STDIN_FILENO);
-	stdio_backup[1] = dup(STDOUT_FILENO);
-	stdio_backup[2] = dup(STDERR_FILENO);
-	if (stdio_backup[0] == -1 || stdio_backup[1] == -1 || stdio_backup[2] == -1)
-	{
-		if (stdio_backup[0] != -1)
-			close(stdio_backup[0]);
-		if (stdio_backup[1] != -1)
-			close(stdio_backup[1]);
-		if (stdio_backup[2] != -1)
-			close(stdio_backup[2]);
-		return (perror("dup"), 1);
-	}
+	init_stdio_backup_exec(stdio_backup);
 	if (apply_redirections(fds, stdio_backup) < 0)
-		return (restore_stdio(stdio_backup), 1);
+	{
+		restore_stdio(stdio_backup);
+		return (1);
+	}
 	if (!should_fork(argv[0]))
 		exit_code = execute_builtin_no_fork(argv, env);
 	else
@@ -40,22 +38,15 @@ static int	exec_with_redirections(char **argv, t_env **env, t_minifd *fds)
 	return (exit_code);
 }
 
-int	exec_command(t_minibox *minibox, t_miniparsing *node, t_env *env)
+static int	handle_no_fork_builtin_exit(char **argv, t_env **env)
 {
-	char	**argv;
-
-	(void)minibox;
-	if (!node || !node->argv || !node->argv[0])
-		return (1);
-	argv = node->argv;
-	if (!node->fds)
+	if (ft_strcmp(argv[0], "exit") == 0)
 	{
-		if (!should_fork(argv[0]))
-			return (execute_builtin_no_fork(argv, &env));
-		else
-			return (run_command(argv, env));
+		ft_dprintf(1, "exit\n");
+		free_env_list(*env);
+		exit(g_signal_received);
 	}
-	return (exec_with_redirections(argv, &env, node->fds));
+	return (1);
 }
 
 int	execute_builtin_no_fork(char **argv, t_env **env)
@@ -64,16 +55,12 @@ int	execute_builtin_no_fork(char **argv, t_env **env)
 		return (1);
 	if (ft_strcmp(argv[0], "cd") == 0)
 		return (ft_cd(argv, env));
-	else if (ft_strcmp(argv[0], "export") == 0)
+	if (ft_strcmp(argv[0], "export") == 0)
 		return (ft_export(argv, env));
-	else if (ft_strcmp(argv[0], "unset") == 0)
+	if (ft_strcmp(argv[0], "unset") == 0)
 		return (ft_unset(argv, env));
-	else if (ft_strcmp(argv[0], "exit") == 0)
-	{
-		ft_dprintf(1, "exit\n");
-		free_env_list(*env);
-		exit(g_signal_received);
-	}
+	if (ft_strcmp(argv[0], "exit") == 0)
+		return (handle_no_fork_builtin_exit(argv, env));
 	return (execute_builtin(argv, env));
 }
 
@@ -90,4 +77,21 @@ int	should_fork(char *cmd)
 	if (ft_strcmp(cmd, "exit") == 0)
 		return (0);
 	return (1);
+}
+
+int	exec_command(t_minibox *minibox, t_miniparsing *node, t_env *env)
+{
+	char	**argv;
+
+	(void)minibox;
+	if (!node || !node->argv || !node->argv[0])
+		return (1);
+	argv = node->argv;
+	if (!node->fds)
+	{
+		if (!should_fork(argv[0]))
+			return (execute_builtin_no_fork(argv, &env));
+		return (run_command(argv, env));
+	}
+	return (exec_with_redirections(argv, &env, node->fds));
 }
