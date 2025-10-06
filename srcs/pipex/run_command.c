@@ -71,9 +71,6 @@ int	run_command(char **argv, t_env *env)
 	else if (pid > 0)
 		return (handle_parent_process(pid));
 	else
-	{
-		perror("fork");
-		return (1);
-	}
+		return (perror("fork"), 1);
 	return (0);
 }

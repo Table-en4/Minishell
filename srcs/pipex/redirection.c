@@ -17,12 +17,8 @@ int	redirect_heredoc(int fd)
 	if (fd < 0)
 		return (-1);
 	if (dup2(fd, STDIN_FILENO) == -1)
-	{
-		perror("dup2");
-		return (-1);
-	}
-	close(fd);
-	return (0);
+		return (perror("dup2"), -1);
+	return (close(fd), 0);
 }
 
 void	restore_stdio(int stdio_backup[3])
@@ -63,16 +59,12 @@ int	exec_redirection(t_minibox *minibox, t_miniparsing *node, t_env *env)
 	if (!node)
 		return (1);
 	if (apply_redirections(node->fds, stdio_backup) < 0)
-	{
-		restore_stdio(stdio_backup);
-		return (1);
-	}
+		return (restore_stdio(stdio_backup), 1);
 	if (node->left)
 		exit_code = execute_ast(minibox, node->left, env);
 	else if (node->right)
 		exit_code = execute_ast(minibox, node->right, env);
 	else
 		exit_code = 0;
-	restore_stdio(stdio_backup);
-	return (exit_code);
+	return (restore_stdio(stdio_backup), exit_code);
 }

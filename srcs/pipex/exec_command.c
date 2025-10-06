@@ -19,16 +19,12 @@ static int	exec_with_redirections(char **argv, t_env **env, t_minifd *fds)
 
 	init_stdio_backup_exec(stdio_backup);
 	if (apply_redirections(fds, stdio_backup) < 0)
-	{
-		restore_stdio(stdio_backup);
-		return (1);
-	}
+		return (restore_stdio(stdio_backup), 1);
 	if (!should_fork(argv[0]))
 		exit_code = execute_builtin_no_fork(argv, env);
 	else
 		exit_code = run_command(argv, *env);
-	restore_stdio(stdio_backup);
-	return (exit_code);
+	return (restore_stdio(stdio_backup), exit_code);
 }
 
 static int	handle_no_fork_builtin_exit(char **argv, t_env **env)

@@ -32,10 +32,7 @@ int	redirect_input(char *file)
 		return (perror(""), -1);
 	}
 	if (dup2(fd, STDIN_FILENO) == -1)
-	{
-		perror("dup2");
-		return (close(fd), -1);
-	}
+		return (perror("dup2"), close(fd), -1);
 	return (close(fd), 0);
 }
 
@@ -52,11 +49,6 @@ int	redirect_output(char *file, int flags)
 		return (perror(""), -1);
 	}
 	if (dup2(fd, STDOUT_FILENO) == -1)
-	{
-		perror("dup2");
-		close(fd);
-		return (-1);
-	}
-	close(fd);
-	return (0);
+		return (perror("dup2"),close(fd), -1);
+	return (close(fd), 0);
 }

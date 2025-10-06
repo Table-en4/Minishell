@@ -46,10 +46,7 @@ char	*find_path(char *cmd, t_env *env)
 		full = ft_strjoin(tmp, cmd);
 		free(tmp);
 		if (access(full, X_OK) == 0)
-		{
-			ft_free_split(paths);
-			return (full);
-		}
+			return (ft_free_split(paths), full);
 		free(full);
 		i++;
 	}
