@@ -12,6 +12,13 @@
 
 #include "minishell.h"
 
+void	init_stdio_backup_exec(int stdio_backup[3])
+{
+	stdio_backup[0] = -1;
+	stdio_backup[1] = -1;
+	stdio_backup[2] = -1;
+}
+
 int	redirect_input(char *file)
 {
 	int	fd;
@@ -22,17 +29,14 @@ int	redirect_input(char *file)
 	if (fd == -1)
 	{
 		ft_dprintf(2, "minishell: %s: ", file);
-		perror("");
-		return (-1);
+		return (perror(""), -1);
 	}
 	if (dup2(fd, STDIN_FILENO) == -1)
 	{
 		perror("dup2");
-		close(fd);
-		return (-1);
+		return (close(fd), -1);
 	}
-	close(fd);
-	return (0);
+	return (close(fd), 0);
 }
 
 int	redirect_output(char *file, int flags)
@@ -45,8 +49,7 @@ int	redirect_output(char *file, int flags)
 	if (fd == -1)
 	{
 		ft_dprintf(2, "minishell: %s: ", file);
-		perror("");
-		return (-1);
+		return (perror(""), -1);
 	}
 	if (dup2(fd, STDOUT_FILENO) == -1)
 	{

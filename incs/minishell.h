@@ -129,6 +129,7 @@ int				redirect_output(char *file, int flags);
 int				redirect_input(char *file);
 int				redirect_heredoc(int fd);
 int				valide_id(char *name);
+void			init_stdio_backup_exec(int stdio_backup[3]);
 
 //utils pour l'exec
 int				execute_minibox(t_minibox *minibox, t_env *env);

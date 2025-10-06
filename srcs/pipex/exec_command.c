@@ -12,13 +12,6 @@
 
 #include "minishell.h"
 
-static void	init_stdio_backup_exec(int stdio_backup[3])
-{
-	stdio_backup[0] = -1;
-	stdio_backup[1] = -1;
-	stdio_backup[2] = -1;
-}
-
 static int	exec_with_redirections(char **argv, t_env **env, t_minifd *fds)
 {
 	int	stdio_backup[3];
