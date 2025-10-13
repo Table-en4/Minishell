@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 10:38:12 by molapoug          #+#    #+#             */
-/*   Updated: 2025/09/18 15:14:41 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/10/13 19:36:29 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,14 @@ static int	handle_child_process(t_minibox *minibox, t_miniparsing *node,
 {
 	int	exit_code;
 
-	signal(SIGINT, SIG_DFL);
-	signal(SIGQUIT, SIG_DFL);
+	setup_child_signals();
 	if (node->fds && apply_redirections(node->fds, stdio_backup) < 0)
+	{
+		restore_stdio(stdio_backup);
 		exit(1);
+	}
 	exit_code = execute_ast(minibox, node->subshell, env);
+	restore_stdio(stdio_backup);
 	exit(exit_code);
 }
 
@@ -31,15 +34,19 @@ static int	handle_parent_process(pid_t pid)
 	int	exit_code;
 	int	sig;
 
-	waitpid(pid, &status, 0);
+	(signal(SIGINT, SIG_IGN), signal(SIGQUIT, SIG_IGN));
+	(waitpid(pid, &status, 0), restore_exec_signals());
 	if (WIFEXITED(status))
 		exit_code = WEXITSTATUS(status);
 	else if (WIFSIGNALED(status))
 	{
 		sig = WTERMSIG(status);
 		if (sig == SIGINT)
-			ft_dprintf(1, "\n");
-		exit_code = 128 + sig;
+			1 && ft_dprintf(1, "\n"), exit_code = 130;
+		else if (sig == SIGQUIT)
+			1 && ft_dprintf(1, "Quit\n"), exit_code = 131;
+		else
+			exit_code = 128 + sig;
 	}
 	else
 		exit_code = 1;
@@ -53,6 +60,7 @@ int	exec_subshell(t_minibox *minibox, t_miniparsing *node, t_env *env)
 
 	if (!node || !node->subshell)
 		return (1);
+	init_stdio_backup_exec(stdio_backup);
 	pid = fork();
 	if (pid == 0)
 		handle_child_process(minibox, node, env, stdio_backup);

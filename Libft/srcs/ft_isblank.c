@@ -1,32 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signals_setup.c                                    :+:      :+:    :+:   */
+/*   ft_isblank.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/17 12:14:47 by molapoug          #+#    #+#             */
-/*   Updated: 2025/10/10 21:11:53 by raamayri         ###   ########.fr       */
+/*   Created: 2025/10/10 21:53:03 by raamayri          #+#    #+#             */
+/*   Updated: 2025/10/10 21:56:47 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../incs/libft.h"
 
-void	setup_child_signals(void)
+int	ft_isblank(const char *s)
 {
-	signal(SIGINT, SIG_DFL);
-	signal(SIGQUIT, SIG_DFL);
-	signal(SIGTSTP, SIG_DFL);
-}
-
-void	handle_sigquit(int sig)
-{
-	(void)sig;
-}
-
-void	setup_signals(void)
-{
-	signal(SIGINT, handle_sigint);
-	signal(SIGQUIT, SIG_IGN);
-	signal(SIGTSTP, SIG_IGN);
+	if (!s)
+		return (0);
+	while (*s)
+	{
+		if (!ft_isspace(*s))
+			return (0);
+		s++;
+	}
+	return (1);
 }

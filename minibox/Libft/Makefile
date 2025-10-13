@@ -6,7 +6,7 @@
 #    By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/06/23 17:57:19 by raamayri          #+#    #+#              #
-#    Updated: 2025/09/17 17:42:08 by raamayri         ###   ########.fr        #
+#    Updated: 2025/10/13 18:20:09 by raamayri         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -85,16 +85,16 @@ all: $(NAME)
 
 $(NAME): $(OBJS)
 	ar -rcs $@ $^
-	$(info [MAKE] $@ built successfully.)
+	$(info [MAKE $(NAME)] $@ built successfully.)
 
 objs/%.o: srcs/%.c
 	mkdir -p $(sort $(dir $@) $(dir $(patsubst objs/%.o,deps/%.d,$@)))
 	cc $(CC_FLAGS) -MMD -MP -MF $(patsubst objs/%.o,deps/%.d,$@) $(addprefix -I,$(INCS)) -o $@ -c $<
-	$(info [MAKE] $(addprefix $*, .c) compiled successfully.)
+	$(info [MAKE $(NAME)] $(addprefix $*, .c) compiled successfully.)
 
 clean:
 	rm -rf $(sort $(dir $(OBJS)) $(dir $(DEPS)))
-	$(info [MAKE] $(NAME) cleaned successfully.)
+	$(info [MAKE $(NAME)] $(NAME) cleaned successfully.)
 
 fclean: clean
 	rm -rf $(NAME)

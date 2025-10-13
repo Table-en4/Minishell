@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 17:56:18 by raamayri          #+#    #+#             */
-/*   Updated: 2025/09/17 18:28:34 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/10/10 21:54:51 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ int		ft_isprint(int c);
 int		ft_islower(int c);
 int		ft_isupper(int c);
 int		ft_isspace(int c);
+int		ft_isblank(const char *s);
 size_t	ft_strlen(const char *s);
 void	*ft_memset(void *s, int c, size_t n);
 void	ft_bzero(void *s, size_t n);

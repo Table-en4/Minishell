@@ -6,20 +6,11 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 11:44:12 by molapoug          #+#    #+#             */
-/*   Updated: 2025/09/21 13:41:05 by molapoug         ###   ########.fr       */
+/*   Updated: 2025/10/13 19:37:55 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-void	free_ast(t_miniparsing *node)
-{
-	if (!node)
-		return ;
-	free_ast(node->left);
-	free_ast(node->right);
-	free(node);
-}
 
 char	*get_prompt(void)
 {
@@ -62,43 +53,45 @@ int	handle_minibox(char *line, char **envp, t_env *env_list)
 	return (ft_destroy_minibox(minibox), free(minibox), exit_code);
 }
 
-int	main_loop(char **envp, t_env *env_list)
+int	main_loop(char **envp, t_env *env_lst)
 {
-	char		*line;
+	char		*ln;
 	char		*prompt;
-	static int	exit_code = 0;
+	static int	code = 0;
 
-	signal_handler(exit_code);
 	while (1)
 	{
 		restore_exec_signals();
-		1 && (prompt = get_prompt()), (line = readline(prompt)), free(prompt);
-		if (!line)
+		1 && (prompt = get_prompt()), (ln = readline(prompt)), free(prompt);
+		if (!ln)
+			return (ft_dprintf(1, "exit\n"), code);
+		if (g_signal == 130)
 		{
-			if (g_signal_received == 130)
-				continue ;
-			return (ft_dprintf(1, "exit\n"), g_signal_received);
-		}
-		if (*line == '\0')
-		{
-			(signal_handler(exit_code), free(line));
+			1 && (code = g_signal), (g_signal = 0);
 			continue ;
 		}
-		add_history(line);
-		exit_code = handle_minibox(line, envp, env_list);
-		(signal_handler(exit_code), free(line));
+		if (!ft_isblank(ln))
+		{
+			add_history(ln);
+			1 && (g_signal = code, (code = handle_minibox(ln, envp, env_lst)));
+		}
+		else
+			1 && (g_signal = 0), (code = 0);
+		1 && (g_signal = 0), free(ln);
 	}
-	return (g_signal_received);
+	return (code);
 }
 
 int	main(int ac, char **av, char **envp)
 {
 	t_env	*env_list;
+	int		exit_code;
 
 	(void)ac;
 	(void)av;
 	env_list = init_env(envp);
-	g_signal_received = main_loop(envp, env_list);
+	setup_signals();
+	exit_code = main_loop(envp, env_list);
 	free_env_list(env_list);
-	return (g_signal_received);
+	return (exit_code);
 }

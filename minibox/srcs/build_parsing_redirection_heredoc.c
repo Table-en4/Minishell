@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/12 23:03:08 by raamayri          #+#    #+#             */
-/*   Updated: 2025/09/18 16:43:23 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/10/13 19:24:07 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,23 +17,26 @@ static void	ft_write_heredoc(t_minibox *minibox, t_minifd *node)
 	const char	*wrn = "minibox: warning: heredoc delimited by eof";
 	const char	*eof = node->file;
 	char		*line;
+	int			brk;
 
 	restore_exec_signals_heredoc();
 	while (1 && minibox->error.code == MINICODE_NONE)
 	{
+		brk = 0;
 		line = readline("heredoc> ");
-		if (g_signal_received == SIGINT + 128)
-			ft_set_minibox_error(minibox, MINICODE_SIGINT);
-		if (!line)
-			ft_dprintf(STDERR_FILENO, "%s (%s)\n", wrn, eof);
-		if (!line || minibox->error.code != MINICODE_NONE || \
-			ft_strcmp(line, eof) == 0)
+		if (g_signal == 130 && brk == 0)
+			1 && (brk = 1), ft_set_minibox_error(minibox, MINICODE_SIGINT);
+		if (!line && brk == 0)
+			1 && (brk = 1), ft_dprintf(STDERR_FILENO, "%s (%s)\n", wrn, eof);
+		if (line && !ft_strcmp(line, eof) && brk == 0)
+			brk = 1;
+		if (brk)
 			break ;
-		1 && ft_dprintf(node->fd, "%s\n", line), free(line);
+		(ft_dprintf(node->fd, "%s\n", line), free(line));
 	}
-	1 && (g_signal_received = 0), close(node->fd);
 	if (line)
 		free(line);
+	(close(node->fd), (rl_done = 0), rl_on_new_line(), restore_exec_signals());
 	return ;
 }
 

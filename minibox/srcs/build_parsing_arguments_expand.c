@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 18:56:47 by raamayri          #+#    #+#             */
-/*   Updated: 2025/09/18 16:43:36 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/10/13 19:24:07 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ static char	*ft_get_env(char *name, char **envp)
 	len = ft_strlen(name);
 	if (ft_strncmp(name, "?", len) == 0)
 	{
-		ft_sprintf(buf, "%d", (int)g_signal_received);
+		ft_sprintf(buf, "%d", (int)g_signal);
 		return (buf);
 	}
 	while (envp[i])

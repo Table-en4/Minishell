@@ -6,11 +6,11 @@
 #    By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/05/29 18:33:52 by raamayri          #+#    #+#              #
-#    Updated: 2025/09/17 17:42:10 by raamayri         ###   ########.fr        #
+#    Updated: 2025/10/13 18:19:19 by raamayri         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-CC_FLAGS =  -g
+CC_FLAGS = -Wall -Wextra -Werror -g
 MK_FLAGS = --silent
 MAKEFLAGS += $(MK_FLAGS)
 
@@ -45,31 +45,34 @@ INCS = incs/ \
 OBJS = $(patsubst srcs/%.c, objs/%.o, $(SRCS))
 DEPS = $(patsubst objs/%.o, deps/%.d, $(OBJS))
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re get-files
 
 all: $(NAME)
 
 $(NAME): $(OBJS) $(LBFT)
 	ar -rcs $@ $^
-	$(info [MAKE] $@ built successfully.)
+	$(info [MAKE $(NAME)] $@ built successfully.)
 
 objs/%.o: srcs/%.c
 	mkdir -p $(sort $(dir $@) $(dir $(patsubst objs/%.o, deps/%.d, $@)))
 	cc $(CC_FLAGS) -MMD -MP -MF $(patsubst objs/%.o, deps/%.d, $@) $(addprefix -I, $(INCS)) -o $@ -c $<
-	$(info [MAKE] $(addprefix $*, .c) compiled successfully.)
+	$(info [MAKE $(NAME)] $(addprefix $*, .c) compiled successfully.)
 
 $(LBFT):
 	$(MAKE) $(MK_FLAGS) -C $(dir $@) 1> /dev/null
-	$(info [MAKE] $(dir $@) compiled successfully.)
+	$(info [MAKE $(NAME)] $(dir $@) compiled successfully.)
 
 clean:
 	rm -rf $(sort $(dir $(OBJS)) $(dir $(DEPS)))
 	$(MAKE) $(MK_FLAGS) -C $(dir $(LBFT)) $@ 1> /dev/null
-	$(info [MAKE] $(NAME) cleaned successfully.)
+	$(info [MAKE $(NAME)] $(NAME) cleaned successfully.)
 
 fclean: clean
 	rm -rf $(NAME) $(LBFT)
 
 re: fclean all
+
+get-srcs:
+	echo $(SRCS)
 
 -include $(DEPS)

@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 10:37:46 by molapoug          #+#    #+#             */
-/*   Updated: 2025/09/18 15:14:27 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/10/13 19:24:07 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ static int	exec_with_redirections(char **argv, t_env **env, t_minifd *fds)
 	if (!should_fork(argv[0]))
 		exit_code = execute_builtin_no_fork(argv, env);
 	else
-		exit_code = run_command(argv, *env);
+		exit_code = run_command(argv, *env, stdio_backup);
 	return (restore_stdio(stdio_backup), exit_code);
 }
 
@@ -33,7 +33,7 @@ static int	handle_no_fork_builtin_exit(char **argv, t_env **env)
 	{
 		ft_dprintf(1, "exit\n");
 		free_env_list(*env);
-		exit(g_signal_received);
+		exit(g_signal);
 	}
 	return (1);
 }
@@ -71,7 +71,11 @@ int	should_fork(char *cmd)
 int	exec_command(t_minibox *minibox, t_miniparsing *node, t_env *env)
 {
 	char	**argv;
+	int		no_backup[3];
 
+	no_backup[0] = -1;
+	no_backup[1] = -1;
+	no_backup[2] = -1;
 	(void)minibox;
 	if (!node || !node->argv || !node->argv[0])
 		return (1);
@@ -80,7 +84,7 @@ int	exec_command(t_minibox *minibox, t_miniparsing *node, t_env *env)
 	{
 		if (!should_fork(argv[0]))
 			return (execute_builtin_no_fork(argv, &env));
-		return (run_command(argv, env));
+		return (run_command(argv, env, no_backup));
 	}
 	return (exec_with_redirections(argv, &env, node->fds));
 }

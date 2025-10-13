@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 11:43:53 by molapoug          #+#    #+#             */
-/*   Updated: 2025/09/18 16:24:02 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/10/13 19:24:07 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ int				execute_ast(t_minibox *minibox, t_miniparsing *node,
 //exec cmd
 int				execute_builtin_no_fork(char **argv, t_env **env);
 int				should_fork(char *cmd);
-int				run_command(char **argv, t_env *env);
+int				run_command(char **argv, t_env *env, int stdio_backup[3]);
 int				exec_command(t_minibox *minibox, t_miniparsing *node,
 					t_env *env);
 int				exec_pipe(t_minibox *minibox, t_miniparsing *node, t_env *env);
@@ -138,10 +138,17 @@ int				execute_node(t_minibox *minibox, t_miniparsing *node,
 
 //signal functions
 void			restore_exec_signals(void);
+void			execution_signals(void);
 void			signal_handler(int sig);
 void			handle_sigint(int sig);
+void			handle_sigint_child(int sig);
 void			handle_sigquit(int sig);
 void			setup_signals(void);
+void			setup_child_signals(void);
+void			restore_exec_signals_heredoc(void);
+void			handle_signal_heredoc(int sig);
 char			*get_prompt(void);
+
+extern sig_atomic_t	g_signal;
 
 #endif

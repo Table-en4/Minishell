@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/24 20:15:46 by raamayri          #+#    #+#             */
-/*   Updated: 2025/09/18 15:49:19 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/10/13 19:24:07 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,8 @@
 
 # define MINIMSG_SIZE 256
 
-extern sig_atomic_t	g_signal_received;
+extern sig_atomic_t	g_signal;
+extern int			g_last_exit_code;
 
 typedef struct s_miniinput
 {

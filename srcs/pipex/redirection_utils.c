@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirection_utils.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: molapoug <molapoug@student.42.fr>          +#+  +:+       +#+        */
+/*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 12:22:58 by molapoug          #+#    #+#             */
-/*   Updated: 2025/09/17 12:23:15 by molapoug         ###   ########.fr       */
+/*   Updated: 2025/10/10 22:10:13 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,6 @@ int	redirect_output(char *file, int flags)
 		return (perror(""), -1);
 	}
 	if (dup2(fd, STDOUT_FILENO) == -1)
-		return (perror("dup2"),close(fd), -1);
+		return (perror("dup2"), close(fd), -1);
 	return (close(fd), 0);
 }

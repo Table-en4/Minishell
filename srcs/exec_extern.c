@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 15:40:54 by molapoug          #+#    #+#             */
-/*   Updated: 2025/09/18 15:16:23 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/10/13 19:36:29 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 static int	handle_child_process(char *cmd_path, char **args, char **envp)
 {
+	setup_child_signals();
 	if (execve(cmd_path, args, envp) == -1)
 	{
 		perror(args[0]);
@@ -27,10 +28,23 @@ static int	handle_child_process(char *cmd_path, char **args, char **envp)
 static int	handle_parent_process(pid_t pid, char *cmd_path, char **envp)
 {
 	int	status;
+	int	sig;
 
+	signal(SIGINT, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
 	waitpid(pid, &status, 0);
+	restore_exec_signals();
 	free(cmd_path);
 	free_envp(envp);
+	if (WIFSIGNALED(status))
+	{
+		sig = WTERMSIG(status);
+		if (sig == SIGINT)
+			return (130);
+		else if (sig == SIGQUIT)
+			return (131);
+		return (128 + sig);
+	}
 	return (WEXITSTATUS(status));
 }
 
