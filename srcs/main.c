@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 11:44:12 by molapoug          #+#    #+#             */
-/*   Updated: 2025/10/13 19:37:55 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/10/13 19:53:26 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ int	main_loop(char **envp, t_env *env_lst)
 			return (ft_dprintf(1, "exit\n"), code);
 		if (g_signal == 130)
 		{
-			1 && (code = g_signal), (g_signal = 0);
+			1 && (code = g_signal), (g_signal = 0), free(ln);
 			continue ;
 		}
 		if (!ft_isblank(ln))
