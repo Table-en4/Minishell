@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 15:40:54 by molapoug          #+#    #+#             */
-/*   Updated: 2025/10/13 19:36:29 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/10/14 17:52:13 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ int	execute_external(char **args, t_env *env_list)
 	{
 		ft_dprintf(2, "%s: command not found\n", args[0]);
 		free_envp(envp);
-		return (1);
+		return (127);
 	}
 	pid = fork();
 	if (pid == 0)

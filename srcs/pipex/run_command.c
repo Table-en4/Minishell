@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 15:36:21 by molapoug          #+#    #+#             */
-/*   Updated: 2025/10/13 19:36:29 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/10/14 17:52:13 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ static int	handle_child_process(char **argv, t_env *env, int stdio_backup[3])
 	if (!cmd_path)
 	{
 		ft_dprintf(2, "%s: command not found\n", argv[0]);
-		(free_envp(envp), exit(1));
+		(free_envp(envp), exit(127));
 	}
 	if (execve(cmd_path, argv, envp) == -1)
 		(perror(argv[0]), free(cmd_path), free_envp(envp), exit(1));

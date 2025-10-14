@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 11:45:06 by molapoug          #+#    #+#             */
-/*   Updated: 2025/09/18 15:09:45 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/10/14 17:58:18 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,12 +51,7 @@ int	execute_builtin(char **args, t_env **envp)
 	else if (builtin == 6)
 		return (ft_export(args, envp));
 	else if (builtin == 7)
-	{
-		ft_dprintf(1, "\e[46mfin de l'experience utilisateur\e[0m\n");
-		free_args(args);
-		free_env_list(*envp);
-		exit(0);
-	}
+		return (ft_exit(args, envp));
 	return (-1);
 }
 

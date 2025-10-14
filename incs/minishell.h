@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 11:43:53 by molapoug          #+#    #+#             */
-/*   Updated: 2025/10/13 19:24:07 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/10/14 18:11:09 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,7 @@ int				ft_export(char **args, t_env **envp);
 int				ft_env(char **args, t_env **envp);
 int				ft_unset(char **args, t_env **envp);
 int				ft_pwd(char **arg, t_env **envp);
+int				ft_exit(char **args, t_env **envp);
 
 //AST READ AND GESTION
 int				execute_ast(t_minibox *minibox, t_miniparsing *node,

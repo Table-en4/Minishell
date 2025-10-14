@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 10:37:46 by molapoug          #+#    #+#             */
-/*   Updated: 2025/10/13 19:24:07 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/10/14 18:24:34 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,17 +27,6 @@ static int	exec_with_redirections(char **argv, t_env **env, t_minifd *fds)
 	return (restore_stdio(stdio_backup), exit_code);
 }
 
-static int	handle_no_fork_builtin_exit(char **argv, t_env **env)
-{
-	if (ft_strcmp(argv[0], "exit") == 0)
-	{
-		ft_dprintf(1, "exit\n");
-		free_env_list(*env);
-		exit(g_signal);
-	}
-	return (1);
-}
-
 int	execute_builtin_no_fork(char **argv, t_env **env)
 {
 	if (!argv || !argv[0])
@@ -49,7 +38,7 @@ int	execute_builtin_no_fork(char **argv, t_env **env)
 	if (ft_strcmp(argv[0], "unset") == 0)
 		return (ft_unset(argv, env));
 	if (ft_strcmp(argv[0], "exit") == 0)
-		return (handle_no_fork_builtin_exit(argv, env));
+		return (ft_exit(argv, env));
 	return (execute_builtin(argv, env));
 }
 
