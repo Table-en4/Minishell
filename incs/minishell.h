@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 11:43:53 by molapoug          #+#    #+#             */
-/*   Updated: 2025/10/14 18:11:09 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/10/14 21:42:49 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,21 +74,21 @@ int				ft_exit(char **args, t_env **envp);
 
 //AST READ AND GESTION
 int				execute_ast(t_minibox *minibox, t_miniparsing *node,
-					t_env *env);
+					t_env **env);
 
 //exec cmd
 int				execute_builtin_no_fork(char **argv, t_env **env);
 int				should_fork(char *cmd);
 int				run_command(char **argv, t_env *env, int stdio_backup[3]);
 int				exec_command(t_minibox *minibox, t_miniparsing *node,
-					t_env *env);
-int				exec_pipe(t_minibox *minibox, t_miniparsing *node, t_env *env);
-int				exec_and(t_minibox *minibox, t_miniparsing *node, t_env *env);
-int				exec_or(t_minibox *minibox, t_miniparsing *node, t_env *env);
+					t_env **env);
+int				exec_pipe(t_minibox *minibox, t_miniparsing *node, t_env **env);
+int				exec_and(t_minibox *minibox, t_miniparsing *node, t_env **env);
+int				exec_or(t_minibox *minibox, t_miniparsing *node, t_env **env);
 int				exec_subshell(t_minibox *minibox, t_miniparsing *node,
-					t_env *env);
+					t_env **env);
 int				exec_redirection(t_minibox *minibox, t_miniparsing *node,
-					t_env *env);
+					t_env **env);
 
 //tokenzing and parsing
 void			free_token_list(t_minilexing *tokens);
@@ -104,7 +104,7 @@ int				env_exec(char **args, t_env *env);
 t_env			*duplic_env(t_env *ori);
 char			*get_env(t_env *envp, char *key);
 char			**env_to_tab(t_env *envp);
-void			set_env_value(t_env **envp, char *key, char *value);
+int				set_env_value(t_env **envp, char *key, char *value);
 char			*get_home(t_env *envp);
 char			*get_oldpwd(t_env *envp);
 t_env			*creat_env(char *key, char *value);
@@ -115,7 +115,6 @@ int				execute_builtin(char **args, t_env **envp);
 int				execute_external(char **args, t_env *env_list);
 void			free_env_list(t_env *envp);
 void			free_env_node(t_env *node);
-void			set_env_value(t_env **envp, char *key, char *value);
 int				valide_id(char *name);
 char			**conv_env_envp(t_env *env_list);
 void			free_envp(char **envp);
@@ -133,9 +132,9 @@ int				valide_id(char *name);
 void			init_stdio_backup_exec(int stdio_backup[3]);
 
 //utils pour l'exec
-int				execute_minibox(t_minibox *minibox, t_env *env);
+int				execute_minibox(t_minibox *minibox, t_env **env);
 int				execute_node(t_minibox *minibox, t_miniparsing *node,
-					t_env *env);
+					t_env **env);
 
 //signal functions
 void			restore_exec_signals(void);

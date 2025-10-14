@@ -6,13 +6,13 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 12:21:04 by molapoug          #+#    #+#             */
-/*   Updated: 2025/09/18 15:07:35 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/10/14 19:20:17 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	execute_minibox(t_minibox *minibox, t_env *env)
+int	execute_minibox(t_minibox *minibox, t_env **env)
 {
 	if (!minibox)
 		return (1);

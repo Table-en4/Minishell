@@ -6,14 +6,14 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 10:37:57 by molapoug          #+#    #+#             */
-/*   Updated: 2025/10/13 19:36:29 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/10/14 19:20:17 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 static pid_t	exec_pipe_second_pid(int pipe_fd[2], t_minibox *minibox,
-	t_miniparsing *node, t_env *env)
+	t_miniparsing *node, t_env **env)
 {
 	pid_t	pid;
 
@@ -28,7 +28,7 @@ static pid_t	exec_pipe_second_pid(int pipe_fd[2], t_minibox *minibox,
 }
 
 static pid_t	exec_pipe_first_pid(int pipe_fd[2], t_minibox *minibox,
-	t_miniparsing *node, t_env *env)
+	t_miniparsing *node, t_env **env)
 {
 	pid_t	pid;
 
@@ -42,7 +42,7 @@ static pid_t	exec_pipe_first_pid(int pipe_fd[2], t_minibox *minibox,
 	return (pid);
 }
 
-int	exec_pipe(t_minibox *minibox, t_miniparsing *node, t_env *env)
+int	exec_pipe(t_minibox *minibox, t_miniparsing *node, t_env **env)
 {
 	int		pipe_fd[2];
 	pid_t	pid[2];

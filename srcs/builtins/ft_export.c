@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_export.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: molapoug <molapoug@student.42.fr>          +#+  +:+       +#+        */
+/*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 10:36:54 by molapoug          #+#    #+#             */
-/*   Updated: 2025/09/05 10:36:55 by molapoug         ###   ########.fr       */
+/*   Updated: 2025/10/14 19:23:42 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,10 @@ int	export_no_value(t_env **envp, char *arg)
 	if (exist)
 		return (0);
 	else
-		return (set_env_value(envp, arg, ""), 0);
-	return (0);
+	{
+		set_env_value(envp, arg, "");
+		return (0);
+	}
 }
 
 // ajouter la gestion d'export tout court et modifier
@@ -76,8 +78,16 @@ int	process_export_args(char **args, t_env **envp)
 	i = 1;
 	while (args[i])
 	{
-		if (export_no_value(envp, args[i]) != 0)
-			error_count++;
+		if (ft_strchr(args[i], '='))
+		{
+			if (export_assign(envp, args[i]) != 0)
+				error_count++;
+		}
+		else
+		{
+			if (export_no_value(envp, args[i]) != 0)
+				error_count++;
+		}
 		i++;
 	}
 	return (error_count);

@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 10:37:46 by molapoug          #+#    #+#             */
-/*   Updated: 2025/10/14 18:24:34 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/10/14 19:20:17 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ int	should_fork(char *cmd)
 	return (1);
 }
 
-int	exec_command(t_minibox *minibox, t_miniparsing *node, t_env *env)
+int	exec_command(t_minibox *minibox, t_miniparsing *node, t_env **env)
 {
 	char	**argv;
 	int		no_backup[3];
@@ -72,8 +72,8 @@ int	exec_command(t_minibox *minibox, t_miniparsing *node, t_env *env)
 	if (!node->fds)
 	{
 		if (!should_fork(argv[0]))
-			return (execute_builtin_no_fork(argv, &env));
-		return (run_command(argv, env, no_backup));
+			return (execute_builtin_no_fork(argv, env));
+		return (run_command(argv, *env, no_backup));
 	}
-	return (exec_with_redirections(argv, &env, node->fds));
+	return (exec_with_redirections(argv, env, node->fds));
 }

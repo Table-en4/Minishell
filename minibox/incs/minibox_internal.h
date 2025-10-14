@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/27 19:23:54 by raamayri          #+#    #+#             */
-/*   Updated: 2025/09/17 22:36:16 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/10/14 20:57:27 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <stdint.h>
 # include <errno.h>
 # include <dirent.h>
+# include <unistd.h>
 # include "minibox.h"
 # include "../Libft/incs/libft.h"
 # include "../Libft/incs/get_next_line.h"

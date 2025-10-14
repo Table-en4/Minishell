@@ -6,14 +6,14 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 10:38:12 by molapoug          #+#    #+#             */
-/*   Updated: 2025/10/13 19:36:29 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/10/14 19:20:17 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 static int	handle_child_process(t_minibox *minibox, t_miniparsing *node,
-				t_env *env, int stdio_backup[3])
+				t_env **env, int stdio_backup[3])
 {
 	int	exit_code;
 
@@ -53,7 +53,7 @@ static int	handle_parent_process(pid_t pid)
 	return (exit_code);
 }
 
-int	exec_subshell(t_minibox *minibox, t_miniparsing *node, t_env *env)
+int	exec_subshell(t_minibox *minibox, t_miniparsing *node, t_env **env)
 {
 	pid_t	pid;
 	int		stdio_backup[3];

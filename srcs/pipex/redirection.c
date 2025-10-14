@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirection.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: molapoug <molapoug@student.42.fr>          +#+  +:+       +#+        */
+/*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 21:28:31 by molapoug          #+#    #+#             */
-/*   Updated: 2025/09/08 21:28:31 by molapoug         ###   ########.fr       */
+/*   Updated: 2025/10/14 19:20:17 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ static void	init_stdio_backup_redir(int stdio_backup[3])
 	stdio_backup[2] = -1;
 }
 
-int	exec_redirection(t_minibox *minibox, t_miniparsing *node, t_env *env)
+int	exec_redirection(t_minibox *minibox, t_miniparsing *node, t_env **env)
 {
 	int	exit_code;
 	int	stdio_backup[3];

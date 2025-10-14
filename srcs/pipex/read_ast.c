@@ -6,20 +6,20 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 10:38:30 by molapoug          #+#    #+#             */
-/*   Updated: 2025/09/17 22:56:26 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/10/14 19:20:17 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	execute_ast(t_minibox *minibox, t_miniparsing *node, t_env *env)
+int	execute_ast(t_minibox *minibox, t_miniparsing *node, t_env **env)
 {
 	if (!minibox || !node)
 		return (1);
 	return (execute_node(minibox, node, env));
 }
 
-int	execute_node(t_minibox *minibox, t_miniparsing *node, t_env *env)
+int	execute_node(t_minibox *minibox, t_miniparsing *node, t_env **env)
 {
 	if (node->type == MINITYPE_CMD)
 		return (exec_command(minibox, node, env));
