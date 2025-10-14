@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 17:04:44 by raamayri          #+#    #+#             */
-/*   Updated: 2025/10/14 21:30:49 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/10/14 21:58:28 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ static int	ft_open_ascii(void)
 	1 && (fd = open(path[1], O_RDONLY)), free(path[1]);
 	if (fd != -1)
 		return (free(path[0]), fd);
-	return (free(path[0]), 1);
+	return (free(path[0]), -1);
 }
 
 static int	ft_display_minibox_ascii(void)
