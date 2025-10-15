@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 18:56:47 by raamayri          #+#    #+#             */
-/*   Updated: 2025/10/13 19:24:07 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/10/15 18:19:59 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,8 @@ static void	ft_set_env(t_minibox *mbx, const char *value, char **str,
 		value[ij[0]] == 95 || value[ij[0]] == 63))
 	{
 		ij[1] = ij[0];
-		while (value[ij[1]] && (ft_isalnum(value[ij[0]]) || \
-			value[ij[0]] == 95 || value[ij[0]] == 63))
+		while (value[ij[1]] && (ft_isalnum(value[ij[1]]) || \
+			value[ij[1]] == 95 || value[ij[1]] == 63))
 			ij[1]++;
 		env_n = ft_substr(value, ij[0], ij[1] - ij[0]);
 		if (!env_n)
