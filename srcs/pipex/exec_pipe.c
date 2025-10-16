@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 10:37:57 by molapoug          #+#    #+#             */
-/*   Updated: 2025/10/14 19:20:17 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/10/16 16:47:14 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ int	exec_pipe(t_minibox *minibox, t_miniparsing *node, t_env **env)
 	(close(pipe_fd[0]), close(pipe_fd[1]));
 	(signal(SIGINT, SIG_IGN), signal(SIGQUIT, SIG_IGN));
 	(waitpid(pid[0], &left_status, 0), waitpid(pid[1], &right_status, 0));
-	restore_exec_signals();
+	ft_restore_signals();
 	if (WIFSIGNALED(right_status))
 		return (128 + WTERMSIG(right_status));
 	return (WEXITSTATUS(right_status));

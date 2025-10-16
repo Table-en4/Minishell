@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 15:36:21 by molapoug          #+#    #+#             */
-/*   Updated: 2025/10/14 17:52:13 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/10/16 16:47:14 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ static int	handle_parent_process(pid_t pid)
 	signal(SIGINT, SIG_IGN);
 	signal(SIGQUIT, SIG_IGN);
 	waitpid(pid, &status, 0);
-	restore_exec_signals();
+	ft_restore_signals();
 	if (WIFEXITED(status))
 		return (WEXITSTATUS(status));
 	else if (WIFSIGNALED(status))

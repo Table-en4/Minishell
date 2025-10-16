@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/12 23:03:08 by raamayri          #+#    #+#             */
-/*   Updated: 2025/10/14 21:45:49 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/10/16 16:48:08 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ static void	ft_write_heredoc(t_minibox *minibox, t_minifd *node)
 	char		*line;
 	int			brk;
 
-	restore_exec_signals_heredoc();
+	ft_restore_signals_heredoc();
 	while (1 && minibox->error.code == MINICODE_NONE)
 	{
 		brk = 0;
@@ -37,7 +37,7 @@ static void	ft_write_heredoc(t_minibox *minibox, t_minifd *node)
 	}
 	if (line)
 		free(line);
-	(close(node->fd), (rl_done = 0), rl_on_new_line(), restore_exec_signals());
+	(close(node->fd), (rl_done = 0), rl_on_new_line(), ft_restore_signals());
 	return ;
 }
 

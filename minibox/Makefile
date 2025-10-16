@@ -6,7 +6,7 @@
 #    By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/05/29 18:33:52 by raamayri          #+#    #+#              #
-#    Updated: 2025/10/13 18:19:19 by raamayri         ###   ########.fr        #
+#    Updated: 2025/10/16 16:56:29 by raamayri         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -39,7 +39,8 @@ SRCS = srcs/build.c \
 	   srcs/destroy_input.c \
 	   srcs/destroy_lexing.c \
 	   srcs/destroy_parsing.c \
-	   srcs/register.c
+	   srcs/register.c \
+	   srcs/signals.c
 INCS = incs/ \
 	   Libft/incs/
 OBJS = $(patsubst srcs/%.c, objs/%.o, $(SRCS))

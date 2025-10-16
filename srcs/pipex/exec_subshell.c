@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 10:38:12 by molapoug          #+#    #+#             */
-/*   Updated: 2025/10/14 19:20:17 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/10/16 16:47:14 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ static int	handle_parent_process(pid_t pid)
 	int	sig;
 
 	(signal(SIGINT, SIG_IGN), signal(SIGQUIT, SIG_IGN));
-	(waitpid(pid, &status, 0), restore_exec_signals());
+	(waitpid(pid, &status, 0), ft_restore_signals());
 	if (WIFEXITED(status))
 		exit_code = WEXITSTATUS(status);
 	else if (WIFSIGNALED(status))

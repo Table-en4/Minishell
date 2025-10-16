@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 11:44:12 by molapoug          #+#    #+#             */
-/*   Updated: 2025/10/14 21:39:38 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/10/16 17:07:44 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ int	main_loop(t_env **env_lst, int dbg)
 
 	while (1)
 	{
-		restore_exec_signals();
+		ft_restore_signals();
 		1 && (prompt = get_prompt()), (ln = readline(prompt)), free(prompt);
 		if (!ln)
 			return (ft_dprintf(1, "exit\n"), code);
@@ -85,7 +85,7 @@ int	main_loop(t_env **env_lst, int dbg)
 			1 && (g_signal = code, (code = handle_minibox(ln, env_lst, dbg)));
 		}
 		else
-			1 && (g_signal = 0), (code = 0);
+			code = 0;
 		1 && (g_signal = 0), free(ln);
 	}
 	return (code);
@@ -104,5 +104,6 @@ int	main(int ac, char **av, char **envp)
 	setup_signals();
 	exit_code = main_loop(&env_list, dbg);
 	free_env_list(env_list);
+	rl_clear_history();
 	return (exit_code);
 }

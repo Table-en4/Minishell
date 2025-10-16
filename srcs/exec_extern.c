@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 15:40:54 by molapoug          #+#    #+#             */
-/*   Updated: 2025/10/14 17:52:13 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/10/16 16:47:14 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ static int	handle_parent_process(pid_t pid, char *cmd_path, char **envp)
 	signal(SIGINT, SIG_IGN);
 	signal(SIGQUIT, SIG_IGN);
 	waitpid(pid, &status, 0);
-	restore_exec_signals();
+	ft_restore_signals();
 	free(cmd_path);
 	free_envp(envp);
 	if (WIFSIGNALED(status))

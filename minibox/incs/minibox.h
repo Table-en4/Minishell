@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/24 20:15:46 by raamayri          #+#    #+#             */
-/*   Updated: 2025/10/13 19:24:07 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/10/16 16:58:34 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@
 # define MINIMSG_SIZE 256
 
 extern sig_atomic_t	g_signal;
-extern int			g_last_exit_code;
 
 typedef struct s_miniinput
 {
@@ -142,7 +141,9 @@ int		ft_build_minibox(t_minibox *minibox, const char *cmd, char **envp);
 void	ft_display_minibox(const t_minibox *minibox);
 void	ft_destroy_minibox(t_minibox *minibox);
 
-void	restore_exec_signals(void);
-void	restore_exec_signals_heredoc(void);
+void	ft_restore_signals(void);
+void	ft_handle_sigint(int sig);
+void	ft_restore_signals_heredoc(void);
+void	ft_handle_sigint_heredoc(int sig);
 
 #endif

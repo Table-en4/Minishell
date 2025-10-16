@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 11:43:53 by molapoug          #+#    #+#             */
-/*   Updated: 2025/10/14 21:42:49 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/10/16 16:59:13 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@
 # include "../Libft/incs/libft.h"
 # include "../Libft/incs/ft_dprintf.h"
 # include "../minibox/incs/minibox.h"
-# include "../minibox/incs/minibox_internal.h"
 
 # define FOUT 2
 # define FIN 3
@@ -137,18 +136,15 @@ int				execute_node(t_minibox *minibox, t_miniparsing *node,
 					t_env **env);
 
 //signal functions
-void			restore_exec_signals(void);
+void			ft_restore_signals(void);
 void			execution_signals(void);
 void			signal_handler(int sig);
-void			handle_sigint(int sig);
 void			handle_sigint_child(int sig);
 void			handle_sigquit(int sig);
 void			setup_signals(void);
 void			setup_child_signals(void);
-void			restore_exec_signals_heredoc(void);
+void			ft_restore_signals_heredoc(void);
 void			handle_signal_heredoc(int sig);
 char			*get_prompt(void);
-
-extern sig_atomic_t	g_signal;
 
 #endif

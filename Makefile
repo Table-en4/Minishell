@@ -20,7 +20,6 @@ SRCS = srcs/main.c \
 	   srcs/builtins/ft_unset.c \
 	   srcs/builtins/ft_pwd.c \
 	   srcs/builtins/ft_exit.c \
-	   srcs/pipex/here_doc.c \
 	   srcs/pipex/exec_and.c \
 	   srcs/pipex/exec_command.c \
 	   srcs/pipex/exec_pipe.c \
