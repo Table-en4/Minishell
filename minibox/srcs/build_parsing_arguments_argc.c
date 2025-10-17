@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 20:13:42 by raamayri          #+#    #+#             */
-/*   Updated: 2025/10/17 18:02:13 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/10/17 20:24:27 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,22 @@ static size_t	ft_count_argument_parts(t_minibox *minibox,
 	return (r = ft_count_wildcard_matches(minibox, strs[0]), free(strs[0]), r);
 }
 
+static void	ft_skip_redirections(t_minilexing **curr_lexing, size_t *i)
+{
+	(*i)++;
+	*curr_lexing = (*curr_lexing)->next;
+	if (*curr_lexing && (*curr_lexing)->token == MINITOKEN_WSPACE)
+	{
+		(*i)++;
+		*curr_lexing = (*curr_lexing)->next;
+	}
+	if (*curr_lexing)
+	{
+		(*i)++;
+		*curr_lexing = (*curr_lexing)->next;
+	}
+}
+
 void	ft_build_parsing_argc(t_minibox *minibox, t_miniparsing *node,
 	const t_minilexing *lexing, const size_t lexing_len)
 {
@@ -77,11 +93,7 @@ void	ft_build_parsing_argc(t_minibox *minibox, t_miniparsing *node,
 	while (curr_lexing && i < lexing_len)
 	{
 		if (ft_isred(curr_lexing->token))
-		{
-			1 && (i++), curr_lexing = curr_lexing->next;
-			if (curr_lexing && curr_lexing->token == MINITOKEN_WSPACE)
-				1 && (i++), curr_lexing = curr_lexing->next;
-		}
+			ft_skip_redirections(&curr_lexing, &i);
 		else if (curr_lexing->token != MINITOKEN_WSPACE)
 		{
 			node->argc += ft_count_argument_parts(minibox, curr_lexing,
