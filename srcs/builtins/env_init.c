@@ -3,14 +3,32 @@
 /*                                                        :::      ::::::::   */
 /*   env_init.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: molapoug <molapoug@student.42.fr>          +#+  +:+       +#+        */
+/*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 11:45:17 by molapoug          #+#    #+#             */
-/*   Updated: 2025/09/05 10:34:42 by molapoug         ###   ########.fr       */
+/*   Updated: 2025/10/17 18:14:48 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+static void	add_shlvl(t_env **env_list)
+{
+	char	*shlvl_str;
+	int		shlvl_value;
+
+	shlvl_str = get_env(*env_list, "SHLVL");
+	if (shlvl_str)
+		shlvl_value = ft_atoi(shlvl_str) + 1;
+	else
+		shlvl_value = 1;
+	shlvl_str = ft_itoa(shlvl_value);
+	if (shlvl_str)
+	{
+		set_env_value(env_list, "SHLVL", shlvl_str);
+		free(shlvl_str);
+	}
+}
 
 t_env	*init_env(char **envp)
 {
@@ -35,10 +53,10 @@ t_env	*init_env(char **envp)
 		}
 		i++;
 	}
-	return (env_list);
+	return (add_shlvl(&env_list), env_list);
 }
 
-char	**pasrse_line(char *line)
+char	**parse_line(char *line)
 {
 	char	**args;
 	char	*token;

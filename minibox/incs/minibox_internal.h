@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/27 19:23:54 by raamayri          #+#    #+#             */
-/*   Updated: 2025/10/14 20:57:27 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/10/17 17:54:12 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,8 @@ t_miniparsing	*ft_new_node(t_minibox *minibox, t_miniparsing *parent,
 
 void			ft_build_parsing_argc(t_minibox *minibox, t_miniparsing *node,
 					const t_minilexing *lexing, const size_t lexing_len);
-void			ft_build_parsing_argv(t_minibox *minibox, t_miniparsing *node,
-					const t_minilexing *lexing, const size_t lexing_len);
+int				ft_build_parsing_argv(t_minibox *minibox, t_miniparsing *node,
+					t_minilexing *lexing, const size_t lexing_len);
 char			*ft_get_expand_val(t_minibox *minibox,
 					const t_minilexing *lexing);
 char			**ft_expand_wildcard(t_minibox *minibox, const char *pattern,

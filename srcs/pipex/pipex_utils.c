@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: molapoug <molapoug@student.42.fr>          +#+  +:+       +#+        */
+/*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 10:38:23 by molapoug          #+#    #+#             */
-/*   Updated: 2025/09/05 19:04:32 by molapoug         ###   ########.fr       */
+/*   Updated: 2025/10/17 18:33:38 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,11 +32,15 @@ char	*find_path(char *cmd, t_env *env)
 	char	**paths;
 	char	*tmp;
 	char	*full;
+	char	*path_env;
 	int		i;
 
 	if (ft_strchr(cmd, '/'))
 		return (ft_strdup(cmd));
-	paths = ft_split(get_env(env, "PATH"), ':');
+	path_env = get_env(env, "PATH");
+	if (!path_env)
+		return (NULL);
+	paths = ft_split(path_env, ':');
 	if (!paths)
 		return (NULL);
 	i = 0;

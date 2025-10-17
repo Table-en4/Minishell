@@ -1,0 +1,211 @@
+# Valgrind suppression file for readline library
+# This file suppresses known memory leaks in the readline library
+# Usage: valgrind --suppressions=readline.supp ./minishell
+
+{
+   readline_leak_1
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   ...
+   fun:readline
+}
+
+{
+   readline_leak_2
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   ...
+   fun:readline
+}
+
+{
+   readline_leak_3
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   ...
+   fun:readline
+}
+
+{
+   readline_history_leak
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   ...
+   fun:add_history
+}
+
+{
+   readline_history_leak_2
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   ...
+   fun:add_history
+}
+
+{
+   readline_history_leak_3
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   ...
+   fun:add_history
+}
+
+{
+   readline_completion_leak
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   ...
+   fun:rl_*
+}
+
+{
+   readline_completion_leak_2
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   ...
+   fun:rl_*
+}
+
+{
+   readline_tilde_expand
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   ...
+   fun:tilde_expand
+}
+
+{
+   readline_filename_completion
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   ...
+   fun:filename_completion_function
+}
+
+{
+   readline_undo_list
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   ...
+   fun:rl_free_undo_list
+}
+
+{
+   readline_clear_history
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   ...
+   fun:clear_history
+}
+
+{
+   readline_using_history
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   ...
+   fun:using_history
+}
+
+{
+   readline_xmalloc
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:xmalloc
+   ...
+}
+
+{
+   readline_xrealloc
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   fun:xrealloc
+   ...
+}
+
+{
+   readline_strdup
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:strdup
+   ...
+   fun:readline
+}
+
+{
+   readline_savestring
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:savestring
+   ...
+}
+
+{
+   readline_terminal_init
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   ...
+   fun:_rl_init_terminal_io
+}
+
+{
+   readline_keymap
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   ...
+   fun:rl_make_bare_keymap
+}
+
+{
+   readline_vi_keymap
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   ...
+   fun:rl_generic_bind
+}
+
+{
+   readline_emacs_keymap
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   ...
+   fun:rl_set_keymap
+}
+
+{
+   readline_signal_handler
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   ...
+   fun:rl_set_signals
+}
+
+{
+   readline_macro_dumper
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   ...
+   fun:_rl_macro_dumper_internal
+}

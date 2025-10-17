@@ -6,7 +6,7 @@
 #    By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/05/29 18:33:52 by raamayri          #+#    #+#              #
-#    Updated: 2025/10/16 16:56:29 by raamayri         ###   ########.fr        #
+#    Updated: 2025/10/17 17:58:09 by raamayri         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,7 +24,9 @@ SRCS = srcs/build.c \
 	   srcs/build_parsing_syntax.c \
 	   srcs/build_parsing_redirection.c \
 	   srcs/build_parsing_redirection_heredoc.c \
-	   srcs/build_parsing_arguments.c \
+	   srcs/build_parsing_arguments_argc.c \
+	   srcs/build_parsing_arguments_argv_part1.c \
+	   srcs/build_parsing_arguments_argv_part2.c \
 	   srcs/build_parsing_arguments_expand.c \
 	   srcs/build_parsing_arguments_wildcard.c \
 	   srcs/build_parsing_arguments_utils.c \

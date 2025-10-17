@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 11:43:53 by molapoug          #+#    #+#             */
-/*   Updated: 2025/10/16 16:59:13 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/10/17 19:12:13 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@
 
 # define FOUT 2
 # define FIN 3
+# define EXIT_SHELL_CODE 255
 
 /*#-----------------#*/
 /*#------struct-----#*/
@@ -108,7 +109,7 @@ char			*get_home(t_env *envp);
 char			*get_oldpwd(t_env *envp);
 t_env			*creat_env(char *key, char *value);
 t_env			*init_env(char **envp);
-char			**pasrse_line(char *line);
+char			**parse_line(char *line);
 void			free_args(char **args);
 int				execute_builtin(char **args, t_env **envp);
 int				execute_external(char **args, t_env *env_list);
