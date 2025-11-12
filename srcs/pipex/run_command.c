@@ -6,11 +6,18 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 15:36:21 by molapoug          #+#    #+#             */
-/*   Updated: 2025/11/12 19:56:51 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/11/12 20:29:50 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+static void	free_mb(t_minibox *mb)
+{
+	free_envp(mb->input->envp);
+	ft_destroy_minibox(mb);
+	free(mb);
+}
 
 static void	csb(int stdio_backup[3])
 {
@@ -33,23 +40,23 @@ static int	handle_child_process(char **argv, t_env *e, int stdio_backup[3],
 	if (is_builtin(argv[0]) != -1)
 	{
 		r = execute_builtin(argv, &e);
-		(free_env_list(e), ft_destroy_minibox(mb), free(mb), exit(r));
+		(free_env_list(e), free_mb(mb), exit(r));
 	}
 	envp = conv_env_envp(e);
 	if (!envp)
-		(free_env_list(e), ft_destroy_minibox(mb), free(mb), exit(1));
+		(free_env_list(e), free_mb(mb), exit(1));
 	cmd_path = find_path(argv[0], e);
 	if (!cmd_path)
 	{
 		(ft_dprintf(2, "%s: command not found\n", argv[0]), free_envp(envp));
-		(free_env_list(e), ft_destroy_minibox(mb), free(mb), exit(127));
+		(free_mb(mb), free_env_list(e), exit(127));
 	}
 	if (execve(cmd_path, argv, envp) == -1)
 	{
-		(free_env_list(e), ft_destroy_minibox(mb), free(mb));
-		(perror(argv[0]), free(cmd_path), free_envp(envp), exit(1));
+		(perror(argv[0]), free_env_list(e), free(cmd_path));
+		(free_mb(mb), free_envp(envp), exit(1));
 	}
-	return (free_env_list(e), ft_destroy_minibox(mb), free(mb), 0);
+	return (free_env_list(e), free_mb(mb), 0);
 }
 
 static int	handle_parent_process(pid_t pid)
