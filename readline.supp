@@ -1,7 +1,3 @@
-# Valgrind suppression file for readline library
-# This file suppresses known memory leaks in the readline library
-# Usage: valgrind --suppressions=readline.supp ./minishell
-
 {
    readline_leak_1
    Memcheck:Leak
