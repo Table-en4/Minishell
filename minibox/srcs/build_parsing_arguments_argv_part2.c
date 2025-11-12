@@ -6,14 +6,14 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 20:13:42 by raamayri          #+#    #+#             */
-/*   Updated: 2025/10/17 20:24:45 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/11/12 15:24:31 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../incs/minibox_internal.h"
 
 int	ft_end_argv(t_minibox *minibox, t_miniparsing *node,
-	char *temp_arg, size_t *j);
+		char *temp_arg, size_t *j);
 
 void	ft_build_argv_seg_3(t_minibox *minibox, t_miniparsing *node,
 	size_t *j, char **tmp_arg)

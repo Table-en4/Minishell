@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 20:13:42 by raamayri          #+#    #+#             */
-/*   Updated: 2025/10/17 20:22:56 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/11/12 15:24:16 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,10 +65,8 @@ static int	ft_build_argv_expand(t_minibox *minibox, t_minilexing **curr_lexing,
 }
 
 static int	ft_build_parsing_argv_init(t_minibox *minibox, t_minilexing *lexing,
-	size_t *ij, t_minilexing **curr_lexing, char **tmp_arg)
+	t_minilexing **curr_lexing, char **tmp_arg)
 {
-	ij[0] = 0;
-	ij[1] = 0;
 	*curr_lexing = lexing;
 	*tmp_arg = ft_strdup("");
 	if (!*tmp_arg)
@@ -83,7 +81,8 @@ int	ft_build_parsing_argv(t_minibox *minibox, t_miniparsing *node,
 	char			*tmp_arg;
 	size_t			ij[2];
 
-	if (ft_build_parsing_argv_init(minibox, lexing, ij, &curr_lexing, &tmp_arg))
+	1 && (ij[0] = 0), (ij[1] = 0);
+	if (ft_build_parsing_argv_init(minibox, lexing, &curr_lexing, &tmp_arg))
 		return (0);
 	while (curr_lexing && ij[0] < lexing_len && ij[1] < node->argc)
 	{
@@ -98,7 +97,7 @@ int	ft_build_parsing_argv(t_minibox *minibox, t_miniparsing *node,
 			ft_build_argv_seg_2_b(minibox, &curr_lexing, &ij[0], &tmp_arg);
 		}
 		else if (ft_build_argv_expand(minibox, &curr_lexing, &ij[0], &tmp_arg))
-				return (0);
+			return (0);
 		if (minibox->error.code != MINICODE_NONE)
 			return (free(tmp_arg), 0);
 	}

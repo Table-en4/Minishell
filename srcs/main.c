@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 11:44:12 by molapoug          #+#    #+#             */
-/*   Updated: 2025/10/17 19:20:11 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/11/12 15:22:14 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,29 +64,29 @@ int	handle_minibox(char *line, t_env **env_list, int dbg)
 
 int	main_loop(t_env **env_lst, int dbg)
 {
-	char		*strs[2];
+	char		*s[2];
 	static int	code = 0;
 
 	while (1)
 	{
-		1 && (strs[1] = get_prompt()), (strs[0] = readline(strs[1])), free(strs[1]);
-		if (!strs[0])
+		1 && (s[1] = get_prompt()), (s[0] = readline(s[1])), free(s[1]);
+		if (!s[0])
 			return (ft_dprintf(1, "exit\n"), code);
 		if (g_signal == 130)
 		{
-			1 && (code = g_signal), (g_signal = 0), free(strs[0]);
+			1 && (code = g_signal), (g_signal = 0), free(s[0]);
 			continue ;
 		}
-		if (!ft_isblank(strs[0]))
+		if (!ft_isblank(s[0]))
 		{
-			add_history(strs[0]);
-			1 && (g_signal = code, (code = handle_minibox(strs[0], env_lst, dbg)));
+			add_history(s[0]);
+			1 && (g_signal = code, (code = handle_minibox(s[0], env_lst, dbg)));
 			if (code >= EXIT_SHELL_CODE)
-				return ((g_signal = 0), free(strs[0]), code - EXIT_SHELL_CODE);
+				return ((g_signal = 0), free(s[0]), code - EXIT_SHELL_CODE);
 		}
 		else
 			code = 0;
-		1 && (g_signal = 0), free(strs[0]);
+		1 && (g_signal = 0), free(s[0]);
 	}
 	return (code);
 }

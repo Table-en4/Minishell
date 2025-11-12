@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 10:38:23 by molapoug          #+#    #+#             */
-/*   Updated: 2025/10/17 18:33:38 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/11/12 15:20:32 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,8 +51,7 @@ char	*find_path(char *cmd, t_env *env)
 		free(tmp);
 		if (access(full, X_OK) == 0)
 			return (ft_free_split(paths), full);
-		free(full);
-		i++;
+		(free(full), (i++));
 	}
 	return (ft_free_split(paths), NULL);
 }

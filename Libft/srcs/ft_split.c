@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 17:55:07 by raamayri          #+#    #+#             */
-/*   Updated: 2025/10/17 18:33:38 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/11/12 15:25:03 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,8 +65,7 @@ char	**ft_split(char const *s, char c)
 	strs = ft_calloc(ft_countwords(s, c) + 1, sizeof(char *));
 	if (!strs)
 		return (NULL);
-	i = 0;
-	j = 0;
+	1 && (i = 0), (j = 0);
 	while (s[i])
 	{
 		while (s[i] && s[i] == c)
