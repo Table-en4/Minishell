@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 11:43:53 by molapoug          #+#    #+#             */
-/*   Updated: 2025/10/17 19:12:13 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/11/12 19:38:58 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,8 @@ int				execute_ast(t_minibox *minibox, t_miniparsing *node,
 //exec cmd
 int				execute_builtin_no_fork(char **argv, t_env **env);
 int				should_fork(char *cmd);
-int				run_command(char **argv, t_env *env, int stdio_backup[3]);
+int				run_command(char **argv, t_env *env, int stdio_backup[3],
+					t_minibox *minibox);
 int				exec_command(t_minibox *minibox, t_miniparsing *node,
 					t_env **env);
 int				exec_pipe(t_minibox *minibox, t_miniparsing *node, t_env **env);
@@ -130,6 +131,7 @@ int				redirect_input(char *file);
 int				redirect_heredoc(int fd);
 int				valide_id(char *name);
 void			init_stdio_backup_exec(int stdio_backup[3]);
+void			close_all_fds(t_miniparsing *node);
 
 //utils pour l'exec
 int				execute_minibox(t_minibox *minibox, t_env **env);

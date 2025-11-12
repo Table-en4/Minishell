@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 10:38:12 by molapoug          #+#    #+#             */
-/*   Updated: 2025/10/16 16:47:14 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/11/12 19:18:16 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,13 +18,20 @@ static int	handle_child_process(t_minibox *minibox, t_miniparsing *node,
 	int	exit_code;
 
 	setup_child_signals();
+	close_all_fds(minibox->parsing);
 	if (node->fds && apply_redirections(node->fds, stdio_backup) < 0)
 	{
 		restore_stdio(stdio_backup);
+		free_env_list(*env);
+		ft_destroy_minibox(minibox);
+		free(minibox);
 		exit(1);
 	}
 	exit_code = execute_ast(minibox, node->subshell, env);
 	restore_stdio(stdio_backup);
+	free_env_list(*env);
+	ft_destroy_minibox(minibox);
+	free(minibox);
 	exit(exit_code);
 }
 

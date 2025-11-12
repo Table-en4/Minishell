@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 10:38:23 by molapoug          #+#    #+#             */
-/*   Updated: 2025/11/12 15:20:32 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/11/12 18:48:55 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,4 +54,33 @@ char	*find_path(char *cmd, t_env *env)
 		(free(full), (i++));
 	}
 	return (ft_free_split(paths), NULL);
+}
+
+static void	close_fds_list(t_minifd *fds)
+{
+	t_minifd	*current;
+
+	if (!fds)
+		return ;
+	current = fds;
+	while (current)
+	{
+		if (current->fd >= 0)
+			close(current->fd);
+		current = current->next;
+	}
+}
+
+void	close_all_fds(t_miniparsing *node)
+{
+	if (!node)
+		return ;
+	if (node->fds)
+		close_fds_list(node->fds);
+	if (node->subshell)
+		close_all_fds(node->subshell);
+	if (node->left)
+		close_all_fds(node->left);
+	if (node->right)
+		close_all_fds(node->right);
 }

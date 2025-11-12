@@ -6,38 +6,50 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 15:36:21 by molapoug          #+#    #+#             */
-/*   Updated: 2025/10/16 16:47:14 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/11/12 19:56:51 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int	handle_child_process(char **argv, t_env *env, int stdio_backup[3])
+static void	csb(int stdio_backup[3])
 {
-	char	*cmd_path;
-	char	**envp;
-
-	setup_child_signals();
 	if (stdio_backup[0] != -1)
 		close(stdio_backup[0]);
 	if (stdio_backup[1] != -1)
 		close(stdio_backup[1]);
 	if (stdio_backup[2] != -1)
 		close(stdio_backup[2]);
+}
+
+static int	handle_child_process(char **argv, t_env *e, int stdio_backup[3],
+	t_minibox *mb)
+{
+	char	*cmd_path;
+	char	**envp;
+	int		r;
+
+	(setup_child_signals(), close_all_fds(mb->parsing), csb(stdio_backup));
 	if (is_builtin(argv[0]) != -1)
-		exit(execute_builtin(argv, &env));
-	envp = conv_env_envp(env);
+	{
+		r = execute_builtin(argv, &e);
+		(free_env_list(e), ft_destroy_minibox(mb), free(mb), exit(r));
+	}
+	envp = conv_env_envp(e);
 	if (!envp)
-		exit(1);
-	cmd_path = find_path(argv[0], env);
+		(free_env_list(e), ft_destroy_minibox(mb), free(mb), exit(1));
+	cmd_path = find_path(argv[0], e);
 	if (!cmd_path)
 	{
-		ft_dprintf(2, "%s: command not found\n", argv[0]);
-		(free_envp(envp), exit(127));
+		(ft_dprintf(2, "%s: command not found\n", argv[0]), free_envp(envp));
+		(free_env_list(e), ft_destroy_minibox(mb), free(mb), exit(127));
 	}
 	if (execve(cmd_path, argv, envp) == -1)
+	{
+		(free_env_list(e), ft_destroy_minibox(mb), free(mb));
 		(perror(argv[0]), free(cmd_path), free_envp(envp), exit(1));
-	return (0);
+	}
+	return (free_env_list(e), ft_destroy_minibox(mb), free(mb), 0);
 }
 
 static int	handle_parent_process(pid_t pid)
@@ -69,7 +81,7 @@ static int	handle_parent_process(pid_t pid)
 	return (1);
 }
 
-int	run_command(char **argv, t_env *env, int stdio_backup[3])
+int	run_command(char **argv, t_env *env, int stdio_backup[3], t_minibox *mb)
 {
 	pid_t	pid;
 
@@ -77,7 +89,7 @@ int	run_command(char **argv, t_env *env, int stdio_backup[3])
 		return (1);
 	pid = fork();
 	if (pid == 0)
-		handle_child_process(argv, env, stdio_backup);
+		handle_child_process(argv, env, stdio_backup, mb);
 	else if (pid > 0)
 		return (handle_parent_process(pid));
 	else

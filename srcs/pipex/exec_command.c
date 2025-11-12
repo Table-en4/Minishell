@@ -6,13 +6,14 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 10:37:46 by molapoug          #+#    #+#             */
-/*   Updated: 2025/10/14 19:20:17 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/11/12 19:38:35 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int	exec_with_redirections(char **argv, t_env **env, t_minifd *fds)
+static int	exec_with_redirections(char **argv, t_env **env, t_minifd *fds,
+	t_minibox *minibox)
 {
 	int	stdio_backup[3];
 	int	exit_code;
@@ -23,7 +24,7 @@ static int	exec_with_redirections(char **argv, t_env **env, t_minifd *fds)
 	if (!should_fork(argv[0]))
 		exit_code = execute_builtin_no_fork(argv, env);
 	else
-		exit_code = run_command(argv, *env, stdio_backup);
+		exit_code = run_command(argv, *env, stdio_backup, minibox);
 	return (restore_stdio(stdio_backup), exit_code);
 }
 
@@ -73,7 +74,7 @@ int	exec_command(t_minibox *minibox, t_miniparsing *node, t_env **env)
 	{
 		if (!should_fork(argv[0]))
 			return (execute_builtin_no_fork(argv, env));
-		return (run_command(argv, *env, no_backup));
+		return (run_command(argv, *env, no_backup, minibox));
 	}
-	return (exec_with_redirections(argv, env, node->fds));
+	return (exec_with_redirections(argv, env, node->fds, minibox));
 }

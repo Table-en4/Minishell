@@ -6,7 +6,7 @@
 /*   By: raamayri <raamayri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 10:37:57 by molapoug          #+#    #+#             */
-/*   Updated: 2025/10/16 16:47:14 by raamayri         ###   ########.fr       */
+/*   Updated: 2025/11/12 19:18:11 by raamayri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,24 @@ static pid_t	exec_pipe_second_pid(int pipe_fd[2], t_minibox *minibox,
 	t_miniparsing *node, t_env **env)
 {
 	pid_t	pid;
+	int		exit_code;
 
 	pid = fork();
 	if (pid == 0)
 	{
 		setup_child_signals();
+		close_all_fds(minibox->parsing);
+		if (minibox->input && minibox->input->envp)
+		{
+			free_envp(minibox->input->envp);
+			minibox->input->envp = NULL;
+		}
 		(close(pipe_fd[1]), dup2(pipe_fd[0], STDIN_FILENO), close(pipe_fd[0]));
-		exit(execute_ast(minibox, node->right, env));
+		exit_code = execute_ast(minibox, node->right, env);
+		free_env_list(*env);
+		ft_destroy_minibox(minibox);
+		free(minibox);
+		exit(exit_code);
 	}
 	return (pid);
 }
@@ -31,13 +42,24 @@ static pid_t	exec_pipe_first_pid(int pipe_fd[2], t_minibox *minibox,
 	t_miniparsing *node, t_env **env)
 {
 	pid_t	pid;
+	int		exit_code;
 
 	pid = fork();
 	if (pid == 0)
 	{
 		setup_child_signals();
+		close_all_fds(minibox->parsing);
+		if (minibox->input && minibox->input->envp)
+		{
+			free_envp(minibox->input->envp);
+			minibox->input->envp = NULL;
+		}
 		(close(pipe_fd[0]), dup2(pipe_fd[1], STDOUT_FILENO), close(pipe_fd[1]));
-		exit(execute_ast(minibox, node->left, env));
+		exit_code = execute_ast(minibox, node->left, env);
+		free_env_list(*env);
+		ft_destroy_minibox(minibox);
+		free(minibox);
+		exit(exit_code);
 	}
 	return (pid);
 }
