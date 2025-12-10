@@ -95,28 +95,16 @@ t_env	*duplic_env(t_env *ori)
 
 int	env_exec(char **args, t_env *env)
 {
-	pid_t	pid;
-	int		status;
 	char	**envp;
 
 	envp = conv_env_envp(env);
-	if (!env)
+	if (!envp)
 		return (1);
-	pid = fork();
-	if (pid == 0)
+	if (execve(args[0], args, envp) == -1)
 	{
-		if (execve(args[0], args, envp) == -1)
-		{
-			perror(args[0]);
-			free_envp(envp);
-			exit(1);
-		}
-	}
-	else if (pid > 0)
-	{
-		waitpid(pid, &status, 0);
+		perror(args[0]);
 		free_envp(envp);
-		return (WEXITSTATUS(status));
+		return (127);
 	}
 	return (0);
 }
