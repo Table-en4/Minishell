@@ -59,4 +59,6 @@ char	*ft_strtok(char *str, const char *delim);
 char	*ft_strcpy(char *dest, char *str);
 char	*ft_strcat(char *dest, char *src);
 
+char	*get_next_line(int fd);
+
 #endif

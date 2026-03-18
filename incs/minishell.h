@@ -56,6 +56,15 @@ typedef struct s_blt
 	char	*copy;
 }	t_blt;
 
+/*#-----------------#*/
+/*#------alias------#*/
+/*#-----------------#*/
+typedef struct s_alias {
+	char *name;
+	char *value;
+	struct s_alias *next;
+}	t_alias;
+
 /*#------------------#*/
 /*#-signal functions-#*/
 /*#------------------#*/
