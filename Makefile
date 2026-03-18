@@ -36,7 +36,8 @@ SRCS = srcs/main.c \
 	   srcs/builtins/utilis.c \
 	   srcs/pipex/apply_redirections.c \
 	   srcs/pipex/run_command.c \
-	   srcs/exec_extern.c
+	   srcs/exec_extern.c \
+	   srcs/config/config.c
 INCS = incs/ \
 	   Libft/incs/
 OBJS = $(patsubst srcs/%.c, objs/%.o, $(SRCS))

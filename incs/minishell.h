@@ -159,4 +159,7 @@ void			ft_restore_signals_heredoc(void);
 void			handle_signal_heredoc(int sig);
 char			*get_prompt(void);
 
+char *resolve_aliases(const char *line);
+void load_config(t_env *envp);
+
 #endif
